@@ -225,7 +225,7 @@ function TelaLogin({ onLogin, onCadastro }: { onLogin: () => void; onCadastro: (
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
           <MascoteFlutuante />
           <h1 style={{ fontFamily: "var(--font-cinzel)", fontSize: "28px", fontWeight: "900", color: DS.douradoClaro, marginTop: "12px", letterSpacing: "3px" }}>
-            GOSPEL QUEST
+            DISCYPULO
           </h1>
           <p style={{ color: DS.off, fontStyle: "italic", fontSize: "14px" }}>Uma jornada épica pela Palavra de Deus</p>
         </div>
@@ -559,7 +559,7 @@ function TelaHome({
             fontSize: "34px",
           }}>✝</div>
           <h1 className="titulo-hero" style={{ fontFamily: "var(--font-cinzel)", fontSize: "30px", fontWeight: "900", color: DS.douradoClaro, margin: "0 0 4px", letterSpacing: "3px" }}>
-            GOSPEL QUEST
+            DISCYPULO
           </h1>
           <p style={{ color: DS.off, fontStyle: "italic", fontSize: "13px" }}>Uma jornada épica pela Palavra de Deus</p>
 
