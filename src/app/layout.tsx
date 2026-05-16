@@ -15,7 +15,7 @@ const garamond = EB_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "Gospel Quest",
+  title: "Discypulo",
   description: "Embarque numa jornada épica pela Palavra de Deus",
 };
 
