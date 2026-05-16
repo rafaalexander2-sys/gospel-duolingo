@@ -1,26 +1,45 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-principal:    #f0ead6;
+  --bg-card:         #faf6ec;
+  --bg-card-border:  #e0d5b8;
+  --texto-titulo:    #3d2008;
+  --texto-corpo:     #5c3a1e;
+  --dourado:         #c9a227;
+  --dourado-sombra:  #9a7a10;
+  --vermelho:        #8b1a1a;
+  --verde-acerto:    #2d6a2d;
+  --verde-sombra:    #1a4a1a;
+  --fundo-acerto:    #d4edda;
+  --fundo-erro:      #f8d7da;
+  --cinza-off:       #b8a98a;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg-principal);
+  --color-foreground: var(--texto-corpo);
+  --font-sans: var(--font-garamond);
+  --font-display: var(--font-cinzel);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-principal);
+  color: var(--texto-corpo);
+  font-family: var(--font-garamond), "EB Garamond", Georgia, serif;
+  -webkit-font-smoothing: antialiased;
 }
+
+h1, h2, h3, .titulo {
+  font-family: var(--font-cinzel), "Cinzel", Georgia, serif;
+  color: var(--texto-titulo);
+}
+
+/* Scrollbar discreta no tom pergaminho */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-principal); }
+::-webkit-scrollbar-thumb { background: var(--bg-card-border); border-radius: 3px; }
