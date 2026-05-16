@@ -22,7 +22,6 @@ export const velhoTestamento: Capitulo[] = [
         opcoes: ["5 dias", "6 dias", "7 dias", "10 dias"],
         resposta: 1,
         explicacao: "Deus criou em 6 dias e descansou no 7º (Gênesis 1-2).",
-        personagem: "moises",
       },
       {
         tipo: "multipla_escolha",
