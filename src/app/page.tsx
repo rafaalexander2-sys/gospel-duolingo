@@ -11,6 +11,8 @@ import {
   calcularVidasAtuais, minutosProxVida,
   carregarPerfil, garantirPerfil, salvarProgresso, carregarProgresso,
   atualizarPerfil, registrarLoginDiario, verificarArmaduraDesbloqueios,
+  carregarRanking, carregarTodosPerfis, resetarPerfilAdmin, deletarProgressoAdmin,
+  type PerfilRanking, type PerfilAdmin,
 } from "@/lib/gameEngine";
 import {
   sfxAcerto, sfxErro, sfxCapituloCompleto, sfxUnlock,
@@ -27,7 +29,8 @@ const DS = {
   verde: "#1a4a1a", acerto: "#c8e6c0", erro: "#f0c8c8", off: "#9a8060",
 };
 
-type Tela = "login" | "cadastro" | "criar_personagem" | "home" | "trilhas" | "mapa" | "etapas" | "jogo" | "resultado" | "armadura" | "ranking" | "missoes";
+type Tela = "login" | "cadastro" | "criar_personagem" | "home" | "trilhas" | "mapa" | "etapas" | "jogo" | "resultado" | "armadura" | "ranking" | "missoes" | "admin";
+const ADMIN_EMAILS = ["rafaalexander2@gmail.com", "santosaline2802@gmail.com"];
 type Trilha = "VT" | "NT" | "JESUS";
 type TipoPersonagem = "peregrino" | "profeta" | "guerreiro" | "sabia";
 
@@ -803,6 +806,7 @@ function AnelProgresso({ completas, total = 5 }: { completas: number; total?: nu
 // ── Tela HOME ─────────────────────────────────────────────────────
 function TelaHome({
   perfil, vidas, onEscolher, onArmadura, onPersonagem, onRanking, onTrilhas, onMissoes, onSair,
+  missaoConcluidaHoje, onAdmin,
 }: {
   perfil: Perfil; vidas: number;
   onEscolher: (t: Trilha) => void;
@@ -812,8 +816,11 @@ function TelaHome({
   onTrilhas: () => void;
   onMissoes: () => void;
   onSair: () => void;
+  missaoConcluidaHoje?: boolean;
+  onAdmin?: () => void;
 }) {
   const pecasTotal = Object.values(perfil.armadura).filter(Boolean).length;
+  const missaoHoje = getMissaoHoje();
 
   return (
     <div className="tela-scroll">
@@ -909,11 +916,27 @@ function TelaHome({
           </button>
         </div>
 
+        {/* Missão do Dia */}
+        <div className="card-pergaminho" style={{ padding: "13px 16px", marginBottom: "12px", display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ fontSize: "22px", flexShrink: 0, color: DS.douradoClaro }}>✦</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "10px", color: DS.dourado, marginBottom: "2px", letterSpacing: "1px" }}>MISSÃO DE HOJE</p>
+            <p style={{ fontSize: "13px", color: DS.titulo, fontWeight: "600", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{missaoHoje.titulo}</p>
+          </div>
+          {missaoConcluidaHoje ? (
+            <span style={{ fontSize: "11px", color: DS.verde, fontFamily: "var(--font-cinzel)", flexShrink: 0 }}>✓ Feita</span>
+          ) : (
+            <button onClick={onMissoes} className="btn-medieval btn-dourado" style={{ padding: "7px 12px", fontSize: "11px", flexShrink: 0 }}>
+              Fazer →
+            </button>
+          )}
+        </div>
+
         {/* XP bar */}
         <div style={{ padding: "0 4px", marginBottom: "8px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: DS.off, marginBottom: "4px" }}>
-            <span>◆ {perfil.xp.toLocaleString()} XP</span>
-            <span>Nv. {Math.floor(perfil.xp / 500) + 1}</span>
+            <span>◆ {perfil.xp.toLocaleString()} XP · Nv. {Math.floor(perfil.xp / 500) + 1}</span>
+            <span>{500 - (perfil.xp % 500)} XP p/ próximo nível</span>
           </div>
           <div className="barra-progress-track">
             <div className="barra-progress-fill" style={{ width: `${(perfil.xp % 500) / 5}%` }} />
@@ -922,18 +945,34 @@ function TelaHome({
 
         <SlotAnuncio altura={70} label="banner" />
 
+        {onAdmin && (
+          <button onClick={onAdmin} style={{
+            background: "none", border: `1px solid ${DS.borda}`,
+            borderRadius: "6px", padding: "6px 14px",
+            color: DS.off, fontSize: "11px", fontFamily: "var(--font-cinzel)",
+            cursor: "pointer", width: "100%", marginBottom: "8px", letterSpacing: "0.5px",
+          }}>
+            ⚙ Painel Admin
+          </button>
+        )}
+
         {/* Nav */}
         <div className="banner-faixa" style={{ borderRadius: "0 0 8px 8px", padding: "8px 0", display: "flex", justifyContent: "space-around" }}>
           {([
-            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke={DS.douradoClaro} strokeWidth="1.5"/><line x1="12" y1="2" x2="12" y2="22" stroke={DS.douradoClaro} strokeWidth="1"/><line x1="2" y1="12" x2="22" y2="12" stroke={DS.douradoClaro} strokeWidth="1"/><circle cx="12" cy="12" r="2.5" fill={DS.douradoClaro}/><path d="M12 5 L13.5 9 L12 8 L10.5 9 Z" fill={DS.douradoClaro}/></svg>, label: "Início", action: () => {} },
-            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><rect x="3" y="4" width="12" height="16" rx="1.5" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="3" y="4" width="4" height="16" rx="1.5" fill={DS.douradoSombra} opacity="0.6"/><line x1="9" y1="8" x2="14" y2="8" stroke={DS.douradoSombra} strokeWidth="1"/><line x1="9" y1="11" x2="14" y2="11" stroke={DS.douradoSombra} strokeWidth="1"/><line x1="9" y1="14" x2="14" y2="14" stroke={DS.douradoSombra} strokeWidth="1"/><path d="M16 6 C18 6 21 7 21 10 C21 13 18 14 16 14" stroke={DS.douradoClaro} strokeWidth="1.5" fill="none" strokeLinecap="round"/></svg>, label: "Trilhas", action: onTrilhas },
-            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 3 L14 8 L8 6 L13 10 L7 10 L12 14 L9 19 L12 16 L15 19 L12 14 L17 10 L11 10 L16 6 L10 8 Z" fill={DS.douradoClaro}/><circle cx="12" cy="12" r="2" fill={DS.douradoSombra}/></svg>, label: "Missões", action: onMissoes },
-            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2 L14.5 8.5 L22 9.3 L16.5 14.2 L18.2 21.5 L12 17.8 L5.8 21.5 L7.5 14.2 L2 9.3 L9.5 8.5 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="10" y="19" width="4" height="4" rx="1" fill={DS.douradoSombra}/><rect x="8" y="22" width="8" height="2" rx="1" fill={DS.douradoSombra}/></svg>, label: "Ranking", action: onRanking },
-            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2 L4 6 L4 13 C4 18 7.5 22 12 23 C16.5 22 20 18 20 13 L20 6 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><path d="M12 7 L8 11 L10 13 L12 11 L16 8 Z" fill={DS.douradoSombra}/></svg>, label: "Armadura", action: onArmadura },
-          ] as { icon: React.ReactNode; label: string; action: () => void }[]).map(nav => (
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke={DS.douradoClaro} strokeWidth="1.5"/><line x1="12" y1="2" x2="12" y2="22" stroke={DS.douradoClaro} strokeWidth="1"/><line x1="2" y1="12" x2="22" y2="12" stroke={DS.douradoClaro} strokeWidth="1"/><circle cx="12" cy="12" r="2.5" fill={DS.douradoClaro}/><path d="M12 5 L13.5 9 L12 8 L10.5 9 Z" fill={DS.douradoClaro}/></svg>, label: "Início", action: () => {}, badge: false },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><rect x="3" y="4" width="12" height="16" rx="1.5" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="3" y="4" width="4" height="16" rx="1.5" fill={DS.douradoSombra} opacity="0.6"/><line x1="9" y1="8" x2="14" y2="8" stroke={DS.douradoSombra} strokeWidth="1"/><line x1="9" y1="11" x2="14" y2="11" stroke={DS.douradoSombra} strokeWidth="1"/><line x1="9" y1="14" x2="14" y2="14" stroke={DS.douradoSombra} strokeWidth="1"/><path d="M16 6 C18 6 21 7 21 10 C21 13 18 14 16 14" stroke={DS.douradoClaro} strokeWidth="1.5" fill="none" strokeLinecap="round"/></svg>, label: "Trilhas", action: onTrilhas, badge: false },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 3 L14 8 L8 6 L13 10 L7 10 L12 14 L9 19 L12 16 L15 19 L12 14 L17 10 L11 10 L16 6 L10 8 Z" fill={DS.douradoClaro}/><circle cx="12" cy="12" r="2" fill={DS.douradoSombra}/></svg>, label: "Missões", action: onMissoes, badge: !missaoConcluidaHoje },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2 L14.5 8.5 L22 9.3 L16.5 14.2 L18.2 21.5 L12 17.8 L5.8 21.5 L7.5 14.2 L2 9.3 L9.5 8.5 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="10" y="19" width="4" height="4" rx="1" fill={DS.douradoSombra}/><rect x="8" y="22" width="8" height="2" rx="1" fill={DS.douradoSombra}/></svg>, label: "Ranking", action: onRanking, badge: false },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2 L4 6 L4 13 C4 18 7.5 22 12 23 C16.5 22 20 18 20 13 L20 6 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><path d="M12 7 L8 11 L10 13 L12 11 L16 8 Z" fill={DS.douradoSombra}/></svg>, label: "Armadura", action: onArmadura, badge: false },
+          ] as { icon: React.ReactNode; label: string; action: () => void; badge: boolean }[]).map(nav => (
             <button key={nav.label} onClick={nav.action}
               style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", padding: "4px 8px" }}>
-              {nav.icon}
+              <div style={{ position: "relative" }}>
+                {nav.icon}
+                {nav.badge && (
+                  <span style={{ position: "absolute", top: "-2px", right: "-2px", width: "8px", height: "8px", borderRadius: "50%", background: "#c04040", border: "1.5px solid #1a0a02" }} />
+                )}
+              </div>
               <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "9px", color: DS.off }}>{nav.label}</span>
             </button>
           ))}
@@ -1089,6 +1128,8 @@ function TelaMissoes({
   const [reflexao, setReflexao] = useState("");
   const [confirmando, setConfirmando] = useState(false);
   const [enviando, setEnviando] = useState(false);
+  const [concluido, setConcluido] = useState(false);
+  const [recompensas, setRecompensas] = useState({ xp: 0, talentos: 0 });
 
   function handleConcluir() {
     if (!reflexao.trim()) return;
@@ -1097,9 +1138,61 @@ function TelaMissoes({
     const mc: MissaoConcluida = { missaoId: missao.id, data: hoje, reflexao: reflexao.trim(), xpGanho: missao.xp };
     setTimeout(() => {
       onConcluir(mc, missao.xp, missao.talentos);
+      setRecompensas({ xp: missao.xp, talentos: missao.talentos });
+      setConcluido(true);
       setEnviando(false);
       setConfirmando(false);
     }, 400);
+  }
+
+  if (concluido) {
+    return (
+      <div style={{ position: "fixed", inset: 0, background: `linear-gradient(160deg, #1a0a02, #2c1505)`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px", zIndex: 100 }}>
+        <style>{`
+          @keyframes missao-pop { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+          @keyframes missao-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+          .mc-pop { animation: missao-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+          .mc-float { animation: missao-float 2.4s ease-in-out infinite; }
+        `}</style>
+
+        <div className="mc-float" style={{ fontSize: "72px", marginBottom: "20px", filter: `drop-shadow(0 0 24px rgba(212,160,20,0.7))` }}>✦</div>
+
+        <h2 className="mc-pop" style={{
+          fontFamily: "var(--font-cinzel)", fontSize: "26px", fontWeight: "900",
+          color: DS.douradoClaro, textAlign: "center", marginBottom: "6px",
+          textShadow: `0 0 30px rgba(212,160,20,0.6)`, letterSpacing: "2px",
+        }}>
+          Missão Concluída!
+        </h2>
+        <p style={{ color: DS.dourado, fontSize: "14px", fontStyle: "italic", marginBottom: "28px", textAlign: "center" }}>
+          {missao.titulo}
+        </p>
+
+        <div style={{
+          background: `linear-gradient(145deg, rgba(212,160,20,0.18), rgba(212,160,20,0.06))`,
+          border: `1.5px solid ${DS.douradoClaro}`, borderRadius: "16px",
+          padding: "24px 48px", textAlign: "center", marginBottom: "28px",
+          boxShadow: `0 0 32px rgba(212,160,20,0.25)`,
+        }}>
+          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "34px", fontWeight: "900", color: DS.douradoClaro }}>
+            +{recompensas.xp} XP
+          </div>
+          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "18px", color: DS.dourado, marginTop: "4px" }}>
+            +{recompensas.talentos} Talentos
+          </div>
+        </div>
+
+        <p style={{ fontSize: "13px", color: "rgba(200,180,140,0.8)", fontStyle: "italic", textAlign: "center", maxWidth: "300px", marginBottom: "32px", lineHeight: 1.7 }}>
+          &ldquo;{missao.versiculo}&rdquo;
+          <br />
+          <span style={{ fontSize: "11px", color: DS.douradoSombra, fontFamily: "var(--font-cinzel)", fontStyle: "normal" }}>— {missao.referencia}</span>
+        </p>
+
+        <button onClick={onVoltar} className="btn-medieval btn-dourado" style={{ padding: "16px 48px", fontSize: "15px", letterSpacing: "1px" }}>
+          Ir para Início ✦
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -1988,62 +2081,215 @@ function TelaTrilhas({ onEscolher, onVoltar }: { onEscolher: (t: Trilha) => void
 
 // ── Tela RANKING ──────────────────────────────────────────────────
 function TelaRanking({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => void }) {
-  const jogadores = [
-    { pos: 1, nome: "Guerreiro da Fé", xp: 2800, icone: "⚔️" },
-    { pos: 2, nome: "Servo Fiel", xp: 1950, icone: "📖" },
-    { pos: 3, nome: perfil.nome, xp: perfil.xp, icone: "✦", atual: true },
-  ];
+  const [jogadores, setJogadores] = useState<PerfilRanking[]>([]);
+  const [carregando, setCarregando] = useState(true);
+
+  useEffect(() => {
+    carregarRanking(50).then(lista => {
+      setJogadores(lista);
+      setCarregando(false);
+    });
+  }, []);
+
+  const posicao = jogadores.findIndex(j => j.id === perfil.id) + 1;
+
+  const medalha = (pos: number) =>
+    pos === 1 ? `linear-gradient(145deg, #ffd700, #b8860b)`
+    : pos === 2 ? `linear-gradient(145deg, #c0c0c0, #808080)`
+    : pos === 3 ? `linear-gradient(145deg, #cd7f32, #8b4513)`
+    : `linear-gradient(145deg, ${DS.douradoSombra}, ${DS.corpo})`;
 
   return (
     <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: DS.bg }}>
-      {/* Header */}
       <div className="banner-faixa" style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: "12px", zIndex: 10 }}>
         <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.douradoClaro, fontSize: "20px", cursor: "pointer", padding: "4px 8px" }}>←</button>
         <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "18px", color: DS.douradoClaro, fontWeight: "700", letterSpacing: "2px" }}>
           Ranking
         </span>
+        <span style={{ marginLeft: "auto", fontSize: "11px", color: DS.off }}>
+          {carregando ? "Carregando..." : `${jogadores.length} jogadores`}
+        </span>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
-        {/* Perfil atual em destaque */}
+        {/* Posição do usuário */}
         <div className="card-pergaminho" style={{ padding: "16px 20px", marginBottom: "20px", textAlign: "center", border: `1.5px solid ${DS.douradoClaro}`, boxShadow: `0 0 12px rgba(212,160,20,0.25)` }}>
           <SvgPersonagem tipo={perfil.personagem_tipo} cor={perfil.personagem_cor} size={64} />
           <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "16px", fontWeight: "700", color: DS.titulo, marginTop: "8px" }}>{perfil.nome}</div>
-          <div style={{ fontSize: "12px", color: DS.off, marginTop: "4px" }}>Posição: aguardando mais jogadores</div>
+          <div style={{ fontSize: "12px", color: DS.off, marginTop: "4px" }}>
+            {!carregando && posicao > 0 ? `${posicao}º lugar` : carregando ? "Calculando posição..." : "Faça um quiz para entrar no ranking!"}
+          </div>
           <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "14px", color: DS.douradoClaro, marginTop: "6px" }}>{perfil.xp.toLocaleString()} XP</div>
         </div>
 
-        {/* Lista */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
-          {jogadores.map((j) => (
-            <div key={j.pos} className="card-pergaminho" style={{
-              padding: "14px 16px", display: "flex", alignItems: "center", gap: "14px",
-              border: j.atual ? `1.5px solid ${DS.douradoClaro}` : undefined,
-              background: j.atual ? `linear-gradient(145deg, #fdf6e3, #f0e4c0)` : undefined,
-            }}>
-              <div style={{
-                width: "36px", height: "36px", borderRadius: "50%", flexShrink: 0,
-                background: j.pos === 1 ? `linear-gradient(145deg, #ffd700, #b8860b)` : j.pos === 2 ? `linear-gradient(145deg, #c0c0c0, #808080)` : `linear-gradient(145deg, #cd7f32, #8b4513)`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontFamily: "var(--font-cinzel)", fontSize: "14px", fontWeight: "700", color: "white",
-              }}>
-                {j.pos}
-              </div>
-              <div style={{ fontSize: "20px" }}>{j.icone}</div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", fontWeight: "700", color: DS.titulo }}>{j.nome}</div>
-                <div style={{ fontSize: "12px", color: DS.dourado, marginTop: "2px" }}>{j.xp.toLocaleString()} XP</div>
-              </div>
-              {j.atual && <span style={{ fontSize: "11px", color: DS.douradoClaro, fontFamily: "var(--font-cinzel)" }}>Você</span>}
-            </div>
-          ))}
-        </div>
-
-        <div style={{ textAlign: "center", padding: "16px", color: DS.off, fontSize: "13px", fontStyle: "italic" }}>
-          Mais jogadores chegando em breve!
-        </div>
+        {carregando ? (
+          <div style={{ textAlign: "center", padding: "40px", color: DS.off, fontSize: "13px", fontStyle: "italic" }}>
+            Carregando ranking...
+          </div>
+        ) : jogadores.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "32px 16px", color: DS.off, fontSize: "13px", fontStyle: "italic" }}>
+            Nenhum jogador ainda. Seja o primeiro a concluir um capítulo!
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
+            {jogadores.map((j, idx) => {
+              const pos = idx + 1;
+              const ehVoce = j.id === perfil.id;
+              return (
+                <div key={j.id} className="card-pergaminho" style={{
+                  padding: "14px 16px", display: "flex", alignItems: "center", gap: "12px",
+                  border: ehVoce ? `1.5px solid ${DS.douradoClaro}` : undefined,
+                  background: ehVoce ? `linear-gradient(145deg, #fdf6e3, #f0e4c0)` : undefined,
+                }}>
+                  <div style={{
+                    width: "34px", height: "34px", borderRadius: "50%", flexShrink: 0,
+                    background: medalha(pos),
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontFamily: "var(--font-cinzel)", fontSize: pos <= 3 ? "14px" : "12px", fontWeight: "700", color: "white",
+                  }}>
+                    {pos}
+                  </div>
+                  <SvgPersonagem tipo={j.personagem_tipo as TipoPersonagem} cor={j.personagem_cor} size={28} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", fontWeight: "700", color: DS.titulo }}>{j.nome}</div>
+                    <div style={{ fontSize: "12px", color: DS.dourado, marginTop: "2px" }}>{j.xp.toLocaleString()} XP</div>
+                  </div>
+                  {j.sequencia > 0 && (
+                    <span style={{ fontSize: "11px", color: "#f0a040" }}>🔥 {j.sequencia}</span>
+                  )}
+                  {ehVoce && <span style={{ fontSize: "11px", color: DS.douradoClaro, fontFamily: "var(--font-cinzel)" }}>Você</span>}
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         <SlotAnuncio altura={70} label="banner" />
+      </div>
+    </div>
+  );
+}
+
+// ── Tela ADMIN ────────────────────────────────────────────────────
+function TelaAdmin({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => void }) {
+  const [usuarios, setUsuarios] = useState<PerfilAdmin[]>([]);
+  const [carregando, setCarregando] = useState(true);
+  const [resettando, setResettando] = useState<string | null>(null);
+  const [confirmarId, setConfirmarId] = useState<string | null>(null);
+  const [confirmarTodos, setConfirmarTodos] = useState(false);
+  const [mensagem, setMensagem] = useState<string | null>(null);
+
+  useEffect(() => {
+    carregarTodosPerfis().then(lista => { setUsuarios(lista); setCarregando(false); });
+  }, []);
+
+  async function executarReset(userId: string) {
+    const nome = usuarios.find(u => u.id === userId)?.nome ?? "usuário";
+    setConfirmarId(null);
+    setResettando(userId);
+    await resetarPerfilAdmin(userId);
+    await deletarProgressoAdmin(userId);
+    setMensagem(`✓ ${nome} resetado com sucesso`);
+    setResettando(null);
+    carregarTodosPerfis().then(setUsuarios);
+    setTimeout(() => setMensagem(null), 4000);
+  }
+
+  async function executarResetTodos() {
+    setConfirmarTodos(false);
+    setCarregando(true);
+    for (const u of usuarios) {
+      await resetarPerfilAdmin(u.id);
+      await deletarProgressoAdmin(u.id);
+    }
+    setMensagem(`✓ ${usuarios.length} usuários resetados`);
+    setCarregando(false);
+    carregarTodosPerfis().then(setUsuarios);
+    setTimeout(() => setMensagem(null), 4000);
+  }
+
+  return (
+    <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: DS.bg }}>
+      <div className="banner-faixa" style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: "12px", zIndex: 10 }}>
+        <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.douradoClaro, fontSize: "20px", cursor: "pointer", padding: "4px 8px" }}>←</button>
+        <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "16px", color: DS.douradoClaro, fontWeight: "700", letterSpacing: "1px" }}>⚙ Painel Admin</span>
+        <span style={{ marginLeft: "auto", fontSize: "11px", color: DS.off }}>
+          {carregando ? "Carregando..." : `${usuarios.length} usuários`}
+        </span>
+      </div>
+
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 32px" }}>
+        {mensagem && (
+          <div style={{ background: "#1a4a1a", color: "#a0e0a0", padding: "12px 16px", borderRadius: "8px", marginBottom: "16px", fontFamily: "var(--font-cinzel)", fontSize: "12px", letterSpacing: "0.5px" }}>
+            {mensagem}
+          </div>
+        )}
+
+        {!carregando && usuarios.length <= 1 && (
+          <div className="card-pergaminho" style={{ padding: "14px 16px", marginBottom: "16px", borderLeft: `4px solid ${DS.dourado}` }}>
+            <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "11px", color: DS.dourado, marginBottom: "6px" }}>⚠ MIGRAÇÃO SQL NECESSÁRIA</p>
+            <p style={{ fontSize: "12px", color: DS.corpo, lineHeight: 1.6 }}>
+              Para ver e gerenciar todos os usuários, execute o arquivo <strong>supabase-admin-migration.sql</strong> no painel SQL do Supabase.
+            </p>
+          </div>
+        )}
+
+        {!confirmarTodos ? (
+          <button onClick={() => setConfirmarTodos(true)} className="btn-medieval btn-vermelho"
+            style={{ width: "100%", padding: "13px", fontSize: "13px", marginBottom: "16px" }}>
+            Resetar Todos os Usuários
+          </button>
+        ) : (
+          <div className="card-pergaminho" style={{ padding: "16px", marginBottom: "16px", borderLeft: `4px solid ${DS.vermelho}` }}>
+            <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "12px", color: DS.vermelho, marginBottom: "12px" }}>
+              ⚠ Isso vai resetar {usuarios.length} usuário(s). Confirmar?
+            </p>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button onClick={() => setConfirmarTodos(false)} className="btn-medieval btn-escuro" style={{ flex: 1, padding: "10px", fontSize: "12px" }}>Cancelar</button>
+              <button onClick={executarResetTodos} className="btn-medieval btn-vermelho" style={{ flex: 2, padding: "10px", fontSize: "12px" }}>Confirmar Reset Geral</button>
+            </div>
+          </div>
+        )}
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          {carregando ? (
+            <div style={{ textAlign: "center", padding: "40px", color: DS.off, fontStyle: "italic" }}>Carregando usuários...</div>
+          ) : usuarios.map(u => {
+            const dataReg = new Date(u.criado_em).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "2-digit" });
+            const ehAdminUser = ADMIN_EMAILS.includes(u.email);
+            return (
+              <div key={u.id} className="card-pergaminho" style={{ padding: "14px 16px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                      <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", fontWeight: "700", color: DS.titulo }}>{u.nome}</span>
+                      {ehAdminUser && <span style={{ fontSize: "9px", background: DS.dourado, color: "white", padding: "1px 5px", borderRadius: "4px", fontFamily: "var(--font-cinzel)" }}>ADMIN</span>}
+                    </div>
+                    <div style={{ fontSize: "11px", color: DS.off, marginTop: "2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{u.email}</div>
+                  </div>
+                  {confirmarId === u.id ? (
+                    <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
+                      <button onClick={() => setConfirmarId(null)} className="btn-medieval btn-escuro" style={{ padding: "5px 10px", fontSize: "10px" }}>✕</button>
+                      <button onClick={() => executarReset(u.id)} disabled={resettando === u.id} className="btn-medieval btn-vermelho" style={{ padding: "5px 10px", fontSize: "10px" }}>
+                        {resettando === u.id ? "..." : "Confirmar"}
+                      </button>
+                    </div>
+                  ) : (
+                    <button onClick={() => setConfirmarId(u.id)} className="btn-medieval btn-escuro" style={{ padding: "5px 12px", fontSize: "11px", flexShrink: 0 }}>
+                      Resetar
+                    </button>
+                  )}
+                </div>
+                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", fontSize: "11px", color: DS.dourado }}>
+                  <span>⭐ {u.xp.toLocaleString()} XP</span>
+                  <span>💰 {u.talentos}</span>
+                  <span>🔥 {u.sequencia}d</span>
+                  <span style={{ marginLeft: "auto", color: DS.off }}>Desde {dataReg}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -2276,6 +2522,10 @@ export default function App() {
     <TelaArmadura perfil={perfil} onVoltar={() => setTela("home")} />
   );
 
+  const missaoHojeObj = getMissaoHoje();
+  const hoje = new Date().toISOString().split("T")[0];
+  const missaoConcluidaHoje = missoesCompletas.some(mc => mc.missaoId === missaoHojeObj.id && mc.data === hoje);
+
   if (tela === "home") return (
     <TelaHome
       perfil={perfil}
@@ -2287,6 +2537,8 @@ export default function App() {
       onTrilhas={() => setTela("trilhas")}
       onMissoes={() => setTela("missoes")}
       onSair={handleSair}
+      missaoConcluidaHoje={missaoConcluidaHoje}
+      onAdmin={ADMIN_EMAILS.includes(perfil.email) ? () => setTela("admin") : undefined}
     />
   );
 
@@ -2299,6 +2551,10 @@ export default function App() {
 
   if (tela === "ranking") return (
     <TelaRanking perfil={perfil} onVoltar={() => setTela("home")} />
+  );
+
+  if (tela === "admin" && ADMIN_EMAILS.includes(perfil.email)) return (
+    <TelaAdmin perfil={perfil} onVoltar={() => setTela("home")} />
   );
 
   if (tela === "missoes") return (
