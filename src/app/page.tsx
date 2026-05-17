@@ -734,7 +734,7 @@ function TelaHome({
   const pecasTotal = Object.values(perfil.armadura).filter(Boolean).length;
 
   return (
-    <div style={{ position: "fixed", inset: 0, display: "flex", justifyContent: "center", alignItems: "center" }}>
+    <div className="tela-scroll">
       <style>{`
         @keyframes pulse-glow {
           0%,100% { text-shadow: 0 0 20px rgba(212,160,23,0.4), 0 2px 4px rgba(0,0,0,0.6); }
@@ -743,7 +743,7 @@ function TelaHome({
         .titulo-hero { animation: pulse-glow 3s ease-in-out infinite; }
       `}</style>
 
-      <main style={{ width: "100%", maxWidth: "450px", padding: "24px 20px" }}>
+      <main style={{ width: "100%", maxWidth: "450px", padding: "16px 20px" }}>
         {/* Header */}
         <div className="banner-faixa" style={{ borderRadius: "8px 8px 0 0", padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0" }}>
           <button onClick={onPersonagem} title="Personalizar personagem"
