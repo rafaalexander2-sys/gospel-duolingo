@@ -630,7 +630,7 @@ function TelaArmadura({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => vo
         <span style={{ marginLeft: "auto", fontSize: "12px", color: DS.off }}>Ef 6:11</span>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 80px" }}>
         {/* Personagem + stats */}
         <div className="card-pergaminho" style={{ padding: "20px", marginBottom: "16px", textAlign: "center" }}>
           <SvgPersonagem tipo={perfil.personagem_tipo} cor={perfil.personagem_cor} size={90} />
@@ -803,6 +803,51 @@ function AnelProgresso({ completas, total = 5 }: { completas: number; total?: nu
   );
 }
 
+// ── Barra de Nav Global ───────────────────────────────────────────
+function BarraNavGlobal({
+  tela, onHome, onMissoes, onPlanos, onRanking, onArmadura, missaoConcluidaHoje,
+}: {
+  tela: Tela;
+  onHome: () => void;
+  onMissoes: () => void;
+  onPlanos: () => void;
+  onRanking: () => void;
+  onArmadura: () => void;
+  missaoConcluidaHoje: boolean;
+}) {
+  const items = ([
+    { icon: <svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke={DS.douradoClaro} strokeWidth="1.5"/><line x1="12" y1="2" x2="12" y2="22" stroke={DS.douradoClaro} strokeWidth="1"/><line x1="2" y1="12" x2="22" y2="12" stroke={DS.douradoClaro} strokeWidth="1"/><circle cx="12" cy="12" r="2.5" fill={DS.douradoClaro}/><path d="M12 5 L13.5 9 L12 8 L10.5 9 Z" fill={DS.douradoClaro}/></svg>, label: "Início", action: onHome, active: tela === "home", badge: false },
+    { icon: <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3 L14 8 L8 6 L13 10 L7 10 L12 14 L9 19 L12 16 L15 19 L12 14 L17 10 L11 10 L16 6 L10 8 Z" fill={DS.douradoClaro}/><circle cx="12" cy="12" r="2" fill={DS.douradoSombra}/></svg>, label: "Missões", action: onMissoes, active: tela === "missoes", badge: !missaoConcluidaHoje },
+    { icon: <svg width="22" height="22" viewBox="0 0 24 24"><path d="M3 19 L5 10 L9 14 L12 7 L15 14 L19 10 L21 19 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="3" y="19" width="18" height="2.5" rx="1" fill={DS.douradoClaro}/><circle cx="5" cy="10" r="1.3" fill="#ffe080"/><circle cx="12" cy="7" r="1.3" fill="#ffe080"/><circle cx="19" cy="10" r="1.3" fill="#ffe080"/></svg>, label: "Premium", action: onPlanos, active: tela === "planos", badge: false },
+    { icon: <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 2 L14.5 8.5 L22 9.3 L16.5 14.2 L18.2 21.5 L12 17.8 L5.8 21.5 L7.5 14.2 L2 9.3 L9.5 8.5 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="10" y="19" width="4" height="4" rx="1" fill={DS.douradoSombra}/><rect x="8" y="22" width="8" height="2" rx="1" fill={DS.douradoSombra}/></svg>, label: "Ranking", action: onRanking, active: tela === "ranking", badge: false },
+    { icon: <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 2 L4 6 L4 13 C4 18 7.5 22 12 23 C16.5 22 20 18 20 13 L20 6 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><path d="M12 7 L8 11 L10 13 L12 11 L16 8 Z" fill={DS.douradoSombra}/></svg>, label: "Armadura", action: onArmadura, active: tela === "armadura", badge: false },
+  ] as { icon: React.ReactNode; label: string; action: () => void; active: boolean; badge: boolean }[]);
+
+  return (
+    <div style={{
+      position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 1000,
+      display: "flex", justifyContent: "space-around",
+      background: "linear-gradient(180deg, #3a1a08 0%, #2c1205 100%)",
+      borderTop: `2px solid ${DS.douradoSombra}`,
+      padding: "8px 0 env(safe-area-inset-bottom, 8px)",
+      boxShadow: "0 -2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(200,150,60,0.2)",
+    }}>
+      {items.map(item => (
+        <button key={item.label} onClick={item.action}
+          style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", padding: "4px 6px" }}>
+          <div style={{ position: "relative" }}>
+            {item.icon}
+            {item.badge && (
+              <span style={{ position: "absolute", top: "-2px", right: "-2px", width: "8px", height: "8px", borderRadius: "50%", background: "#c04040", border: "1.5px solid #1a0a02" }} />
+            )}
+          </div>
+          <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "9px", color: item.active ? DS.douradoClaro : (item.label === "Premium" ? DS.douradoClaro : DS.off), fontWeight: item.active ? "700" : "400" }}>{item.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 // ── Tela HOME ─────────────────────────────────────────────────────
 function TelaHome({
   perfil, vidas, onEscolher, onArmadura, onPersonagem, onRanking, onTrilhas, onMissoes, onSair,
@@ -833,7 +878,7 @@ function TelaHome({
         .titulo-hero { animation: pulse-glow 3s ease-in-out infinite; }
       `}</style>
 
-      <main style={{ width: "100%", maxWidth: "450px", padding: "16px 20px" }}>
+      <main style={{ width: "100%", maxWidth: "450px", padding: "16px 20px 80px" }}>
         {/* Header */}
         <div className="banner-faixa" style={{ borderRadius: "8px 8px 0 0", padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0" }}>
           <button onClick={onPersonagem} title="Personalizar personagem"
@@ -972,27 +1017,6 @@ function TelaHome({
           </button>
         )}
 
-        {/* Nav */}
-        <div className="banner-faixa" style={{ borderRadius: "0 0 8px 8px", padding: "8px 0", display: "flex", justifyContent: "space-around" }}>
-          {([
-            { icon: <svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke={DS.douradoClaro} strokeWidth="1.5"/><line x1="12" y1="2" x2="12" y2="22" stroke={DS.douradoClaro} strokeWidth="1"/><line x1="2" y1="12" x2="22" y2="12" stroke={DS.douradoClaro} strokeWidth="1"/><circle cx="12" cy="12" r="2.5" fill={DS.douradoClaro}/><path d="M12 5 L13.5 9 L12 8 L10.5 9 Z" fill={DS.douradoClaro}/></svg>, label: "Início", action: () => {}, badge: false },
-            { icon: <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3 L14 8 L8 6 L13 10 L7 10 L12 14 L9 19 L12 16 L15 19 L12 14 L17 10 L11 10 L16 6 L10 8 Z" fill={DS.douradoClaro}/><circle cx="12" cy="12" r="2" fill={DS.douradoSombra}/></svg>, label: "Missões", action: onMissoes, badge: !missaoConcluidaHoje },
-            { icon: <svg width="22" height="22" viewBox="0 0 24 24"><path d="M3 19 L5 10 L9 14 L12 7 L15 14 L19 10 L21 19 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="3" y="19" width="18" height="2.5" rx="1" fill={DS.douradoClaro}/><circle cx="5" cy="10" r="1.3" fill="#ffe080"/><circle cx="12" cy="7" r="1.3" fill="#ffe080"/><circle cx="19" cy="10" r="1.3" fill="#ffe080"/></svg>, label: "Premium", action: onPlanos, badge: false },
-            { icon: <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 2 L14.5 8.5 L22 9.3 L16.5 14.2 L18.2 21.5 L12 17.8 L5.8 21.5 L7.5 14.2 L2 9.3 L9.5 8.5 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="10" y="19" width="4" height="4" rx="1" fill={DS.douradoSombra}/><rect x="8" y="22" width="8" height="2" rx="1" fill={DS.douradoSombra}/></svg>, label: "Ranking", action: onRanking, badge: false },
-            { icon: <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 2 L4 6 L4 13 C4 18 7.5 22 12 23 C16.5 22 20 18 20 13 L20 6 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><path d="M12 7 L8 11 L10 13 L12 11 L16 8 Z" fill={DS.douradoSombra}/></svg>, label: "Armadura", action: onArmadura, badge: false },
-          ] as { icon: React.ReactNode; label: string; action: () => void; badge: boolean }[]).map(nav => (
-            <button key={nav.label} onClick={nav.action}
-              style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", padding: "4px 6px" }}>
-              <div style={{ position: "relative" }}>
-                {nav.icon}
-                {nav.badge && (
-                  <span style={{ position: "absolute", top: "-2px", right: "-2px", width: "8px", height: "8px", borderRadius: "50%", background: "#c04040", border: "1.5px solid #1a0a02" }} />
-                )}
-              </div>
-              <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "9px", color: nav.label === "Premium" ? DS.douradoClaro : DS.off }}>{nav.label}</span>
-            </button>
-          ))}
-        </div>
       </main>
     </div>
   );
@@ -1036,7 +1060,7 @@ function TelaMapa({
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 60px", position: "relative" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 80px", position: "relative" }}>
         {/* Personagem */}
         <div style={{ textAlign: "center", marginBottom: "12px" }}>
           <SvgPersonagem tipo={perfil.personagem_tipo} cor={perfil.personagem_cor} size={72} />
@@ -1224,7 +1248,7 @@ function TelaMissoes({
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 32px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 80px" }}>
 
         {/* Missão do Dia */}
         <div style={{ marginBottom: "6px" }}>
@@ -1397,7 +1421,7 @@ function TelaEtapas({
         <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "16px", color: DS.douradoClaro, fontWeight: "700" }}>{capitulo.titulo}</span>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "20px 20px 80px" }}>
         {/* Capítulo info */}
         <div style={{ textAlign: "center", marginBottom: "28px" }}>
           <div style={{ position: "relative", display: "inline-block", width: "76px", height: "76px", marginBottom: "12px" }}>
@@ -2070,7 +2094,7 @@ function TelaTrilhas({ onEscolher, onVoltar }: { onEscolher: (t: Trilha) => void
   ];
   return (
     <div className="tela-scroll">
-      <main style={{ width: "100%", maxWidth: "450px", padding: "16px 20px" }}>
+      <main style={{ width: "100%", maxWidth: "450px", padding: "16px 20px 80px" }}>
         <div className="banner-faixa" style={{ borderRadius: "8px", padding: "12px 16px", display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
           <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.douradoClaro, fontSize: "20px", cursor: "pointer" }}>←</button>
           <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "16px", color: DS.douradoClaro, fontWeight: "700", letterSpacing: "1px" }}>Escolher Trilha</span>
@@ -2127,7 +2151,7 @@ function TelaRanking({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => voi
         </span>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 80px" }}>
         {/* Posição do usuário */}
         <div className="card-pergaminho" style={{ padding: "16px 20px", marginBottom: "20px", textAlign: "center", border: `1.5px solid ${DS.douradoClaro}`, boxShadow: `0 0 12px rgba(212,160,20,0.25)` }}>
           <SvgPersonagem tipo={perfil.personagem_tipo} cor={perfil.personagem_cor} size={64} />
@@ -2205,7 +2229,7 @@ function TelaPlanos({ onVoltar }: { onVoltar: () => void }) {
         <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.douradoClaro, fontSize: "20px", cursor: "pointer", padding: "4px 8px" }}>←</button>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "0 20px 40px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
         {/* Hero */}
         <div style={{ textAlign: "center", paddingBottom: "28px" }}>
           <div style={{ fontSize: "52px", marginBottom: "12px", filter: `drop-shadow(0 0 20px rgba(212,160,20,0.5))` }}>👑</div>
@@ -2293,7 +2317,7 @@ function TelaSemVidas({ minutosProxima, onVoltar, onPremium }: {
   onPremium: () => void;
 }) {
   return (
-    <div style={{ position: "fixed", inset: 0, background: `linear-gradient(160deg, #120600, #2c1505)`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 24px" }}>
+    <div style={{ position: "fixed", inset: 0, background: `linear-gradient(160deg, #120600, #2c1505)`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 24px 90px" }}>
       <div style={{ fontSize: "36px", letterSpacing: "8px", marginBottom: "24px", opacity: 0.35 }}>{"♡".repeat(5)}</div>
 
       <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "22px", fontWeight: "900", color: DS.douradoClaro, textAlign: "center", marginBottom: "8px", letterSpacing: "1px" }}>
@@ -2387,7 +2411,7 @@ function TelaAdmin({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => void 
         </span>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 32px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 80px" }}>
         {mensagem && (
           <div style={{ background: "#1a4a1a", color: "#a0e0a0", padding: "12px 16px", borderRadius: "8px", marginBottom: "16px", fontFamily: "var(--font-cinzel)", fontSize: "12px", letterSpacing: "0.5px" }}>
             {mensagem}
@@ -2697,15 +2721,14 @@ export default function App() {
 
   if (!perfil) return null;
 
-  if (tela === "armadura") return (
-    <TelaArmadura perfil={perfil} onVoltar={() => setTela("home")} />
-  );
-
   const missaoHojeObj = getMissaoHoje();
   const hoje = new Date().toISOString().split("T")[0];
   const missaoConcluidaHoje = missoesCompletas.some(mc => mc.missaoId === missaoHojeObj.id && mc.data === hoje);
 
-  if (tela === "home") return (
+  const mostrarNav = tela !== "jogo" && tela !== "resultado";
+
+  let conteudo: React.ReactNode = null;
+  if (tela === "home") conteudo = (
     <TelaHome
       perfil={perfil}
       vidas={vidasAtivas}
@@ -2721,35 +2744,32 @@ export default function App() {
       onPlanos={() => setTela("planos")}
     />
   );
-
-  if (tela === "trilhas") return (
+  else if (tela === "armadura") conteudo = (
+    <TelaArmadura perfil={perfil} onVoltar={() => setTela("home")} />
+  );
+  else if (tela === "trilhas") conteudo = (
     <TelaTrilhas
       onEscolher={t => { setTrilha(t); setTela("mapa"); }}
       onVoltar={() => setTela("home")}
     />
   );
-
-  if (tela === "ranking") return (
+  else if (tela === "ranking") conteudo = (
     <TelaRanking perfil={perfil} onVoltar={() => setTela("home")} />
   );
-
-  if (tela === "admin" && ADMIN_EMAILS.includes(perfil.email)) return (
+  else if (tela === "admin" && ADMIN_EMAILS.includes(perfil.email)) conteudo = (
     <TelaAdmin perfil={perfil} onVoltar={() => setTela("home")} />
   );
-
-  if (tela === "planos") return (
+  else if (tela === "planos") conteudo = (
     <TelaPlanos onVoltar={() => setTela("home")} />
   );
-
-  if (tela === "sem_vidas") return (
+  else if (tela === "sem_vidas") conteudo = (
     <TelaSemVidas
       minutosProxima={minutosProxVida(perfil)}
       onVoltar={() => setTela("mapa")}
       onPremium={() => setTela("planos")}
     />
   );
-
-  if (tela === "missoes") return (
+  else if (tela === "missoes") conteudo = (
     <TelaMissoes
       perfil={perfil}
       missoesCompletas={missoesCompletas}
@@ -2757,8 +2777,7 @@ export default function App() {
       onVoltar={() => setTela("home")}
     />
   );
-
-  if (tela === "mapa") return (
+  else if (tela === "mapa") conteudo = (
     <TelaMapa
       trilha={trilha} perfil={perfil} vidas={vidasAtivas}
       progressoCompleto={progressoIds}
@@ -2776,8 +2795,7 @@ export default function App() {
       onVoltar={() => setTela("home")}
     />
   );
-
-  if (tela === "etapas" && capitulo) return (
+  else if (tela === "etapas" && capitulo) conteudo = (
     <TelaEtapas
       capitulo={capitulo}
       trilha={trilha}
@@ -2786,8 +2804,7 @@ export default function App() {
       onVoltar={() => setTela("mapa")}
     />
   );
-
-  if (tela === "jogo" && capitulo) return (
+  else if (tela === "jogo" && capitulo) conteudo = (
     <TelaQuiz
       capitulo={capitulo} trilha={trilha} perfil={perfil} vidas={vidasAtivas}
       questoes={capitulo.etapas ? capitulo.etapas[etapaAtual] : undefined}
@@ -2795,8 +2812,7 @@ export default function App() {
       onSemVidas={handleSemVidas}
     />
   );
-
-  if (tela === "resultado") return (
+  else if (tela === "resultado") conteudo = (
     <TelaResultado
       capitulo={capitulo!}
       acertos={resultadoState.acertos}
@@ -2810,5 +2826,20 @@ export default function App() {
     />
   );
 
-  return null;
+  return (
+    <>
+      {conteudo}
+      {mostrarNav && (
+        <BarraNavGlobal
+          tela={tela}
+          onHome={() => setTela("home")}
+          onMissoes={() => setTela("missoes")}
+          onPlanos={() => setTela("planos")}
+          onRanking={() => setTela("ranking")}
+          onArmadura={() => setTela("armadura")}
+          missaoConcluidaHoje={missaoConcluidaHoje}
+        />
+      )}
+    </>
+  );
 }
