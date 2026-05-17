@@ -655,13 +655,6 @@ function TelaHome({
 
         {/* Hero */}
         <div style={{ textAlign: "center", padding: "20px 0 16px" }}>
-          <div style={{
-            width: "76px", height: "76px", margin: "0 auto 14px", borderRadius: "50%",
-            background: `linear-gradient(145deg, ${DS.douradoClaro}, ${DS.douradoSombra})`,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: `0 0 20px rgba(212,160,20,0.5), 0 4px 12px rgba(0,0,0,0.4)`,
-            fontSize: "34px",
-          }}>✝</div>
           <h1 className="titulo-hero" style={{ fontFamily: "var(--font-cinzel)", fontSize: "30px", fontWeight: "900", color: DS.douradoClaro, margin: "0 0 4px", letterSpacing: "3px" }}>
             DISCYPULO
           </h1>
@@ -723,7 +716,7 @@ function TelaHome({
           padding: "16px 20px", marginBottom: "12px",
           boxShadow: `0 0 16px rgba(120,20,20,0.4), 0 2px 8px rgba(0,0,0,0.4)`,
         }}>
-          <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", color: "#ffcccc", marginBottom: "6px" }}>✝ Jornada de Jesus</p>
+          <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", color: "#ffcccc", marginBottom: "6px" }}>Jornada de Jesus</p>
           <p style={{ fontSize: "12px", color: "#ffaaaa", marginBottom: "12px", lineHeight: 1.5 }}>
             Caminhe ao lado de Jesus — do nascimento à ressurreição. Uma narrativa única.
           </p>
