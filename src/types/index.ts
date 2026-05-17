@@ -102,8 +102,9 @@ export interface Capitulo {
   titulo: string;
   subtitulo: string;
   icone: string;
-  livros: string[];       // livros da Bíblia referenciados
+  livros: string[];
   perguntas: Questao[];
+  etapas?: Questao[][];   // 5 grupos de questões por dificuldade crescente
 }
 
 export interface Trilha {

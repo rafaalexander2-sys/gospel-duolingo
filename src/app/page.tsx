@@ -27,7 +27,7 @@ const DS = {
   verde: "#1a4a1a", acerto: "#c8e6c0", erro: "#f0c8c8", off: "#9a8060",
 };
 
-type Tela = "login" | "cadastro" | "criar_personagem" | "home" | "trilhas" | "mapa" | "jogo" | "resultado" | "armadura" | "ranking";
+type Tela = "login" | "cadastro" | "criar_personagem" | "home" | "trilhas" | "mapa" | "etapas" | "jogo" | "resultado" | "armadura" | "ranking";
 type Trilha = "VT" | "NT" | "JESUS";
 type TipoPersonagem = "peregrino" | "profeta" | "guerreiro" | "sabia";
 
@@ -721,6 +721,30 @@ function BotaoBgm() {
   );
 }
 
+// ── Anel de progresso (5 segmentos ao redor do nó) ───────────────
+function AnelProgresso({ completas, total = 5 }: { completas: number; total?: number }) {
+  const cx = 45, cy = 45, r = 42;
+  const segDeg = 64, gapDeg = 8; // 5*(64+8)=360
+  const toRad = (d: number) => d * Math.PI / 180;
+  return (
+    <svg width="90" height="90" style={{ position: "absolute", top: "-7px", left: "-7px", pointerEvents: "none" }}>
+      {Array.from({ length: total }, (_, i) => {
+        const s = -90 + i * (segDeg + gapDeg);
+        const e = s + segDeg;
+        const x1 = cx + r * Math.cos(toRad(s)), y1 = cy + r * Math.sin(toRad(s));
+        const x2 = cx + r * Math.cos(toRad(e)), y2 = cy + r * Math.sin(toRad(e));
+        return (
+          <path key={i}
+            d={`M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`}
+            stroke={i < completas ? DS.douradoClaro : "#3a2808"}
+            strokeWidth="5.5" fill="none" strokeLinecap="round"
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
 // ── Tela HOME ─────────────────────────────────────────────────────
 function TelaHome({
   perfil, vidas, onEscolher, onArmadura, onPersonagem, onRanking, onTrilhas, onSair,
@@ -862,11 +886,12 @@ function TelaHome({
 
 // ── Tela MAPA ─────────────────────────────────────────────────────
 function TelaMapa({
-  trilha, perfil, vidas, progressoCompleto,
+  trilha, perfil, vidas, progressoCompleto, progressoEtapas,
   onCapitulo, onVoltar,
 }: {
   trilha: Trilha; perfil: Perfil; vidas: number;
   progressoCompleto: Set<string>;
+  progressoEtapas: Record<string, number>;
   onCapitulo: (c: Capitulo, idx: number) => void;
   onVoltar: () => void;
 }) {
@@ -953,24 +978,25 @@ function TelaMapa({
                   {atual && <div style={{ fontSize: "10px", color: "#00c8ff", fontFamily: "var(--font-cinzel)", fontWeight: "700", marginTop: "2px" }}>JOGAR</div>}
                 </div>
 
-                {/* Botão capítulo */}
-                <button
-                  disabled={bloqueado}
-                  onClick={() => !bloqueado && onCapitulo(cap, idx)}
-                  className={atual ? "cap-atual" : ""}
-                  style={{
-                    width: "76px", height: "76px", borderRadius: "50%", flexShrink: 0,
-                    background: bg,
-                    border: `3px solid ${borda}`,
-                    boxShadow: glow,
-                    cursor: bloqueado ? "not-allowed" : "pointer",
-                    fontSize: "26px",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    transition: "transform 0.15s",
-                    opacity: bloqueado ? 0.35 : 1,
-                  }}>
-                  {bloqueado ? "🔒" : cap.icone}
-                </button>
+                {/* Botão capítulo + anel de etapas */}
+                <div style={{ position: "relative", width: "76px", height: "76px", flexShrink: 0 }}>
+                  <button
+                    disabled={bloqueado}
+                    onClick={() => !bloqueado && onCapitulo(cap, idx)}
+                    className={atual ? "cap-atual" : ""}
+                    style={{
+                      width: "76px", height: "76px", borderRadius: "50%",
+                      background: bg, border: `3px solid ${borda}`, boxShadow: glow,
+                      cursor: bloqueado ? "not-allowed" : "pointer", fontSize: "26px",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      transition: "transform 0.15s", opacity: bloqueado ? 0.35 : 1,
+                    }}>
+                    {bloqueado ? "🔒" : cap.icone}
+                  </button>
+                  {!bloqueado && cap.etapas && cap.etapas.length > 0 && (
+                    <AnelProgresso completas={progressoEtapas[`${trilha}_${cap.id}`] ?? 0} total={cap.etapas.length} />
+                  )}
+                </div>
 
                 <div style={{ flex: 1, opacity: bloqueado ? 0.4 : 1 }} />
               </div>
@@ -982,16 +1008,122 @@ function TelaMapa({
   );
 }
 
+// ── Tela ETAPAS ───────────────────────────────────────────────────
+function TelaEtapas({
+  capitulo, trilha, progressoEtapas, onEtapa, onVoltar,
+}: {
+  capitulo: Capitulo; trilha: Trilha; progressoEtapas: number;
+  onEtapa: (idx: number) => void; onVoltar: () => void;
+}) {
+  const etapas = capitulo.etapas ?? [];
+  const nomes = ["Iniciante", "Aprendiz", "Conhecedor", "Sábio", "Mestre"];
+
+  return (
+    <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: "linear-gradient(180deg, #1a1208 0%, #2a1c08 100%)" }}>
+      <div style={{ padding: "12px 20px", display: "flex", alignItems: "center", gap: "12px", background: "rgba(0,0,0,0.4)", backdropFilter: "blur(8px)" }}>
+        <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.douradoClaro, fontSize: "20px", cursor: "pointer", padding: "4px 8px" }}>←</button>
+        <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "16px", color: DS.douradoClaro, fontWeight: "700" }}>{capitulo.titulo}</span>
+      </div>
+
+      <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
+        {/* Capítulo info */}
+        <div style={{ textAlign: "center", marginBottom: "28px" }}>
+          <div style={{ position: "relative", display: "inline-block", width: "76px", height: "76px", marginBottom: "12px" }}>
+            <div style={{
+              width: "76px", height: "76px", borderRadius: "50%",
+              background: `linear-gradient(145deg, ${DS.douradoClaro}, ${DS.douradoSombra})`,
+              border: `3px solid ${DS.douradoClaro}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "28px",
+              boxShadow: `0 0 20px rgba(212,160,20,0.5)`,
+            }}>{capitulo.icone}</div>
+            <AnelProgresso completas={progressoEtapas} total={etapas.length} />
+          </div>
+          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "20px", color: DS.douradoClaro, fontWeight: "700", marginTop: "8px" }}>{capitulo.titulo}</div>
+          <div style={{ fontSize: "12px", color: DS.off, marginTop: "4px" }}>{capitulo.subtitulo}</div>
+          <div style={{ fontSize: "12px", color: DS.dourado, marginTop: "8px", fontFamily: "var(--font-cinzel)" }}>
+            {progressoEtapas}/{etapas.length} etapas concluídas
+          </div>
+        </div>
+
+        {/* Lista de etapas */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "380px", margin: "0 auto" }}>
+          {etapas.map((etapa, i) => {
+            const completa = i < progressoEtapas;
+            const atual = i === progressoEtapas;
+            const bloqueada = i > progressoEtapas;
+            return (
+              <button key={i} disabled={bloqueada}
+                onClick={() => { sfxClick(); !bloqueada && onEtapa(i); }}
+                style={{
+                  padding: "14px 18px", borderRadius: "12px",
+                  cursor: bloqueada ? "not-allowed" : "pointer",
+                  display: "flex", alignItems: "center", gap: "14px", textAlign: "left",
+                  background: completa
+                    ? `linear-gradient(145deg, ${DS.douradoClaro}, ${DS.douradoSombra})`
+                    : atual ? `linear-gradient(145deg, #00c8ff, #0060a0)`
+                    : `linear-gradient(145deg, #2a2018, #1a1208)`,
+                  border: `2px solid ${completa ? DS.douradoClaro : atual ? "#00c8ff" : "#3a2818"}`,
+                  boxShadow: atual ? `0 0 20px rgba(0,200,255,0.35)` : "none",
+                  opacity: bloqueada ? 0.4 : 1,
+                  transition: "all 0.15s",
+                  width: "100%",
+                }}>
+                <div style={{
+                  width: "38px", height: "38px", borderRadius: "50%", flexShrink: 0,
+                  background: "rgba(255,255,255,0.12)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontFamily: "var(--font-cinzel)", fontSize: "14px", fontWeight: "700",
+                  color: completa ? DS.titulo : "white",
+                }}>
+                  {completa ? "✓" : i + 1}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", fontWeight: "700", color: completa ? DS.titulo : "white" }}>
+                    Etapa {i + 1} — {nomes[i] ?? "Desafio"}
+                  </div>
+                  <div style={{ fontSize: "11px", color: completa ? DS.titulo : "rgba(255,255,255,0.6)", marginTop: "2px" }}>
+                    {etapa.length} questões
+                  </div>
+                </div>
+                {completa && (
+                  <svg width="20" height="20" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="9" fill={DS.douradoSombra}/>
+                    <path d="M5 10 L8 13 L15 7" stroke={DS.douradoClaro} strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+                  </svg>
+                )}
+                {bloqueada && (
+                  <svg width="16" height="20" viewBox="0 0 16 20">
+                    <rect x="2" y="8" width="12" height="10" rx="2.5" fill="#2a1808" stroke="#4a3018" strokeWidth="1.5"/>
+                    <path d="M4 8 V6 A4 4 0 0 1 12 6 V8" fill="none" stroke="#4a3018" strokeWidth="1.5"/>
+                    <circle cx="8" cy="13" r="1.8" fill="#4a3018"/>
+                  </svg>
+                )}
+                {atual && (
+                  <svg width="14" height="14" viewBox="0 0 14 14">
+                    <path d="M3 2 L12 7 L3 12 Z" fill="white"/>
+                  </svg>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Tela QUIZ ─────────────────────────────────────────────────────
 function TelaQuiz({
-  capitulo, trilha, perfil, vidas,
+  capitulo, trilha, perfil, vidas, questoes: questoesProp,
   onConcluir, onSemVidas,
 }: {
   capitulo: Capitulo; trilha: Trilha; perfil: Perfil; vidas: number;
+  questoes?: Questao[];
   onConcluir: (acertos: number, xpGanho: number, talentosGanho: number) => void;
   onSemVidas: () => void;
 }) {
-  const questoesPrincipais = capitulo.perguntas;
+  const questoesPrincipais = questoesProp ?? capitulo.perguntas;
   const [idx, setIdx] = useState(0);
   const [selecionada, setSelecionada] = useState<number | null>(null);
   const [confirmada, setConfirmada] = useState(false);
@@ -1689,10 +1821,20 @@ export default function App() {
   const [trilha, setTrilha] = useState<Trilha>("VT");
   const [capitulo, setCapitulo] = useState<Capitulo | null>(null);
   const [progressoIds, setProgressoIds] = useState<Set<string>>(new Set());
+  const [progressoEtapas, setProgressoEtapas] = useState<Record<string, number>>({});
+  const [etapaAtual, setEtapaAtual] = useState(0);
   const [resultadoState, setResultadoState] = useState({ acertos: 0, total: 0, xp: 0, talentos: 0, novasPecas: [] as string[] });
 
   const atualizarVidas = useCallback((p: Perfil) => {
     setVidasAtivas(calcularVidasAtuais(p));
+  }, []);
+
+  // Carrega progresso de etapas do localStorage
+  useEffect(() => {
+    try {
+      const salvo = localStorage.getItem("gq_etapas");
+      if (salvo) setProgressoEtapas(JSON.parse(salvo));
+    } catch { /* ignore */ }
   }, []);
 
   // Checa sessão ao montar
@@ -1762,14 +1904,23 @@ export default function App() {
 
   async function handleConcluirQuiz(acertos: number, xpGanho: number, talentosGanho: number) {
     if (!perfil || !capitulo) return;
-    // Chegar ao fim sem perder todas as vidas = capítulo completo. Quem perde
-    // todas as vidas vai para onSemVidas e nunca chama onConcluir.
-    const completo = true;
+    const chave = `${trilha}_${capitulo.id}`;
 
-    // Salva progresso
-    await salvarProgresso(perfil.id, trilha, String(capitulo.id), acertos, completo);
-    if (completo) {
-      setProgressoIds(prev => new Set([...prev, `${trilha}_${capitulo.id}`]));
+    // Atualiza progresso de etapas se o capítulo tiver etapas
+    if (capitulo.etapas && capitulo.etapas.length > 0) {
+      const novaContagem = Math.min(etapaAtual + 1, capitulo.etapas.length);
+      const novoProgresso = { ...progressoEtapas, [chave]: novaContagem };
+      setProgressoEtapas(novoProgresso);
+      try { localStorage.setItem("gq_etapas", JSON.stringify(novoProgresso)); } catch { /* ignore */ }
+
+      // Marca capítulo completo apenas quando todas as etapas forem concluídas
+      if (novaContagem >= capitulo.etapas.length) {
+        await salvarProgresso(perfil.id, trilha, String(capitulo.id), acertos, true);
+        setProgressoIds(prev => new Set([...prev, chave]));
+      }
+    } else {
+      await salvarProgresso(perfil.id, trilha, String(capitulo.id), acertos, true);
+      setProgressoIds(prev => new Set([...prev, chave]));
     }
 
     // Atualiza XP e talentos
@@ -1783,7 +1934,10 @@ export default function App() {
       const t = partes[0] as "VT" | "NT" | "JESUS";
       contagens[t] = (contagens[t] || 0) + 1;
     });
-    if (completo) contagens[trilha]++;
+    const novoCapituloCompleto = !progressoIds.has(chave) && (
+      !capitulo.etapas || (etapaAtual + 1) >= (capitulo.etapas.length ?? 0)
+    );
+    if (novoCapituloCompleto) contagens[trilha]++;
 
     const perfilTemp = { ...perfil, xp: novoXp, talentos: novosTalentos };
     const novaArmadura = verificarArmaduraDesbloqueios(perfilTemp, contagens);
@@ -1800,7 +1954,8 @@ export default function App() {
     const perfilAtualizado = { ...perfilTemp, armadura: novaArmadura };
     setPerfil(perfilAtualizado);
 
-    setResultadoState({ acertos, total: capitulo.perguntas.length, xp: xpGanho, talentos: talentosGanho, novasPecas });
+    const totalQuestoes = (capitulo.etapas && capitulo.etapas[etapaAtual]) ? capitulo.etapas[etapaAtual].length : capitulo.perguntas.length;
+    setResultadoState({ acertos, total: totalQuestoes, xp: xpGanho, talentos: talentosGanho, novasPecas });
     setTela("resultado");
   }
 
@@ -1867,14 +2022,34 @@ export default function App() {
     <TelaMapa
       trilha={trilha} perfil={perfil} vidas={vidasAtivas}
       progressoCompleto={progressoIds}
-      onCapitulo={(cap) => { setCapitulo(cap); setTela("jogo"); }}
+      progressoEtapas={progressoEtapas}
+      onCapitulo={(cap) => {
+        setCapitulo(cap);
+        if (cap.etapas && cap.etapas.length > 0) {
+          setTela("etapas");
+        } else {
+          setEtapaAtual(0);
+          setTela("jogo");
+        }
+      }}
       onVoltar={() => setTela("home")}
+    />
+  );
+
+  if (tela === "etapas" && capitulo) return (
+    <TelaEtapas
+      capitulo={capitulo}
+      trilha={trilha}
+      progressoEtapas={progressoEtapas[`${trilha}_${capitulo.id}`] ?? 0}
+      onEtapa={(idx) => { setEtapaAtual(idx); setTela("jogo"); }}
+      onVoltar={() => setTela("mapa")}
     />
   );
 
   if (tela === "jogo" && capitulo) return (
     <TelaQuiz
       capitulo={capitulo} trilha={trilha} perfil={perfil} vidas={vidasAtivas}
+      questoes={capitulo.etapas ? capitulo.etapas[etapaAtual] : undefined}
       onConcluir={handleConcluirQuiz}
       onSemVidas={() => setTela("mapa")}
     />
@@ -1889,7 +2064,7 @@ export default function App() {
       streakDias={perfil.sequencia}
       talentosGanho={resultadoState.talentos}
       novasPecas={resultadoState.novasPecas}
-      onReiniciar={() => setTela("jogo")}
+      onReiniciar={() => capitulo?.etapas ? setTela("etapas") : setTela("jogo")}
       onVoltar={() => setTela("mapa")}
     />
   );

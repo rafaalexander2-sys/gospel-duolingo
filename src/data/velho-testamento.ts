@@ -134,6 +134,48 @@ export const velhoTestamento: Capitulo[] = [
         explicacao: "Adão foi o primeiro homem, criado do pó da terra (Gênesis 2:7-20).",
       },
     ],
+    etapas: [
+      // Etapa 1 — O começo
+      [
+        { tipo: "fato_fake", personagem: "moises", afirmacao: "No princípio, Deus criou os céus e a terra.", fato: true, explicacao: "Gênesis 1:1 — a primeira frase da Bíblia." },
+        { tipo: "qual_numero", personagem: "moises", enunciado: "Em quantos dias Deus completou toda a criação?", opcoes: ["5 dias", "6 dias", "7 dias", "10 dias"], resposta: 1, explicacao: "Deus criou em 6 dias e descansou no 7º (Gênesis 1-2)." },
+        { tipo: "multipla_escolha", personagem: "moises", enunciado: "O que Deus criou no primeiro dia?", opcoes: ["O sol e a lua", "A luz", "Os animais", "Os peixes"], resposta: 1, explicacao: "No primeiro dia Deus disse: 'Haja luz' (Gênesis 1:3)." },
+        { tipo: "completar_versiculo", personagem: "moises", versiculo: "No princípio, criou Deus os ___ e a terra.", referencia: "Gênesis 1:1", opcoes: ["mares", "céus", "homens", "animais"], resposta: 1, explicacao: "Gênesis 1:1 — a abertura das Escrituras." },
+        { tipo: "multipla_escolha", personagem: "moises", enunciado: "O que foi criado no segundo dia?", opcoes: ["A terra seca", "O firmamento (céu)", "Os animais", "O homem"], resposta: 1, explicacao: "Gênesis 1:6-8 — no segundo dia Deus fez o firmamento, separando as águas." },
+      ],
+      // Etapa 2 — Os dias da criação
+      [
+        { tipo: "ordenar_eventos", personagem: "moises", enunciado: "Ordem correta dos dias da criação:", eventos: ["Animais terrestres e humanos", "Separação da luz e trevas", "Sol, lua e estrelas", "Peixes e aves"], ordemCorreta: [1, 3, 2, 0], explicacao: "1º: luz, 4º: astros, 5º: peixes/aves, 6º: animais/humanos." },
+        { tipo: "qual_numero", personagem: "moises", enunciado: "Em qual dia Deus criou o sol e a lua?", opcoes: ["2º dia", "3º dia", "4º dia", "5º dia"], resposta: 2, explicacao: "Gênesis 1:14-19 — os astros foram criados no quarto dia." },
+        { tipo: "multipla_escolha", personagem: "moises", enunciado: "O que Deus criou no quinto dia?", opcoes: ["Os vegetais", "O ser humano", "Os peixes e as aves", "O sol e as estrelas"], resposta: 2, explicacao: "Gênesis 1:20-23 — peixes e aves no quinto dia." },
+        { tipo: "quem_disse", personagem: "moises", frase: "Façamos o homem à nossa imagem, conforme a nossa semelhança.", opcoes: ["Um anjo", "A serpente", "Deus", "Adão"], resposta: 2, explicacao: "Gênesis 1:26 — Deus disse isso antes de criar o ser humano." },
+        { tipo: "fato_fake", personagem: "moises", afirmacao: "Deus viu tudo o que havia feito e era muito bom.", fato: true, explicacao: "Gênesis 1:31 — ao fim do sexto dia, a criação foi avaliada como 'muito boa'." },
+      ],
+      // Etapa 3 — Adão e Eva
+      [
+        { tipo: "fato_fake", personagem: "moises", afirmacao: "Deus criou o homem do pó da terra e soprou em suas narinas o fôlego de vida.", fato: true, explicacao: "Gênesis 2:7 — 'E formou o Senhor Deus o homem do pó da terra.'" },
+        { tipo: "multipla_escolha", personagem: "moises", enunciado: "De onde Deus tirou a costela para criar Eva?", opcoes: ["Da terra", "Do próprio Deus", "De Adão", "De um animal"], resposta: 2, explicacao: "Gênesis 2:21-22 — Deus fez Adão dormir e tirou uma costela." },
+        { tipo: "onde_aconteceu", personagem: "moises", evento: "Adão e Eva viveram após serem criados por Deus", opcoes: ["Monte Sinai", "Jardim do Éden", "Terra de Canaã", "Cidade de Ur"], resposta: 1, explicacao: "Gênesis 2:8 — 'E plantou o Senhor Deus um jardim no Éden.'" },
+        { tipo: "quem_disse", personagem: "moises", frase: "Esta é osso dos meus ossos e carne da minha carne.", opcoes: ["Deus", "A serpente", "Adão", "Eva"], resposta: 2, explicacao: "Gênesis 2:23 — Adão disse isso ao ver Eva pela primeira vez." },
+        { tipo: "verdade_mito", personagem: "moises", mito: "Eva recebeu esse nome porque foi tirada do varão.", fato: true, explicacao: "Gênesis 2:23 — Adão a chamou de 'varoa' (isha) porque foi tirada do varão (ish). O nome Eva (Havá) vem de Gênesis 3:20." },
+      ],
+      // Etapa 4 — O jardim e a tentação
+      [
+        { tipo: "verdade_mito", personagem: "moises", mito: "A maçã é o fruto proibido mencionado na Bíblia.", fato: false, explicacao: "A Bíblia nunca especifica o fruto — apenas 'o fruto da árvore do conhecimento'. A ideia de maçã veio de traduções medievais." },
+        { tipo: "fato_fake", personagem: "moises", afirmacao: "A serpente que tentou Eva era o próprio Satanás em forma visível, segundo Gênesis.", fato: false, explicacao: "Gênesis descreve apenas 'a serpente, mais astuta que todos os animais'. A ligação com Satanás vem de Apocalipse 12:9." },
+        { tipo: "quem_disse", personagem: "moises", frase: "Não é bom que o homem esteja só; far-lhe-ei uma auxiliadora.", opcoes: ["Adão", "A serpente", "Deus", "Um anjo"], resposta: 2, explicacao: "Gênesis 2:18 — foi Deus quem disse isso antes de criar Eva." },
+        { tipo: "multipla_escolha", personagem: "moises", enunciado: "O que aconteceu imediatamente após Adão e Eva comerem o fruto proibido?", opcoes: ["Foram expulsos do jardim", "Perceberam que estavam nus", "A serpente desapareceu", "Deus apareceu em forma humana"], resposta: 1, explicacao: "Gênesis 3:7 — 'Abriram-se os olhos de ambos, e conheceram que estavam nus.'" },
+        { tipo: "completar_versiculo", personagem: "moises", versiculo: "E conhecereis o bem e o ___, e sereis como Deus.", referencia: "Gênesis 3:5", opcoes: ["amor", "poder", "mal", "mundo"], resposta: 2, explicacao: "Gênesis 3:5 — as palavras da serpente enganando Eva." },
+      ],
+      // Etapa 5 — Desafio final
+      [
+        { tipo: "qual_livro", personagem: "moises", enunciado: "Em qual livro da Bíblia está o relato completo da criação?", opcoes: ["Êxodo", "Salmos", "Gênesis", "Jó"], resposta: 2, explicacao: "Gênesis, o primeiro livro da Bíblia, capítulos 1 e 2." },
+        { tipo: "personagem_misterio", personagem: "moises", pistas: ["Fui o primeiro ser humano criado por Deus.", "Recebi a missão de cuidar e guardar o jardim.", "Dei nome a todos os animais."], opcoes: ["Noé", "Adão", "Abel", "Sete"], resposta: 1, explicacao: "Adão foi o primeiro homem, criado do pó da terra (Gênesis 2:7-20)." },
+        { tipo: "personagem_misterio", personagem: "moises", pistas: ["Fui criada a partir de um ser já existente.", "Meu nome significa 'mãe de todos os viventes'.", "Fui a primeira mulher da humanidade."], opcoes: ["Sara", "Eva", "Rebeca", "Raquel"], resposta: 1, explicacao: "Gênesis 3:20 — 'E chamou Adão o nome de sua mulher Eva, porquanto era a mãe de todos os viventes.'" },
+        { tipo: "qual_numero", personagem: "moises", enunciado: "Quantos rios saíam do jardim do Éden, segundo Gênesis 2?", opcoes: ["2 rios", "3 rios", "4 rios", "7 rios"], resposta: 2, explicacao: "Gênesis 2:10-14 — quatro rios: Pisom, Giom, Tigre e Eufrates." },
+        { tipo: "fato_fake", personagem: "moises", afirmacao: "Deus colocou querubins e uma espada flamejante para guardar o caminho da árvore da vida.", fato: true, explicacao: "Gênesis 3:24 — após a expulsão, querubins guardavam o acesso à árvore da vida." },
+      ],
+    ],
   },
   {
     id: 2,
@@ -267,6 +309,48 @@ export const velhoTestamento: Capitulo[] = [
         fato: false,
         explicacao: "A Bíblia descreve a arca com formato retangular (caixão/baú), não de barco. As medidas em Gênesis 6:15 indicam uma estrutura 300 côvados × 50 × 30.",
       },
+    ],
+    etapas: [
+      // Etapa 1 — Noé e o chamado
+      [
+        { tipo: "fato_fake", personagem: "joao", afirmacao: "Noé levou 7 pares de cada animal limpo para dentro da arca.", fato: true, explicacao: "Gênesis 7:2 — dos animais limpos, 7 pares; dos impuros, 1 par." },
+        { tipo: "multipla_escolha", personagem: "joao", enunciado: "Quantos filhos Noé tinha?", opcoes: ["2 filhos", "3 filhos", "4 filhos", "5 filhos"], resposta: 1, explicacao: "Gênesis 6:10 — Noé tinha três filhos: Sem, Cam e Jafé." },
+        { tipo: "quem_disse", personagem: "joao", frase: "Farei um dilúvio de águas sobre a terra, para destruir toda carne.", opcoes: ["Noé", "Um anjo", "Deus", "Sem"], resposta: 2, explicacao: "Gênesis 6:17 — foi Deus quem anunciou o dilúvio a Noé." },
+        { tipo: "personagem_misterio", personagem: "joao", pistas: ["Era considerado justo e íntegro entre os homens do meu tempo.", "Andei com Deus quando todos ao meu redor estavam corrompidos.", "Construí uma embarcação gigante seguindo instruções divinas."], opcoes: ["Abraão", "Moisés", "Noé", "Elias"], resposta: 2, explicacao: "Noé era justo em sua geração (Gênesis 6:9)." },
+        { tipo: "verdade_mito", personagem: "joao", mito: "Noé tinha 600 anos quando entrou na arca.", fato: true, explicacao: "Gênesis 7:6 — 'Era Noé de seiscentos anos quando o dilúvio das águas veio sobre a terra.'" },
+      ],
+      // Etapa 2 — O dilúvio
+      [
+        { tipo: "qual_numero", personagem: "joao", enunciado: "Quantos dias e noites durou a chuva do dilúvio?", opcoes: ["7 dias", "20 dias", "40 dias", "100 dias"], resposta: 2, explicacao: "Gênesis 7:12 — 'E houve chuva sobre a terra quarenta dias e quarenta noites.'" },
+        { tipo: "qual_numero", personagem: "joao", enunciado: "Quantas pessoas entraram na arca com Noé?", opcoes: ["4 pessoas", "6 pessoas", "8 pessoas", "12 pessoas"], resposta: 2, explicacao: "Gênesis 7:13 — Noé, sua esposa, seus 3 filhos e as esposas deles = 8 pessoas." },
+        { tipo: "fato_fake", personagem: "joao", afirmacao: "Depois do dilúvio, Deus prometeu nunca mais destruir a terra com água.", fato: true, explicacao: "Gênesis 9:11 — 'Não haverá mais dilúvio para destruir a terra.'" },
+        { tipo: "ordenar_eventos", personagem: "joao", enunciado: "Ordem dos eventos do dilúvio:", eventos: ["Deus estabelece o arco-íris", "Noé recebe a ordem de construir a arca", "Chuva por 40 dias e noites", "Pomba volta com ramo de oliveira"], ordemCorreta: [1, 2, 3, 0], explicacao: "Construção → chuva → pomba → aliança do arco-íris." },
+        { tipo: "completar_versiculo", personagem: "joao", versiculo: "E pus o meu ___ nas nuvens, o qual será por sinal da aliança entre mim e a terra.", referencia: "Gênesis 9:13", opcoes: ["trovão", "arco-íris", "anjo", "sol"], resposta: 1, explicacao: "O arco-íris foi o sinal da aliança de Deus com Noé e toda a criação." },
+      ],
+      // Etapa 3 — A arca
+      [
+        { tipo: "multipla_escolha", personagem: "joao", enunciado: "Qual ave Noé soltou primeiro para verificar se as águas haviam baixado?", opcoes: ["Uma pomba", "Um corvo", "Uma andorinha", "Uma águia"], resposta: 1, explicacao: "Gênesis 8:7 — Noé primeiro soltou um corvo, depois a pomba." },
+        { tipo: "multipla_escolha", personagem: "joao", enunciado: "O que a pomba trouxe no bico quando voltou pela segunda vez?", opcoes: ["Um galho de cedro", "Uma folha de oliveira", "Uma espiga de trigo", "Uma flor do campo"], resposta: 1, explicacao: "Gênesis 8:11 — a pomba voltou com uma folha de oliveira." },
+        { tipo: "fato_fake", personagem: "joao", afirmacao: "A arca de Noé pousou no Monte Sinai após o dilúvio.", fato: false, explicacao: "Gênesis 8:4 — a arca repousou sobre os montes de Ararate, não no Sinai." },
+        { tipo: "onde_aconteceu", personagem: "joao", evento: "A arca de Noé encalhou após as águas baixarem", opcoes: ["Monte Sinai", "Monte Carmelo", "Montes de Ararate", "Monte Nebo"], resposta: 2, explicacao: "Gênesis 8:4 — 'E a arca repousou no sétimo mês... sobre os montes de Ararate.'" },
+        { tipo: "verdade_mito", personagem: "joao", mito: "A Bíblia descreve a arca de Noé com formato de barco tradicional.", fato: false, explicacao: "A Bíblia descreve a arca com formato retangular, não de barco (Gênesis 6:15)." },
+      ],
+      // Etapa 4 — Detalhes e aliança
+      [
+        { tipo: "qual_numero", personagem: "joao", enunciado: "Quantos dias Noé esperou para soltar a pomba pela primeira vez?", opcoes: ["7 dias", "14 dias", "21 dias", "40 dias"], resposta: 0, explicacao: "Gênesis 8:10 — Noé esperou 7 dias entre as solturas da pomba." },
+        { tipo: "multipla_escolha", personagem: "joao", enunciado: "Qual foi o sinal da aliança que Deus fez com Noé?", opcoes: ["Uma estrela brilhante", "Um arco-íris", "Uma pomba branca", "Uma chama de fogo"], resposta: 1, explicacao: "Gênesis 9:13 — o arco-íris nas nuvens foi o sinal da aliança." },
+        { tipo: "fato_fake", personagem: "joao", afirmacao: "A aliança do arco-íris foi feita apenas com Noé e seus filhos.", fato: false, explicacao: "Gênesis 9:12-17 — a aliança foi com Noé, seus descendentes E com 'toda alma vivente' — toda criação." },
+        { tipo: "qual_livro", personagem: "joao", enunciado: "Em qual livro da Bíblia está a história completa do dilúvio?", opcoes: ["Êxodo", "Números", "Gênesis", "Deuteronômio"], resposta: 2, explicacao: "O relato do dilúvio está em Gênesis, capítulos 6 a 9." },
+        { tipo: "quem_disse", personagem: "joao", frase: "Crescei e multiplicai-vos, e enchei a terra.", opcoes: ["Noé", "Sem", "Deus", "Um anjo"], resposta: 2, explicacao: "Gênesis 9:1 — Deus abençoou Noé e seus filhos com essas palavras após o dilúvio." },
+      ],
+      // Etapa 5 — Desafio final
+      [
+        { tipo: "fato_fake", personagem: "joao", afirmacao: "Noé construiu um altar e ofereceu holocaustos a Deus após sair da arca.", fato: true, explicacao: "Gênesis 8:20 — a primeira ação de Noé ao sair da arca foi construir um altar para Deus." },
+        { tipo: "multipla_escolha", personagem: "joao", enunciado: "Por que Deus decidiu enviar o dilúvio?", opcoes: ["Por desobedinência de Noé", "Pela maldade e corrupção dos homens", "Por causa de uma guerra", "Para testar a fé de Abraão"], resposta: 1, explicacao: "Gênesis 6:5-7 — 'E viu o Senhor que era muita a maldade dos homens na terra.'" },
+        { tipo: "completar_versiculo", personagem: "joao", versiculo: "Noé, porém, achou ___ aos olhos do Senhor.", referencia: "Gênesis 6:8", opcoes: ["riqueza", "graça", "poder", "sabedoria"], resposta: 1, explicacao: "Gênesis 6:8 — Noé encontrou graça diante de Deus, por isso foi escolhido." },
+        { tipo: "qual_numero", personagem: "joao", enunciado: "Quantos dias Noé esperou até que as águas secassem completamente da terra?", opcoes: ["150 dias", "200 dias", "365 dias", "40 dias"], resposta: 2, explicacao: "Do início das chuvas até a terra secar completamente passaram aproximadamente um ano (Gênesis 7:11 → 8:14)." },
+        { tipo: "verdade_mito", personagem: "joao", mito: "Deus se arrependeu de ter criado o ser humano antes do dilúvio.", fato: true, explicacao: "Gênesis 6:6 — 'E arrependeu-se o Senhor de haver feito o homem na terra, e pesou-lhe isso no coração.'" },
+      ],
     ],
   },
   {
