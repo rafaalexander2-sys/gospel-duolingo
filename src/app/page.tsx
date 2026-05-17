@@ -677,6 +677,25 @@ function TelaHome({
           )}
         </div>
 
+        {/* Personagem card */}
+        <button onClick={onPersonagem} style={{
+          width: "100%", background: "none", border: "none", cursor: "pointer", padding: "0", marginBottom: "12px",
+        }}>
+          <div className="card-pergaminho" style={{
+            padding: "12px 16px", display: "flex", alignItems: "center", gap: "14px",
+            border: `1.5px solid ${DS.douradoClaro}`, boxShadow: `0 0 10px rgba(212,160,20,0.2)`,
+          }}>
+            <SvgPersonagem tipo={perfil.personagem_tipo} cor={perfil.personagem_cor} size={56} />
+            <div style={{ flex: 1, textAlign: "left" }}>
+              <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "14px", fontWeight: "700", color: DS.titulo }}>{perfil.nome}</div>
+              <div style={{ fontSize: "11px", color: DS.off, marginTop: "2px" }}>
+                {ARQUETIPOS.find(a => a.id === perfil.personagem_tipo)?.nome ?? perfil.personagem_tipo}
+              </div>
+            </div>
+            <span style={{ fontSize: "12px", color: DS.dourado, fontFamily: "var(--font-cinzel)" }}>✏️ Editar</span>
+          </div>
+        </button>
+
         <div className="divisor-ornamentado"><span>✦</span></div>
 
         {/* Bíblia */}
