@@ -27,7 +27,7 @@ const DS = {
   verde: "#1a4a1a", acerto: "#c8e6c0", erro: "#f0c8c8", off: "#9a8060",
 };
 
-type Tela = "login" | "cadastro" | "criar_personagem" | "home" | "trilhas" | "mapa" | "etapas" | "jogo" | "resultado" | "armadura" | "ranking";
+type Tela = "login" | "cadastro" | "criar_personagem" | "home" | "trilhas" | "mapa" | "etapas" | "jogo" | "resultado" | "armadura" | "ranking" | "missoes";
 type Trilha = "VT" | "NT" | "JESUS";
 type TipoPersonagem = "peregrino" | "profeta" | "guerreiro" | "sabia";
 
@@ -721,6 +721,61 @@ function BotaoBgm() {
   );
 }
 
+// ── Missões Diárias ───────────────────────────────────────────────
+interface Missao {
+  id: string;
+  titulo: string;
+  descricao: string;
+  devocional: string;
+  versiculo: string;
+  referencia: string;
+  xp: number;
+  talentos: number;
+}
+interface MissaoConcluida {
+  missaoId: string;
+  data: string; // "YYYY-MM-DD"
+  reflexao: string;
+  xpGanho: number;
+}
+
+const MISSOES: Missao[] = [
+  { id:"m1", titulo:"Perdoar Alguém", descricao:"Perdoe alguém que te magoou — de coração, sem guardar rancor.", devocional:"Perdoar não é fraqueza, é um ato de fé. Quando escolhemos perdoar, seguimos o exemplo de Cristo, que nos perdoou mesmo quando não merecíamos. O rancor aprisiona, mas o perdão liberta.", versiculo:"Sede bondosos uns para com os outros, compassivos, perdoando-vos mutuamente, assim como Deus vos perdoou em Cristo.", referencia:"Efésios 4:32", xp:80, talentos:15 },
+  { id:"m2", titulo:"Ajudar uma Pessoa", descricao:"Ofereça ajuda concreta a alguém hoje — sem esperar nada em troca.", devocional:"O amor cristão se prova em ações. Servir ao próximo é servir a Cristo. Uma mão estendida pode mudar o dia — ou a vida — de alguém.", versiculo:"Cada um cuide, não somente dos seus próprios interesses, mas também dos interesses dos outros.", referencia:"Filipenses 2:4", xp:70, talentos:12 },
+  { id:"m3", titulo:"Ler a Bíblia por 20 min", descricao:"Reserve 20 minutos de silêncio para ler e meditar na Palavra de Deus.", devocional:"A Bíblia não é apenas um livro — é o pão do espírito. Cada versículo lido com atenção transforma nossa mente e fortalece nossa fé contra as dificuldades do dia.", versiculo:"Lâmpada para os meus pés é a tua palavra e luz para o meu caminho.", referencia:"Salmos 119:105", xp:60, talentos:10 },
+  { id:"m4", titulo:"Fazer uma Doação", descricao:"Doe algo de valor — dinheiro, roupa, comida — a quem precisa.", devocional:"A generosidade é o antídoto para a ganância. Quando damos, declaramos que nossa confiança está em Deus e não nas posses. O que damos ao próximo, damos ao Senhor.", versiculo:"Quem é generoso para com o pobre empresta ao Senhor, e ele o recompensará.", referencia:"Provérbios 19:17", xp:90, talentos:20 },
+  { id:"m5", titulo:"Orar por Alguém Publicamente", descricao:"Ore em voz alta por alguém na presença de outras pessoas hoje.", devocional:"Orar pelo outro na frente de testemunhas declara publicamente nossa dependência de Deus e nosso amor pelo próximo. Não é vaidade — é coragem espiritual.", versiculo:"Orai uns pelos outros, para que sareis. A oração do justo é poderosa e eficaz.", referencia:"Tiago 5:16", xp:100, talentos:20 },
+  { id:"m6", titulo:"Compartilhar o Evangelho", descricao:"Fale sobre Jesus com alguém que ainda não o conhece.", devocional:"A boa notícia é boa demais para guardar. Cada cristão é chamado a ser embaixador de Cristo. Não precisamos de palavras perfeitas — apenas de coração disposto.", versiculo:"Portanto ide e fazei discípulos de todas as nações.", referencia:"Mateus 28:19", xp:120, talentos:25 },
+  { id:"m7", titulo:"Convidar para um Café", descricao:"Convide alguém para um café e ouça sua história com atenção.", devocional:"Jesus construiu relacionamentos à mesa. Um café simples pode abrir portas que sermões não abrem. Mostrar interesse genuíno pelo outro é uma forma de amor.", versiculo:"Praticai a hospitalidade uns para com os outros, sem murmurar.", referencia:"1 Pedro 4:9", xp:60, talentos:10 },
+  { id:"m8", titulo:"Convidar para a Igreja", descricao:"Convide alguém novo para participar do culto ou célula com você.", devocional:"A Igreja é a família de Deus, e toda família cresce quando novos membros são acolhidos. Seu convite pode ser a virada na história de alguém.", versiculo:"Não deixemos de nos reunir, como é costume de alguns, mas que um encoraje ao outro.", referencia:"Hebreus 10:25", xp:100, talentos:20 },
+  { id:"m9", titulo:"Boa Ação Anônima", descricao:"Faça uma boa ação sem que ninguém saiba que foi você.", devocional:"A recompensa mais pura vem do que fazemos quando ninguém está vendo. Agir sem reconhecimento é o grau mais alto da generosidade cristã.", versiculo:"Não saiba a tua mão esquerda o que faz a tua mão direita.", referencia:"Mateus 6:3", xp:80, talentos:15 },
+  { id:"m10", titulo:"Dar uma Bíblia de Presente", descricao:"Presenteie alguém com uma Bíblia ou compartilhe um texto bíblico.", devocional:"Nenhum presente tem valor eterno maior que a Palavra de Deus. Uma Bíblia entregue no momento certo pode plantar uma semente que dura para sempre.", versiculo:"A palavra de Deus é viva, e eficaz, e mais afiada do que qualquer espada de dois gumes.", referencia:"Hebreus 4:12", xp:90, talentos:18 },
+  { id:"m11", titulo:"Escrever uma Carta de Gratidão", descricao:"Escreva uma carta ou mensagem agradecendo alguém que impactou sua vida.", devocional:"A gratidão transforma quem a expressa tanto quanto quem a recebe. Reconhecer a bondade nos outros é reconhecer a mão de Deus agindo através deles.", versiculo:"Em tudo dai graças, porque esta é a vontade de Deus em Cristo Jesus para convosco.", referencia:"1 Tessalonicenses 5:18", xp:70, talentos:12 },
+  { id:"m12", titulo:"Jejum e Oração", descricao:"Faça um jejum (de comida ou de redes sociais) e dedique esse tempo à oração.", devocional:"O jejum não muda Deus — nos muda. Quando silenciamos os apetites do corpo, aguçamos os do espírito. É um ato de rendição que posiciona nossa alma para ouvir.", versiculo:"Quando jejuardes, não ponhais cara triste como os hipócritas.", referencia:"Mateus 6:16", xp:110, talentos:22 },
+  { id:"m13", titulo:"Visitar o Solitário", descricao:"Visite ou ligue para alguém que está sozinho — idoso, doente, amigo distante.", devocional:"Solidão é uma das maiores dores humanas. Sua presença pode ser o instrumento de cura que Deus escolheu usar hoje. Não subestime o poder de simplesmente aparecer.", versiculo:"Religião pura e sem mácula é esta: visitar os órfãos e as viúvas nas suas tribulações.", referencia:"Tiago 1:27", xp:90, talentos:18 },
+  { id:"m14", titulo:"Palavra de Encorajamento", descricao:"Diga ou escreva uma palavra de encorajamento genuíno para alguém hoje.", devocional:"As palavras têm poder de vida e de morte. Um elogio sincero, uma afirmação no momento certo, pode reacender a chama de alguém que está prestes a desistir.", versiculo:"Portanto, encorajai-vos uns aos outros e edificai-vos uns aos outros.", referencia:"1 Tessalonicenses 5:11", xp:60, talentos:10 },
+  { id:"m15", titulo:"Pagar pelo Próximo", descricao:"Pague o almoço, café ou conta de alguém de surpresa hoje.", devocional:"Pequenos gestos financeiros carregam uma mensagem poderosa: você foi visto, você importa. Cristo nos viu quando ninguém nos via. Podemos passar isso adiante.", versiculo:"Servi-vos uns aos outros por amor.", referencia:"Gálatas 5:13", xp:80, talentos:15 },
+  { id:"m16", titulo:"Ligar para Quem Faz Tempo", descricao:"Ligue para alguém com quem não fala há meses. Só para saber como está.", devocional:"Relacionamentos precisam de atenção para sobreviver. Uma ligação inesperada pode reconstruir pontes que pareciam irreparáveis. Deus nos chama para restaurar laços.", versiculo:"O amigo ama em todo tempo, e como irmão se mostra na adversidade.", referencia:"Provérbios 17:17", xp:65, talentos:10 },
+  { id:"m17", titulo:"Agradecer por 5 Bênçãos", descricao:"Liste 5 bênçãos específicas hoje e agradeça a Deus por cada uma.", devocional:"Gratidão é um exercício espiritual que recalibra nossa visão. Quando focamos no que temos em vez do que falta, nossa perspectiva muda e nossa fé cresce.", versiculo:"Bom é render graças ao Senhor e cantar louvores ao Teu nome, ó Altíssimo.", referencia:"Salmos 92:1", xp:50, talentos:8 },
+  { id:"m18", titulo:"Reconciliar-se com Alguém", descricao:"Dê o primeiro passo para restaurar um relacionamento rompido.", devocional:"A reconciliação exige humildade — e a humildade é a postura do discípulo de Cristo. Ir primeiro, mesmo sem ter errado, é o caminho que Jesus traçou.", versiculo:"Se, pois, trouxeres a tua oferta ao altar e ali te lembrares que teu irmão tem alguma coisa contra ti... primeiro reconcilia-te com teu irmão.", referencia:"Mateus 5:23-24", xp:120, talentos:25 },
+  { id:"m19", titulo:"Cantar um Louvor", descricao:"Cante ou toque um louvor — sozinho, com alguém ou numa reunião.", devocional:"O louvor não é só música — é uma declaração de fé. Quando louvamos em meio às dificuldades, estamos dizendo que Deus é maior do que nossos problemas.", versiculo:"Cantai ao Senhor um cântico novo; cantai ao Senhor toda a terra.", referencia:"Salmos 96:1", xp:55, talentos:8 },
+  { id:"m20", titulo:"Memorizar um Versículo", descricao:"Escolha um versículo e o memorize até o fim do dia.", devocional:"A Palavra guardada no coração é a arma mais poderosa contra a tentação, a dúvida e o desânimo. Jesus usou versículos contra Satanás no deserto.", versiculo:"Guardo no coração as Tuas palavras para não pecar contra Ti.", referencia:"Salmos 119:11", xp:75, talentos:12 },
+  { id:"m21", titulo:"Servir na Comunidade", descricao:"Voluntarie-se em algo: limpeza, cozinha, atendimento, qualquer serviço.", devocional:"Jesus lavou os pés de seus discípulos — o ato mais humilde de um Rei. Servir sem título ou reconhecimento é um dos sinais mais claros de transformação pelo Evangelho.", versiculo:"O maior entre vós será o vosso servo.", referencia:"Mateus 23:11", xp:100, talentos:20 },
+  { id:"m22", titulo:"Silêncio e Meditação", descricao:"Passe 15 minutos em silêncio total — sem celular, só ouvindo Deus.", devocional:"Num mundo cheio de barulho, o silêncio é revolucionário. É no silêncio que Deus fala em voz mansa e delicada. Aprender a ouvir é a disciplina mais necessária do discípulo.", versiculo:"Aquietai-vos e sabei que eu sou Deus.", referencia:"Salmos 46:10", xp:65, talentos:10 },
+  { id:"m23", titulo:"Perdoar a Si Mesmo", descricao:"Escolha se perdoar por algo que carrega com culpa — e seguir em frente.", devocional:"Muitos cristãos perdoam os outros com facilidade mas se torturam com seus próprios erros. A graça de Deus é suficiente para tudo — inclusive para o que você fez. Receba-a.", versiculo:"Portanto, já não há nenhuma condenação para os que estão em Cristo Jesus.", referencia:"Romanos 8:1", xp:85, talentos:15 },
+  { id:"m24", titulo:"Compartilhar sua Fé Online", descricao:"Publique algo sobre sua fé — versículo, reflexão ou testemunho.", devocional:"As redes sociais podem ser palanque de superficialidade ou de impacto eterno. Uma palavra de fé no lugar certo pode alcançar alguém que jamais entraria numa igreja.", versiculo:"Portanto, não vos envergonheis do testemunho do nosso Senhor.", referencia:"2 Timóteo 1:8", xp:70, talentos:12 },
+  { id:"m25", titulo:"Orar pelo Governo", descricao:"Ore especificamente por líderes do seu país — mesmo os que não admira.", devocional:"A oração pelos governantes não é aprovação política — é obediência. Deus usa reis, presidentes e prefeitos para seus propósitos. Nossa oração molda a história.", versiculo:"Exorto, pois, antes de tudo, que se façam súplicas, orações... pelos reis e por todos os que estão em autoridade.", referencia:"1 Timóteo 2:1-2", xp:60, talentos:10 },
+  { id:"m26", titulo:"Testemunhar no Trabalho", descricao:"Compartilhe algo de sua fé com um colega de trabalho ou estudo.", devocional:"Passamos a maior parte de nossa vida útil no trabalho. Se o Evangelho não entra nesse espaço, fica confinado a duas horas por semana. Seja luz onde você já está.", versiculo:"Vós sois a luz do mundo. Não se pode esconder uma cidade edificada sobre um monte.", referencia:"Mateus 5:14", xp:90, talentos:18 },
+  { id:"m27", titulo:"Dar sem Receber", descricao:"Dê algo de valor — tempo, presente, dinheiro — a alguém que nunca poderá retribuir.", devocional:"O nível mais alto de generosidade é o que não espera retorno. Dar a quem não pode pagar de volta é imitar o coração de Deus, que nos amou quando ainda éramos inimigos seus.", versiculo:"Quando deres um banquete, convida os pobres, os aleijados, os coxos, os cegos. Serás bem-aventurado.", referencia:"Lucas 14:13-14", xp:100, talentos:20 },
+  { id:"m28", titulo:"Praticar a Paciência", descricao:"Escolha conscientemente não reagir com raiva ou irritação hoje.", devocional:"Paciência não é passividade — é força sob controle. Em nossa cultura da resposta imediata, aguentar firme e responder com mansidão é um ato radical de contracorrente.", versiculo:"A brandura da resposta desvia o furor, mas a palavra dura suscita a ira.", referencia:"Provérbios 15:1", xp:70, talentos:12 },
+];
+
+function getMissaoHoje(): Missao {
+  const d = new Date();
+  const day = Math.floor((d.getTime() - new Date(d.getFullYear(), 0, 0).getTime()) / 86400000);
+  return MISSOES[day % MISSOES.length];
+}
+
 // ── Anel de progresso (5 segmentos ao redor do nó) ───────────────
 function AnelProgresso({ completas, total = 5 }: { completas: number; total?: number }) {
   const cx = 45, cy = 45, r = 42;
@@ -747,7 +802,7 @@ function AnelProgresso({ completas, total = 5 }: { completas: number; total?: nu
 
 // ── Tela HOME ─────────────────────────────────────────────────────
 function TelaHome({
-  perfil, vidas, onEscolher, onArmadura, onPersonagem, onRanking, onTrilhas, onSair,
+  perfil, vidas, onEscolher, onArmadura, onPersonagem, onRanking, onTrilhas, onMissoes, onSair,
 }: {
   perfil: Perfil; vidas: number;
   onEscolher: (t: Trilha) => void;
@@ -755,6 +810,7 @@ function TelaHome({
   onPersonagem: () => void;
   onRanking: () => void;
   onTrilhas: () => void;
+  onMissoes: () => void;
   onSair: () => void;
 }) {
   const pecasTotal = Object.values(perfil.armadura).filter(Boolean).length;
@@ -790,6 +846,9 @@ function TelaHome({
               {perfil.talentos}
             </span>
             <BotaoBgm />
+            <button onClick={onSair} title="Sair" style={{ background:"none",border:"none",cursor:"pointer",color:DS.off }}>
+              <svg width="16" height="16" viewBox="0 0 24 24"><path d="M10 12 L18 12 M18 12 L14 8 M18 12 L14 16" stroke={DS.off} strokeWidth="2" strokeLinecap="round"/><path d="M14 5 L5 5 L5 19 L14 19" stroke={DS.off} strokeWidth="2" strokeLinecap="round" fill="none"/></svg>
+            </button>
           </div>
         </div>
 
@@ -866,11 +925,11 @@ function TelaHome({
         {/* Nav */}
         <div className="banner-faixa" style={{ borderRadius: "0 0 8px 8px", padding: "8px 0", display: "flex", justifyContent: "space-around" }}>
           {([
-            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 3 L3 10 L3 21 L9 21 L9 15 L15 15 L15 21 L21 21 L21 10 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="9" y="15" width="6" height="6" fill={DS.douradoSombra}/></svg>, label: "Início", action: () => {} },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke={DS.douradoClaro} strokeWidth="1.5"/><line x1="12" y1="2" x2="12" y2="22" stroke={DS.douradoClaro} strokeWidth="1"/><line x1="2" y1="12" x2="22" y2="12" stroke={DS.douradoClaro} strokeWidth="1"/><circle cx="12" cy="12" r="2.5" fill={DS.douradoClaro}/><path d="M12 5 L13.5 9 L12 8 L10.5 9 Z" fill={DS.douradoClaro}/></svg>, label: "Início", action: () => {} },
             { icon: <svg width="24" height="24" viewBox="0 0 24 24"><rect x="3" y="4" width="12" height="16" rx="1.5" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="3" y="4" width="4" height="16" rx="1.5" fill={DS.douradoSombra} opacity="0.6"/><line x1="9" y1="8" x2="14" y2="8" stroke={DS.douradoSombra} strokeWidth="1"/><line x1="9" y1="11" x2="14" y2="11" stroke={DS.douradoSombra} strokeWidth="1"/><line x1="9" y1="14" x2="14" y2="14" stroke={DS.douradoSombra} strokeWidth="1"/><path d="M16 6 C18 6 21 7 21 10 C21 13 18 14 16 14" stroke={DS.douradoClaro} strokeWidth="1.5" fill="none" strokeLinecap="round"/></svg>, label: "Trilhas", action: onTrilhas },
-            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2 L4 6 L4 13 C4 18 7.5 22 12 23 C16.5 22 20 18 20 13 L20 6 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><path d="M12 7 L8 11 L10 13 L12 11 L16 8 Z" fill={DS.douradoSombra}/></svg>, label: "Armadura", action: onArmadura },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 3 L14 8 L8 6 L13 10 L7 10 L12 14 L9 19 L12 16 L15 19 L12 14 L17 10 L11 10 L16 6 L10 8 Z" fill={DS.douradoClaro}/><circle cx="12" cy="12" r="2" fill={DS.douradoSombra}/></svg>, label: "Missões", action: onMissoes },
             { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2 L14.5 8.5 L22 9.3 L16.5 14.2 L18.2 21.5 L12 17.8 L5.8 21.5 L7.5 14.2 L2 9.3 L9.5 8.5 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="10" y="19" width="4" height="4" rx="1" fill={DS.douradoSombra}/><rect x="8" y="22" width="8" height="2" rx="1" fill={DS.douradoSombra}/></svg>, label: "Ranking", action: onRanking },
-            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M10 12 L18 12 M18 12 L14 8 M18 12 L14 16" stroke={DS.douradoClaro} strokeWidth="2" strokeLinecap="round"/><path d="M14 5 L5 5 L5 19 L14 19" stroke={DS.douradoClaro} strokeWidth="2" strokeLinecap="round" fill="none"/></svg>, label: "Sair", action: onSair },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2 L4 6 L4 13 C4 18 7.5 22 12 23 C16.5 22 20 18 20 13 L20 6 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><path d="M12 7 L8 11 L10 13 L12 11 L16 8 Z" fill={DS.douradoSombra}/></svg>, label: "Armadura", action: onArmadura },
           ] as { icon: React.ReactNode; label: string; action: () => void }[]).map(nav => (
             <button key={nav.label} onClick={nav.action}
               style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", padding: "4px 8px" }}>
@@ -1010,6 +1069,203 @@ function TelaMapa({
             );
           })}
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Tela MISSOES ──────────────────────────────────────────────────
+function TelaMissoes({
+  perfil, missoesCompletas, onConcluir, onVoltar,
+}: {
+  perfil: Perfil;
+  missoesCompletas: MissaoConcluida[];
+  onConcluir: (mc: MissaoConcluida, xp: number, talentos: number) => void;
+  onVoltar: () => void;
+}) {
+  const missao = getMissaoHoje();
+  const hoje = new Date().toISOString().split("T")[0];
+  const jaConcluidaHoje = missoesCompletas.find(mc => mc.missaoId === missao.id && mc.data === hoje);
+  const [reflexao, setReflexao] = useState("");
+  const [confirmando, setConfirmando] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+
+  function handleConcluir() {
+    if (!reflexao.trim()) return;
+    setEnviando(true);
+    sfxCapituloCompleto();
+    const mc: MissaoConcluida = { missaoId: missao.id, data: hoje, reflexao: reflexao.trim(), xpGanho: missao.xp };
+    setTimeout(() => {
+      onConcluir(mc, missao.xp, missao.talentos);
+      setEnviando(false);
+      setConfirmando(false);
+    }, 400);
+  }
+
+  return (
+    <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: DS.bg }}>
+      {/* Header */}
+      <div className="banner-faixa" style={{ padding: "12px 20px", display: "flex", alignItems: "center", gap: "12px", zIndex: 10 }}>
+        <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.douradoClaro, fontSize: "20px", cursor: "pointer", padding: "4px 8px" }}>←</button>
+        <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "16px", color: DS.douradoClaro, fontWeight: "700", letterSpacing: "1px" }}>Missões Diárias</span>
+        <div style={{ marginLeft: "auto", display: "flex", gap: "8px", alignItems: "center" }}>
+          <span style={{ fontSize: "11px", color: DS.dourado, fontFamily: "var(--font-cinzel)" }}>
+            {missoesCompletas.length} concluídas
+          </span>
+        </div>
+      </div>
+
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 32px" }}>
+
+        {/* Missão do Dia */}
+        <div style={{ marginBottom: "6px" }}>
+          <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "11px", color: DS.dourado, letterSpacing: "2px", marginBottom: "10px" }}>
+            ✦ MISSÃO DE HOJE
+          </p>
+
+          <div style={{
+            background: `linear-gradient(145deg, #fdf6e3, #f0e4c0)`,
+            border: `2px solid ${DS.douradoClaro}`,
+            borderRadius: "12px",
+            padding: "20px",
+            boxShadow: `0 0 20px rgba(212,160,20,0.2), 0 4px 12px rgba(0,0,0,0.15)`,
+            marginBottom: "12px",
+            position: "relative",
+            overflow: "hidden",
+          }}>
+            {/* decorative corner */}
+            <div style={{ position: "absolute", top: 0, right: 0, width: "80px", height: "80px", background: `linear-gradient(225deg, rgba(212,160,20,0.15), transparent)`, borderRadius: "0 12px 0 80px" }} />
+
+            {/* XP badge */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "14px" }}>
+              <div style={{
+                background: `linear-gradient(135deg, ${DS.douradoClaro}, ${DS.douradoSombra})`,
+                borderRadius: "20px", padding: "4px 12px",
+                fontFamily: "var(--font-cinzel)", fontSize: "11px", fontWeight: "700", color: DS.titulo,
+              }}>
+                +{missao.xp} XP · +{missao.talentos} Talentos
+              </div>
+              {jaConcluidaHoje && (
+                <div style={{ background: DS.verde, borderRadius: "20px", padding: "4px 12px", fontFamily: "var(--font-cinzel)", fontSize: "11px", color: "white" }}>
+                  ✓ Concluída
+                </div>
+              )}
+            </div>
+
+            <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "20px", color: DS.titulo, fontWeight: "900", marginBottom: "8px" }}>
+              {missao.titulo}
+            </h2>
+            <p style={{ fontSize: "14px", color: DS.corpo, fontWeight: "600", marginBottom: "14px", lineHeight: 1.5 }}>
+              {missao.descricao}
+            </p>
+
+            {/* Divisor */}
+            <div className="divisor-ornamentado" style={{ marginBottom: "12px" }}><span>✦</span></div>
+
+            {/* Devocional */}
+            <p style={{ fontSize: "13px", color: DS.corpo, lineHeight: 1.7, marginBottom: "14px" }}>
+              {missao.devocional}
+            </p>
+
+            {/* Versículo */}
+            <div style={{
+              background: `linear-gradient(145deg, #2c1505, #1a0a02)`,
+              borderRadius: "8px", padding: "14px 16px",
+              borderLeft: `4px solid ${DS.douradoClaro}`,
+            }}>
+              <p style={{ fontStyle: "italic", color: DS.douradoClaro, fontSize: "13px", lineHeight: 1.6, marginBottom: "6px" }}>
+                "{missao.versiculo}"
+              </p>
+              <span style={{ fontSize: "11px", color: DS.douradoSombra, fontFamily: "var(--font-cinzel)" }}>— {missao.referencia}</span>
+            </div>
+          </div>
+
+          {/* Ação */}
+          {!jaConcluidaHoje ? (
+            !confirmando ? (
+              <button onClick={() => setConfirmando(true)} className="btn-medieval btn-dourado"
+                style={{ width: "100%", padding: "15px", fontSize: "14px" }}>
+                Concluir Missão ✦
+              </button>
+            ) : (
+              <div className="card-pergaminho" style={{ padding: "16px 20px" }}>
+                <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "12px", color: DS.titulo, marginBottom: "10px", letterSpacing: "0.5px" }}>
+                  O QUE VOCÊ APRENDEU COM ESSA MISSÃO?
+                </p>
+                <textarea
+                  value={reflexao}
+                  onChange={e => setReflexao(e.target.value)}
+                  placeholder="Escreva sua reflexão, o que sentiu, o que aconteceu..."
+                  style={{
+                    width: "100%", minHeight: "100px", padding: "12px",
+                    background: "#fdf6e3", border: `1.5px solid ${DS.borda}`,
+                    borderRadius: "8px", fontFamily: "var(--font-garamond)",
+                    fontSize: "14px", color: DS.titulo, resize: "vertical",
+                    outline: "none", lineHeight: 1.6,
+                  }}
+                />
+                <div style={{ display: "flex", gap: "10px", marginTop: "12px" }}>
+                  <button onClick={() => setConfirmando(false)} className="btn-medieval btn-escuro"
+                    style={{ flex: 1, padding: "12px", fontSize: "13px" }}>
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleConcluir}
+                    disabled={!reflexao.trim() || enviando}
+                    className="btn-medieval btn-dourado"
+                    style={{ flex: 2, padding: "12px", fontSize: "13px", opacity: reflexao.trim() ? 1 : 0.5 }}>
+                    {enviando ? "Salvando..." : "Registrar Reflexão ✦"}
+                  </button>
+                </div>
+              </div>
+            )
+          ) : (
+            /* Reflexão já registrada */
+            <div className="card-pergaminho" style={{ padding: "16px 20px", borderLeft: `4px solid ${DS.verde}` }}>
+              <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "11px", color: DS.verde, marginBottom: "8px" }}>
+                ✓ SUA REFLEXÃO DE HOJE
+              </p>
+              <p style={{ fontSize: "13px", color: DS.corpo, lineHeight: 1.6, fontStyle: "italic" }}>
+                "{jaConcluidaHoje.reflexao}"
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Diário de Fé */}
+        {missoesCompletas.length > 0 && (
+          <div style={{ marginTop: "28px" }}>
+            <div className="divisor-ornamentado" style={{ marginBottom: "16px" }}><span>Diário de Fé</span></div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {[...missoesCompletas].reverse().map((mc, i) => {
+                const m = MISSOES.find(x => x.id === mc.missaoId);
+                if (!m) return null;
+                const dataFmt = new Date(mc.data + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+                return (
+                  <div key={i} className="card-pergaminho" style={{ padding: "14px 16px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                      <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "12px", fontWeight: "700", color: DS.titulo }}>{m.titulo}</span>
+                      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                        <span style={{ fontSize: "10px", color: DS.dourado }}>+{mc.xpGanho} XP</span>
+                        <span style={{ fontSize: "11px", color: DS.off }}>{dataFmt}</span>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: "12px", color: DS.corpo, lineHeight: 1.5, fontStyle: "italic" }}>
+                      "{mc.reflexao}"
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {missoesCompletas.length === 0 && (
+          <div style={{ textAlign: "center", padding: "32px 16px", color: DS.off, fontSize: "13px", fontStyle: "italic" }}>
+            Complete a primeira missão para começar seu Diário de Fé.
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1830,6 +2086,7 @@ export default function App() {
   const [progressoIds, setProgressoIds] = useState<Set<string>>(new Set());
   const [progressoEtapas, setProgressoEtapas] = useState<Record<string, number>>({});
   const [etapaAtual, setEtapaAtual] = useState(0);
+  const [missoesCompletas, setMissoesCompletas] = useState<MissaoConcluida[]>([]);
   const [resultadoState, setResultadoState] = useState({ acertos: 0, total: 0, xp: 0, talentos: 0, novasPecas: [] as string[] });
 
   const atualizarVidas = useCallback((p: Perfil) => {
@@ -1841,6 +2098,13 @@ export default function App() {
     try {
       const salvo = localStorage.getItem("gq_etapas");
       if (salvo) setProgressoEtapas(JSON.parse(salvo));
+    } catch { /* ignore */ }
+  }, []);
+
+  useEffect(() => {
+    try {
+      const salvo = localStorage.getItem("gq_missoes");
+      if (salvo) setMissoesCompletas(JSON.parse(salvo));
     } catch { /* ignore */ }
   }, []);
 
@@ -1966,6 +2230,17 @@ export default function App() {
     setTela("resultado");
   }
 
+  async function handleConcluirMissao(mc: MissaoConcluida, xpGanho: number, talentosGanho: number) {
+    if (!perfil) return;
+    const novo = [...missoesCompletas, mc];
+    setMissoesCompletas(novo);
+    try { localStorage.setItem("gq_missoes", JSON.stringify(novo)); } catch {}
+    const novoXp = perfil.xp + xpGanho;
+    const novosTalentos = perfil.talentos + talentosGanho;
+    await atualizarPerfil(perfil.id, { xp: novoXp, talentos: novosTalentos });
+    setPerfil(p => p ? { ...p, xp: novoXp, talentos: novosTalentos } : p);
+  }
+
   async function handleSair() {
     await supabase.auth.signOut();
   }
@@ -2010,6 +2285,7 @@ export default function App() {
       onPersonagem={() => setTela("criar_personagem")}
       onRanking={() => setTela("ranking")}
       onTrilhas={() => setTela("trilhas")}
+      onMissoes={() => setTela("missoes")}
       onSair={handleSair}
     />
   );
@@ -2023,6 +2299,15 @@ export default function App() {
 
   if (tela === "ranking") return (
     <TelaRanking perfil={perfil} onVoltar={() => setTela("home")} />
+  );
+
+  if (tela === "missoes") return (
+    <TelaMissoes
+      perfil={perfil}
+      missoesCompletas={missoesCompletas}
+      onConcluir={(mc, xp, talentos) => { handleConcluirMissao(mc, xp, talentos); }}
+      onVoltar={() => setTela("home")}
+    />
   );
 
   if (tela === "mapa") return (
