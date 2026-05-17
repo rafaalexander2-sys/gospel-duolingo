@@ -192,3 +192,44 @@ export async function registrarLoginDiario(perfil: Perfil): Promise<Partial<Perf
   await atualizarPerfil(perfil.id, updates);
   return updates;
 }
+
+// ── Ranking & Admin ────────────────────────────────────────────────
+
+export type PerfilRanking = Pick<Perfil, "id" | "nome" | "xp" | "talentos" | "sequencia" | "personagem_tipo" | "personagem_cor">;
+
+export async function carregarRanking(limit = 50): Promise<PerfilRanking[]> {
+  const { data } = await supabase
+    .from("perfis")
+    .select("id, nome, xp, talentos, sequencia, personagem_tipo, personagem_cor")
+    .order("xp", { ascending: false })
+    .limit(limit);
+  return (data ?? []) as PerfilRanking[];
+}
+
+export type PerfilAdmin = Pick<Perfil, "id" | "nome" | "email" | "xp" | "talentos" | "sequencia" | "personagem_tipo" | "personagem_cor" | "criado_em">;
+
+export async function carregarTodosPerfis(): Promise<PerfilAdmin[]> {
+  const { data } = await supabase
+    .from("perfis")
+    .select("id, nome, email, xp, talentos, sequencia, personagem_tipo, personagem_cor, criado_em")
+    .order("criado_em", { ascending: false });
+  return (data ?? []) as PerfilAdmin[];
+}
+
+export async function resetarPerfilAdmin(userId: string): Promise<boolean> {
+  const { error } = await supabase.from("perfis").update({
+    xp: 0,
+    talentos: 50,
+    sequencia: 0,
+    sequencia_max: 0,
+    sequencia_ultimo_dia: null,
+    vidas: 5,
+    armadura: {},
+  }).eq("id", userId);
+  return !error;
+}
+
+export async function deletarProgressoAdmin(userId: string): Promise<boolean> {
+  const { error } = await supabase.from("progresso").delete().eq("user_id", userId);
+  return !error;
+}
