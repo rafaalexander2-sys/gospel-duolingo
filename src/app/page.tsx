@@ -27,7 +27,7 @@ const DS = {
   verde: "#1a4a1a", acerto: "#c8e6c0", erro: "#f0c8c8", off: "#9a8060",
 };
 
-type Tela = "login" | "cadastro" | "criar_personagem" | "home" | "mapa" | "jogo" | "resultado" | "armadura";
+type Tela = "login" | "cadastro" | "criar_personagem" | "home" | "mapa" | "jogo" | "resultado" | "armadura" | "ranking";
 type Trilha = "VT" | "NT" | "JESUS";
 type TipoPersonagem = "peregrino" | "profeta" | "guerreiro" | "sabia";
 
@@ -723,12 +723,13 @@ function BotaoBgm() {
 
 // ── Tela HOME ─────────────────────────────────────────────────────
 function TelaHome({
-  perfil, vidas, onEscolher, onArmadura, onPersonagem, onSair,
+  perfil, vidas, onEscolher, onArmadura, onPersonagem, onRanking, onSair,
 }: {
   perfil: Perfil; vidas: number;
   onEscolher: (t: Trilha) => void;
   onArmadura: () => void;
   onPersonagem: () => void;
+  onRanking: () => void;
   onSair: () => void;
 }) {
   const pecasTotal = Object.values(perfil.armadura).filter(Boolean).length;
@@ -783,25 +784,6 @@ function TelaHome({
             </button>
           )}
         </div>
-
-        {/* Personagem card */}
-        <button onClick={onPersonagem} style={{
-          width: "100%", background: "none", border: "none", cursor: "pointer", padding: "0", marginBottom: "12px",
-        }}>
-          <div className="card-pergaminho" style={{
-            padding: "12px 16px", display: "flex", alignItems: "center", gap: "14px",
-            border: `1.5px solid ${DS.douradoClaro}`, boxShadow: `0 0 10px rgba(212,160,20,0.2)`,
-          }}>
-            <SvgPersonagem tipo={perfil.personagem_tipo} cor={perfil.personagem_cor} size={56} />
-            <div style={{ flex: 1, textAlign: "left" }}>
-              <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "14px", fontWeight: "700", color: DS.titulo }}>{perfil.nome}</div>
-              <div style={{ fontSize: "11px", color: DS.off, marginTop: "2px" }}>
-                {ARQUETIPOS.find(a => a.id === perfil.personagem_tipo)?.nome ?? perfil.personagem_tipo}
-              </div>
-            </div>
-            <span style={{ fontSize: "12px", color: DS.dourado, fontFamily: "var(--font-cinzel)" }}>Editar</span>
-          </div>
-        </button>
 
         <div className="divisor-ornamentado"><span>✦</span></div>
 
@@ -859,13 +841,14 @@ function TelaHome({
         {/* Nav */}
         <div className="banner-faixa" style={{ borderRadius: "0 0 8px 8px", padding: "8px 0", display: "flex", justifyContent: "space-around" }}>
           {([
-            { icon: <svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 2 L2 8 L2 16 L7 16 L7 11 L11 11 L11 16 L16 16 L16 8 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="7" y="11" width="4" height="5" fill={DS.douradoSombra}/></svg>, label: "Início", action: () => {} },
-            { icon: <svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 2 L3 5 L3 10 C3 14 6 17 9 18 C12 17 15 14 15 10 L15 5 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><path d="M9 6 L6 9 L8 11 L9 10 L12 7 Z" fill={DS.douradoSombra}/></svg>, label: "Armadura", action: onArmadura },
-            { icon: <svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="6" r="4" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><path d="M3 17 C3 12 15 12 15 17" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/></svg>, label: "Personagem", action: onPersonagem },
-            { icon: <svg width="18" height="18" viewBox="0 0 18 18"><path d="M7 9 L14 9 M14 9 L11 6 M14 9 L11 12" stroke={DS.douradoClaro} strokeWidth="1.8" strokeLinecap="round"/><path d="M10 4 L4 4 L4 14 L10 14" stroke={DS.douradoClaro} strokeWidth="1.5" strokeLinecap="round" fill="none"/></svg>, label: "Sair", action: onSair },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 3 L3 10 L3 21 L9 21 L9 15 L15 15 L15 21 L21 21 L21 10 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="9" y="15" width="6" height="6" fill={DS.douradoSombra}/></svg>, label: "Início", action: () => {} },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><rect x="3" y="4" width="12" height="16" rx="1.5" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="3" y="4" width="4" height="16" rx="1.5" fill={DS.douradoSombra} opacity="0.6"/><line x1="9" y1="8" x2="14" y2="8" stroke={DS.douradoSombra} strokeWidth="1"/><line x1="9" y1="11" x2="14" y2="11" stroke={DS.douradoSombra} strokeWidth="1"/><line x1="9" y1="14" x2="14" y2="14" stroke={DS.douradoSombra} strokeWidth="1"/><path d="M16 6 C18 6 21 7 21 10 C21 13 18 14 16 14" stroke={DS.douradoClaro} strokeWidth="1.5" fill="none" strokeLinecap="round"/></svg>, label: "Trilhas", action: () => {} },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2 L4 6 L4 13 C4 18 7.5 22 12 23 C16.5 22 20 18 20 13 L20 6 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><path d="M12 7 L8 11 L10 13 L12 11 L16 8 Z" fill={DS.douradoSombra}/></svg>, label: "Armadura", action: onArmadura },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2 L14.5 8.5 L22 9.3 L16.5 14.2 L18.2 21.5 L12 17.8 L5.8 21.5 L7.5 14.2 L2 9.3 L9.5 8.5 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="10" y="19" width="4" height="4" rx="1" fill={DS.douradoSombra}/><rect x="8" y="22" width="8" height="2" rx="1" fill={DS.douradoSombra}/></svg>, label: "Ranking", action: onRanking },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M10 12 L18 12 M18 12 L14 8 M18 12 L14 16" stroke={DS.douradoClaro} strokeWidth="2" strokeLinecap="round"/><path d="M14 5 L5 5 L5 19 L14 19" stroke={DS.douradoClaro} strokeWidth="2" strokeLinecap="round" fill="none"/></svg>, label: "Sair", action: onSair },
           ] as { icon: React.ReactNode; label: string; action: () => void }[]).map(nav => (
             <button key={nav.label} onClick={nav.action}
-              style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", padding: "4px 10px" }}>
+              style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", padding: "4px 8px" }}>
               {nav.icon}
               <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "9px", color: DS.off }}>{nav.label}</span>
             </button>
@@ -889,78 +872,106 @@ function TelaMapa({
   const capitulos: Capitulo[] = trilha === "VT" ? velhoTestamento : trilha === "NT" ? novoTestamento : jornadaJesus;
   const titulo = trilha === "VT" ? "Velho Testamento" : trilha === "NT" ? "Novo Testamento" : "Jornada de Jesus";
 
+  const primeiroNaoCompleto = capitulos.findIndex((cap, i) => !progressoCompleto.has(`${trilha}_${cap.id}`));
+  const idxAtual = primeiroNaoCompleto === -1 ? capitulos.length : primeiroNaoCompleto;
+
   return (
-    <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: DS.bg }}>
+    <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: "linear-gradient(180deg, #1a1208 0%, #2a1c08 40%, #1a1208 100%)" }}>
+      <style>{`
+        @keyframes mapa-pulse { 0%,100%{box-shadow:0 0 20px rgba(0,200,255,0.5),0 4px 12px rgba(0,0,0,0.5)} 50%{box-shadow:0 0 40px rgba(0,200,255,0.9),0 4px 12px rgba(0,0,0,0.5)} }
+        .cap-atual { animation: mapa-pulse 2s ease-in-out infinite; }
+      `}</style>
       {/* Header */}
-      <div className="banner-faixa" style={{ padding: "12px 20px", display: "flex", alignItems: "center", gap: "12px", zIndex: 10 }}>
+      <div style={{ padding: "12px 20px", display: "flex", alignItems: "center", gap: "12px", zIndex: 10, background: "rgba(0,0,0,0.4)", backdropFilter: "blur(8px)" }}>
         <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.douradoClaro, fontSize: "20px", cursor: "pointer", padding: "4px 8px" }}>←</button>
         <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "16px", color: DS.douradoClaro, fontWeight: "700" }}>{titulo}</span>
-        <div style={{ marginLeft: "auto", display: "flex", gap: "12px" }}>
-          <span style={{ fontSize: "13px", color: "#f0a0a0" }}>{"❤️".repeat(vidas)}</span>
-          <span style={{ fontSize: "13px", color: DS.douradoClaro }}>🪙 {perfil.talentos}</span>
+        <div style={{ marginLeft: "auto", display: "flex", gap: "14px", alignItems: "center" }}>
+          <span style={{ fontSize: "14px", color: "#f0a0a0", letterSpacing: "2px" }}>
+            {"♥".repeat(vidas)}{"♡".repeat(VIDAS_MAX - vidas)}
+          </span>
+          <span style={{ fontSize: "13px", color: DS.douradoClaro, display: "flex", alignItems: "center", gap: "4px" }}>
+            <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6.5" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="1"/><text x="7" y="10.5" textAnchor="middle" fontSize="7" fill={DS.douradoSombra} fontWeight="bold">D</text></svg>
+            {perfil.talentos}
+          </span>
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 40px", position: "relative" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 60px", position: "relative" }}>
         {/* Personagem */}
-        <div style={{ textAlign: "center", marginBottom: "8px" }}>
+        <div style={{ textAlign: "center", marginBottom: "12px" }}>
           <SvgPersonagem tipo={perfil.personagem_tipo} cor={perfil.personagem_cor} size={72} />
         </div>
 
         {/* Caminho */}
         <div style={{ position: "relative", paddingBottom: "20px" }}>
-          {/* Linha do caminho */}
+          {/* Linha do caminho — espessa com gradiente */}
           <div style={{
             position: "absolute", left: "50%", top: "10px", bottom: "10px",
-            width: "6px", marginLeft: "-3px",
-            background: `linear-gradient(180deg, ${DS.douradoSombra} 0%, ${DS.borda} 100%)`,
-            borderRadius: "3px", opacity: 0.4,
-            backgroundImage: "repeating-linear-gradient(180deg, transparent 0, transparent 8px, rgba(255,255,255,0.15) 8px, rgba(255,255,255,0.15) 10px)",
+            width: "8px", marginLeft: "-4px",
+            background: `linear-gradient(180deg, ${DS.douradoClaro} 0%, ${DS.douradoSombra} 60%, #3a2808 100%)`,
+            borderRadius: "4px", opacity: 0.5,
           }} />
 
           {capitulos.map((cap, idx) => {
             const chave = `${trilha}_${cap.id}`;
             const completo = progressoCompleto.has(chave);
             const bloqueado = idx > 0 && !progressoCompleto.has(`${trilha}_${capitulos[idx - 1].id}`);
+            const atual = idx === idxAtual;
             const lado = idx % 2 === 0 ? "left" : "right";
+
+            let bg, borda, glow;
+            if (completo) {
+              bg = `linear-gradient(145deg, ${DS.douradoClaro}, ${DS.douradoSombra})`;
+              borda = DS.douradoClaro;
+              glow = `0 0 20px rgba(212,160,20,0.7), 0 4px 10px rgba(0,0,0,0.5)`;
+            } else if (atual) {
+              bg = `linear-gradient(145deg, #00c8ff, #0060a0)`;
+              borda = "#00c8ff";
+              glow = `0 0 20px rgba(0,200,255,0.6), 0 4px 10px rgba(0,0,0,0.5)`;
+            } else if (bloqueado) {
+              bg = `linear-gradient(145deg, #2a2018, #1a1208)`;
+              borda = "#3a2818";
+              glow = `0 2px 6px rgba(0,0,0,0.5)`;
+            } else {
+              bg = `linear-gradient(145deg, #fdf6e3, #c8a860)`;
+              borda = DS.borda;
+              glow = `0 3px 10px rgba(0,0,0,0.3)`;
+            }
 
             return (
               <div key={cap.id} style={{
                 display: "flex",
                 flexDirection: lado === "left" ? "row" : "row-reverse",
                 alignItems: "center", gap: "12px",
-                marginBottom: "24px", position: "relative",
+                marginBottom: "28px", position: "relative",
               }}>
                 {/* Info */}
-                <div style={{ flex: 1, textAlign: lado === "left" ? "right" : "left", opacity: bloqueado ? 0.5 : 1 }}>
-                  <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "12px", color: DS.titulo, fontWeight: "700" }}>{cap.titulo}</div>
-                  {completo && <div style={{ fontSize: "10px", color: DS.verde }}>✓ Completo</div>}
+                <div style={{ flex: 1, textAlign: lado === "left" ? "right" : "left", opacity: bloqueado ? 0.4 : 1 }}>
+                  <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "12px", color: completo ? DS.douradoClaro : atual ? "#00c8ff" : "#c8b890", fontWeight: "700" }}>{cap.titulo}</div>
+                  {completo && <div style={{ fontSize: "10px", color: DS.douradoClaro, marginTop: "2px" }}>✓ Completo</div>}
+                  {atual && <div style={{ fontSize: "10px", color: "#00c8ff", fontFamily: "var(--font-cinzel)", fontWeight: "700", marginTop: "2px" }}>JOGAR</div>}
                 </div>
 
                 {/* Botão capítulo */}
                 <button
                   disabled={bloqueado}
                   onClick={() => !bloqueado && onCapitulo(cap, idx)}
+                  className={atual ? "cap-atual" : ""}
                   style={{
-                    width: "64px", height: "64px", borderRadius: "50%", flexShrink: 0,
-                    background: completo
-                      ? `linear-gradient(145deg, ${DS.douradoClaro}, ${DS.douradoSombra})`
-                      : bloqueado
-                        ? "linear-gradient(145deg, #8a7a60, #6a5a40)"
-                        : `linear-gradient(145deg, #fdf6e3, ${DS.borda})`,
-                    border: `2px solid ${completo ? DS.douradoClaro : bloqueado ? DS.off : DS.borda}`,
-                    boxShadow: completo
-                      ? `0 0 16px rgba(212,160,20,0.6), 0 4px 8px rgba(0,0,0,0.3)`
-                      : `0 3px 8px rgba(0,0,0,0.25)`,
+                    width: "76px", height: "76px", borderRadius: "50%", flexShrink: 0,
+                    background: bg,
+                    border: `3px solid ${borda}`,
+                    boxShadow: glow,
                     cursor: bloqueado ? "not-allowed" : "pointer",
-                    fontSize: "24px",
+                    fontSize: "26px",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    transition: "box-shadow 0.2s",
+                    transition: "transform 0.15s",
+                    opacity: bloqueado ? 0.35 : 1,
                   }}>
-                  {bloqueado ? "🔒" : completo ? cap.icone : cap.icone}
+                  {bloqueado ? "🔒" : cap.icone}
                 </button>
 
-                <div style={{ flex: 1, opacity: bloqueado ? 0.5 : 1 }} />
+                <div style={{ flex: 1, opacity: bloqueado ? 0.4 : 1 }} />
               </div>
             );
           })}
@@ -996,6 +1007,17 @@ function TelaQuiz({
   const [reviewIdx, setReviewIdx] = useState(0);
   const [aviso, setAviso] = useState<string | null>(null);
   const avisoRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [msgMotivacional, setMsgMotivacional] = useState<string | null>(null);
+  const [msgMotivacionalRef, setMsgMotivacionalRef] = useState<string | null>(null);
+
+  const MSGS_MOTIVACIONAIS = [
+    { texto: "\"Tudo posso naquele que me fortalece.\"", ref: "— Filipenses 4:13" },
+    { texto: "\"O Senhor é o meu pastor e nada me faltará.\"", ref: "— Salmos 23:1" },
+    { texto: "\"Sede fortes e corajosos. Não temais!\"", ref: "— Deuteronômio 31:6" },
+    { texto: "\"Confiai no Senhor de todo o coração.\"", ref: "— Provérbios 3:5" },
+    { texto: "\"Buscai primeiro o Reino de Deus.\"", ref: "— Mateus 6:33" },
+    { texto: "\"Com Deus, nada é impossível.\"", ref: "— Lucas 1:37" },
+  ];
 
   function mostrarAviso(msg: string) {
     if (avisoRef.current) clearTimeout(avisoRef.current);
@@ -1062,7 +1084,7 @@ function TelaQuiz({
     setFeedback({ certa, explicacao: (q as any).explicacao ?? "" });
   }
 
-  function proximo() {
+  function avancarProximo() {
     resetQuestao();
     if (isReview) {
       if (reviewIdx + 1 >= reviewList.length) {
@@ -1084,6 +1106,17 @@ function TelaQuiz({
     } else { setIdx(i => i + 1); }
   }
 
+  function proximo() {
+    if (!isReview && (idx + 1) % 5 === 0 && idx + 1 < questoesPrincipais.length) {
+      const msg = MSGS_MOTIVACIONAIS[Math.floor(Math.random() * MSGS_MOTIVACIONAIS.length)];
+      setMsgMotivacional(msg.texto);
+      setMsgMotivacionalRef(msg.ref);
+      resetQuestao();
+      return;
+    }
+    avancarProximo();
+  }
+
   const corFeedback = feedback?.certa ? DS.acerto : DS.erro;
   const bordaFeedback = feedback?.certa ? DS.verde : DS.vermelho;
   const podeVerificar = isOrdenar ? ordemToque.length === opcoes.length : selecionada !== null;
@@ -1091,7 +1124,10 @@ function TelaQuiz({
   if (phase === "review-intro") return (
     <div style={{ position: "fixed", inset: 0, background: `linear-gradient(145deg,${DS.vermelhoEsc},#1a0808)`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "20px", padding: "32px" }}>
       <style>{`@keyframes rl { from{width:0%} to{width:100%} }`}</style>
-      <div style={{ fontSize: "52px" }}>🔄</div>
+      <svg width="64" height="64" viewBox="0 0 64 64" style={{ marginBottom: "0" }}>
+        <circle cx="32" cy="32" r="28" fill="none" stroke="#ff8888" strokeWidth="5" strokeDasharray="120 30" strokeLinecap="round"/>
+        <path d="M50 18 L56 12 M56 12 L56 22 M56 12 L46 12" stroke="#ff8888" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
       <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "24px", color: "#ffdddd", fontWeight: "900", letterSpacing: "2px", textAlign: "center" }}>Revisão de Erros</h2>
       <p style={{ color: "#ffaaaa", fontSize: "15px", textAlign: "center", lineHeight: 1.6 }}>
         Você errou <strong style={{ color: "#ff6666" }}>{reviewList.length}</strong> questão{reviewList.length !== 1 ? "ões" : ""}.<br />
@@ -1099,6 +1135,25 @@ function TelaQuiz({
       </p>
       <div style={{ width: "60px", height: "6px", borderRadius: "3px", background: "rgba(255,255,255,0.15)", overflow: "hidden" }}>
         <div style={{ height: "100%", background: "#ff8888", borderRadius: "3px", animation: "rl 2.5s linear forwards" }} />
+      </div>
+    </div>
+  );
+
+  if (msgMotivacional) return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px", zIndex: 200 }}>
+      <div className="card-pergaminho" style={{ padding: "32px 28px", maxWidth: "380px", width: "100%", textAlign: "center" }}>
+        <div style={{ fontSize: "40px", marginBottom: "16px" }}>✦</div>
+        <p style={{ fontFamily: "var(--font-garamond)", fontSize: "20px", color: DS.titulo, lineHeight: 1.7, fontStyle: "italic", marginBottom: "12px" }}>
+          {msgMotivacional}
+        </p>
+        <p style={{ fontSize: "13px", color: DS.dourado, fontFamily: "var(--font-cinzel)", marginBottom: "24px" }}>{msgMotivacionalRef}</p>
+        <button
+          onClick={() => { setMsgMotivacional(null); setMsgMotivacionalRef(null); avancarProximo(); }}
+          className="btn-medieval btn-dourado"
+          style={{ width: "100%", padding: "14px", fontSize: "14px" }}
+        >
+          Continuar →
+        </button>
       </div>
     </div>
   );
@@ -1269,16 +1324,16 @@ function TelaQuiz({
         <div className="barra-progress-track" style={{ flex: 1 }}>
           <div className="barra-progress-fill" style={{ width: `${progressoPct}%`, background: isReview ? "#ff8888" : undefined }} />
         </div>
-        <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "11px", color: isReview ? "#ff8888" : DS.dourado, whiteSpace: "nowrap" }}>
-          {isReview ? "🔄" : "✦"} {questaoAtual + 1}/{questoes.length}
+        <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "11px", color: isReview ? "#ff8888" : DS.dourado, whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px" }}>
+          {isReview ? <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7 C2 4 4 2 7 2 C10 2 12 4 12 7 C12 10 10 12 7 12 C4 12 2 10 2 7Z" fill="none" stroke="#ff8888" strokeWidth="1.5"/><path d="M5 5 L9 9 M9 5 L5 9" stroke="#ff8888" strokeWidth="1.5" strokeLinecap="round"/><path d="M7 2 L7 0 M11.5 2.5 L13 1 M12 7 L14 7" stroke="#ff8888" strokeWidth="1" strokeLinecap="round"/></svg> : "✦"} {questaoAtual + 1}/{questoes.length}
         </span>
-        <span style={{ fontSize: "12px", color: "#f0a0a0" }}>{"❤️".repeat(vidasRestantes)}{"🖤".repeat(Math.max(0, VIDAS_MAX - vidasRestantes))}</span>
+        <span style={{ fontSize: "12px", color: "#f0a0a0", letterSpacing: "1px" }}>{"♥".repeat(vidasRestantes)}{"♡".repeat(Math.max(0, VIDAS_MAX - vidasRestantes))}</span>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 20px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
           <span style={{ background: isReview ? `linear-gradient(135deg,#7a1515,#4a0a0a)` : `linear-gradient(135deg,${DS.vermelho},${DS.vermelhoEsc})`, color: isReview ? "#ffaaaa" : "#ffcccc", fontSize: "11px", padding: "3px 10px", borderRadius: "12px", fontFamily: "var(--font-cinzel)", letterSpacing: "0.5px" }}>
-            {isReview ? "🔄 REVISÃO" : `📖 ${capitulo.titulo.toUpperCase()}`}
+            {isReview ? "↺ REVISÃO" : capitulo.titulo.toUpperCase()}
           </span>
           {xpGanho > 0 && <span style={{ fontSize: "11px", color: DS.dourado }}>+{xpGanho} XP</span>}
         </div>
@@ -1297,9 +1352,9 @@ function TelaQuiz({
 
       <div className="banner-faixa" style={{ padding: "12px 20px" }}>
         {!confirmada ? (
-          <button onClick={confirmar} disabled={!podeVerificar} className="btn-medieval btn-dourado" style={{ width: "100%", padding: "14px", fontSize: "14px", opacity: podeVerificar ? 1 : 0.5 }}>Verificar</button>
+          <button onClick={() => { sfxClick(); confirmar(); }} disabled={!podeVerificar} className="btn-medieval btn-dourado" style={{ width: "100%", padding: "14px", fontSize: "14px", opacity: podeVerificar ? 1 : 0.5 }}>Verificar</button>
         ) : (
-          <button onClick={proximo} className="btn-medieval btn-dourado" style={{ width: "100%", padding: "14px", fontSize: "14px" }}>
+          <button onClick={() => { sfxClick(); proximo(); }} className="btn-medieval btn-dourado" style={{ width: "100%", padding: "14px", fontSize: "14px" }}>
             {isReview ? (reviewIdx + 1 >= reviewList.length ? "Finalizar ✦" : "Próxima →") : (idx + 1 >= questoesPrincipais.length ? (wrongList.length > 0 ? "Revisar Erros 🔄" : "Ver Resultado ✦") : "Continuar →")}
           </button>
         )}
@@ -1310,18 +1365,20 @@ function TelaQuiz({
 
 // ── Tela RESULTADO ────────────────────────────────────────────────
 function TelaResultado({
-  capitulo, acertos, total, xpGanho, talentosGanho, novasPecas,
+  capitulo, acertos, total, xpGanho, talentosGanho, novasPecas, streakDias,
   onReiniciar, onVoltar,
 }: {
   capitulo: Capitulo; acertos: number; total: number;
   xpGanho: number; talentosGanho: number;
-  novasPecas: string[];
+  novasPecas: string[]; streakDias?: number;
   onReiniciar: () => void; onVoltar: () => void;
 }) {
   const pct = Math.round((acertos / total) * 100);
   const perfeito = acertos === total;
+  const [step, setStep] = useState<"pontos" | "ofensiva" | "arca" | "fim">("pontos");
+  const arcaBonus = talentosGanho + 15;
 
-  return (
+  if (step === "pontos") return (
     <div style={{ position: "fixed", inset: 0, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px" }}>
       <style>{`
         @keyframes shine { 0%,100%{opacity:0.6} 50%{opacity:1} }
@@ -1335,7 +1392,6 @@ function TelaResultado({
           </h2>
           <p style={{ color: DS.off, fontSize: "13px", marginBottom: "20px" }}>{capitulo.titulo}</p>
 
-          {/* Score */}
           <div style={{ display: "flex", justifyContent: "center", gap: "24px", marginBottom: "20px" }}>
             <div>
               <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "28px", fontWeight: "900", color: perfeito ? DS.douradoClaro : DS.titulo }}>{pct}%</div>
@@ -1349,11 +1405,10 @@ function TelaResultado({
             <div style={{ width: "1px", background: DS.borda }} />
             <div>
               <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "24px", color: DS.dourado }}>+{talentosGanho}</div>
-              <div style={{ fontSize: "11px", color: DS.off }}>🪙 Talentos</div>
+              <div style={{ fontSize: "11px", color: DS.off }}>Talentos</div>
             </div>
           </div>
 
-          {/* Peças desbloqueadas */}
           {novasPecas.length > 0 && (
             <div style={{ background: `linear-gradient(145deg, #fdf6e3, #f0e4c0)`, border: `1.5px solid ${DS.douradoClaro}`, borderRadius: "8px", padding: "14px", marginBottom: "16px" }}>
               <p className="shine" style={{ fontFamily: "var(--font-cinzel)", fontSize: "12px", color: DS.dourado, marginBottom: "8px" }}>✦ ARMADURA DESBLOQUEADA ✦</p>
@@ -1372,19 +1427,173 @@ function TelaResultado({
             </div>
           )}
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            <button onClick={onReiniciar} className="btn-medieval btn-dourado"
-              style={{ width: "100%", padding: "13px", fontSize: "14px" }}>
-              Tentar Novamente
-            </button>
-            <button onClick={onVoltar} className="btn-medieval btn-escuro"
-              style={{ width: "100%", padding: "11px", fontSize: "13px" }}>
-              ← Voltar ao Mapa
-            </button>
-          </div>
+          <button onClick={() => setStep("ofensiva")} className="btn-medieval btn-dourado"
+            style={{ width: "100%", padding: "13px", fontSize: "14px" }}>
+            Ver Progresso →
+          </button>
         </div>
         <SlotAnuncio altura={90} label="banner" />
       </main>
+    </div>
+  );
+
+  if (step === "ofensiva") return (
+    <div style={{ position: "fixed", inset: 0, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", background: `linear-gradient(145deg, #1a0a00, #2a1200)` }}>
+      <main style={{ width: "100%", maxWidth: "420px", textAlign: "center" }}>
+        <svg width="80" height="100" viewBox="0 0 80 100" style={{ marginBottom: "16px" }}>
+          <path d="M40 5 C30 20 10 30 10 50 C10 72 23 90 40 95 C57 90 70 72 70 50 C70 30 50 20 40 5Z" fill="#ff6a00" opacity="0.9"/>
+          <path d="M40 20 C33 32 20 40 20 55 C20 70 29 82 40 86 C51 82 60 70 60 55 C60 40 47 32 40 20Z" fill="#ffb800" opacity="0.85"/>
+          <path d="M40 35 C36 43 28 48 28 58 C28 67 33 75 40 78 C47 75 52 67 52 58 C52 48 44 43 40 35Z" fill="#fff176" opacity="0.8"/>
+        </svg>
+        <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "28px", fontWeight: "900", color: "#ffb800", marginBottom: "8px", letterSpacing: "1px" }}>
+          Ofensiva de {streakDias ?? 1} {(streakDias ?? 1) === 1 ? "dia" : "dias"}!
+        </h2>
+        <p style={{ color: "#ffddaa", fontSize: "15px", lineHeight: 1.6, marginBottom: "32px" }}>
+          Continue assim! Cada dia dedicado fortalece sua fé e sabedoria.
+        </p>
+        <button onClick={() => setStep("arca")} className="btn-medieval btn-dourado"
+          style={{ width: "100%", padding: "14px", fontSize: "14px", maxWidth: "360px" }}>
+          Abrir Arca →
+        </button>
+      </main>
+    </div>
+  );
+
+  if (step === "arca") return (
+    <div style={{ position: "fixed", inset: 0, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", background: `linear-gradient(145deg, #0a0806, #1a1204)` }}>
+      <style>{`
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        .float-arca { animation: float 2.4s ease-in-out infinite; }
+      `}</style>
+      <main style={{ width: "100%", maxWidth: "420px", textAlign: "center" }}>
+        <div className="float-arca" style={{ marginBottom: "20px" }}>
+          <svg width="120" height="90" viewBox="0 0 120 90">
+            <rect x="10" y="40" width="100" height="48" rx="6" fill="#8a5c20" stroke="#d4a017" strokeWidth="2"/>
+            <rect x="10" y="40" width="100" height="12" rx="4" fill="#b87830" stroke="#d4a017" strokeWidth="1.5"/>
+            <path d="M10 52 Q60 30 110 52" fill="#c88c30" stroke="#d4a017" strokeWidth="2"/>
+            <rect x="20" y="54" width="25" height="28" rx="3" fill="#7a4c18" stroke="#b8860b" strokeWidth="1"/>
+            <rect x="75" y="54" width="25" height="28" rx="3" fill="#7a4c18" stroke="#b8860b" strokeWidth="1"/>
+            <rect x="50" y="56" width="20" height="26" rx="3" fill="#7a4c18" stroke="#b8860b" strokeWidth="1"/>
+            <rect x="52" y="60" width="16" height="6" rx="2" fill="#d4a017" opacity="0.8"/>
+            <circle cx="60" cy="63" r="3" fill="#ffcc00"/>
+            <line x1="10" y1="52" x2="110" y2="52" stroke="#d4a017" strokeWidth="1.5"/>
+            <rect x="5" y="56" width="8" height="26" rx="2" fill="#6a3c10" stroke="#b8860b" strokeWidth="1"/>
+            <rect x="107" y="56" width="8" height="26" rx="2" fill="#6a3c10" stroke="#b8860b" strokeWidth="1"/>
+          </svg>
+        </div>
+        <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "24px", fontWeight: "900", color: DS.douradoClaro, marginBottom: "8px", letterSpacing: "1px" }}>
+          Arca Recompensa!
+        </h2>
+        <p style={{ color: DS.off, fontSize: "14px", marginBottom: "8px" }}>Recompensa acumulada:</p>
+        <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "32px", color: DS.douradoClaro, marginBottom: "28px", fontWeight: "900" }}>
+          +{arcaBonus} talentos
+        </p>
+        <button onClick={() => setStep("fim")} style={{
+          width: "100%", maxWidth: "360px", padding: "15px", fontSize: "15px",
+          background: `linear-gradient(145deg, ${DS.douradoClaro}, ${DS.douradoSombra})`,
+          border: `2px solid ${DS.douradoClaro}`, borderRadius: "8px", cursor: "pointer",
+          fontFamily: "var(--font-cinzel)", fontWeight: "700", color: "#1a0a00",
+          boxShadow: `0 0 20px rgba(212,160,20,0.5)`,
+        }}>
+          Abrir Arca
+        </button>
+      </main>
+    </div>
+  );
+
+  // step === "fim"
+  return (
+    <div style={{ position: "fixed", inset: 0, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", background: `linear-gradient(145deg, #1a1208, #2a1c08)` }}>
+      <style>{`
+        @keyframes sparkle { 0%,100%{opacity:0;transform:scale(0.5)} 50%{opacity:1;transform:scale(1.2)} }
+        .sp1{animation:sparkle 1.2s ease-in-out infinite 0s}
+        .sp2{animation:sparkle 1.2s ease-in-out infinite 0.4s}
+        .sp3{animation:sparkle 1.2s ease-in-out infinite 0.8s}
+      `}</style>
+      <main style={{ width: "100%", maxWidth: "420px", textAlign: "center" }}>
+        <div style={{ position: "relative", display: "inline-block", marginBottom: "24px" }}>
+          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "48px", fontWeight: "900", color: DS.douradoClaro, textShadow: `0 0 30px rgba(212,160,20,0.8)` }}>
+            +{arcaBonus}
+          </div>
+          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "18px", color: DS.dourado }}>talentos</div>
+          <div className="sp1" style={{ position: "absolute", top: "-10px", right: "-15px", fontSize: "20px", color: DS.douradoClaro }}>✦</div>
+          <div className="sp2" style={{ position: "absolute", top: "10px", left: "-20px", fontSize: "16px", color: DS.douradoClaro }}>✦</div>
+          <div className="sp3" style={{ position: "absolute", bottom: "-5px", right: "0px", fontSize: "14px", color: DS.douradoClaro }}>✦</div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px", maxWidth: "360px", margin: "0 auto" }}>
+          <button onClick={onReiniciar} className="btn-medieval btn-dourado"
+            style={{ width: "100%", padding: "14px", fontSize: "14px" }}>
+            Repetir
+          </button>
+          <button onClick={onVoltar} className="btn-medieval btn-escuro"
+            style={{ width: "100%", padding: "12px", fontSize: "13px" }}>
+            Continuar
+          </button>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+// ── Tela RANKING ──────────────────────────────────────────────────
+function TelaRanking({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => void }) {
+  const jogadores = [
+    { pos: 1, nome: "Guerreiro da Fé", xp: 2800, icone: "⚔️" },
+    { pos: 2, nome: "Servo Fiel", xp: 1950, icone: "📖" },
+    { pos: 3, nome: perfil.nome, xp: perfil.xp, icone: "✦", atual: true },
+  ];
+
+  return (
+    <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: DS.bg }}>
+      {/* Header */}
+      <div className="banner-faixa" style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: "12px", zIndex: 10 }}>
+        <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.douradoClaro, fontSize: "20px", cursor: "pointer", padding: "4px 8px" }}>←</button>
+        <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "18px", color: DS.douradoClaro, fontWeight: "700", letterSpacing: "2px" }}>
+          Ranking
+        </span>
+      </div>
+
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
+        {/* Perfil atual em destaque */}
+        <div className="card-pergaminho" style={{ padding: "16px 20px", marginBottom: "20px", textAlign: "center", border: `1.5px solid ${DS.douradoClaro}`, boxShadow: `0 0 12px rgba(212,160,20,0.25)` }}>
+          <SvgPersonagem tipo={perfil.personagem_tipo} cor={perfil.personagem_cor} size={64} />
+          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "16px", fontWeight: "700", color: DS.titulo, marginTop: "8px" }}>{perfil.nome}</div>
+          <div style={{ fontSize: "12px", color: DS.off, marginTop: "4px" }}>Posição: aguardando mais jogadores</div>
+          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "14px", color: DS.douradoClaro, marginTop: "6px" }}>{perfil.xp.toLocaleString()} XP</div>
+        </div>
+
+        {/* Lista */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
+          {jogadores.map((j) => (
+            <div key={j.pos} className="card-pergaminho" style={{
+              padding: "14px 16px", display: "flex", alignItems: "center", gap: "14px",
+              border: j.atual ? `1.5px solid ${DS.douradoClaro}` : undefined,
+              background: j.atual ? `linear-gradient(145deg, #fdf6e3, #f0e4c0)` : undefined,
+            }}>
+              <div style={{
+                width: "36px", height: "36px", borderRadius: "50%", flexShrink: 0,
+                background: j.pos === 1 ? `linear-gradient(145deg, #ffd700, #b8860b)` : j.pos === 2 ? `linear-gradient(145deg, #c0c0c0, #808080)` : `linear-gradient(145deg, #cd7f32, #8b4513)`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontFamily: "var(--font-cinzel)", fontSize: "14px", fontWeight: "700", color: "white",
+              }}>
+                {j.pos}
+              </div>
+              <div style={{ fontSize: "20px" }}>{j.icone}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", fontWeight: "700", color: DS.titulo }}>{j.nome}</div>
+                <div style={{ fontSize: "12px", color: DS.dourado, marginTop: "2px" }}>{j.xp.toLocaleString()} XP</div>
+              </div>
+              {j.atual && <span style={{ fontSize: "11px", color: DS.douradoClaro, fontFamily: "var(--font-cinzel)" }}>Você</span>}
+            </div>
+          ))}
+        </div>
+
+        <div style={{ textAlign: "center", padding: "16px", color: DS.off, fontSize: "13px", fontStyle: "italic" }}>
+          Mais jogadores chegando em breve!
+        </div>
+
+        <SlotAnuncio altura={70} label="banner" />
+      </div>
     </div>
   );
 }
@@ -1459,6 +1668,17 @@ export default function App() {
     });
     return () => sub.subscription.unsubscribe();
   }, [atualizarVidas]);
+
+  // Desbloquear audio no primeiro clique/toque
+  useEffect(() => {
+    const unlock = () => { import("@/lib/sounds").then(m => m.sfxClick()); };
+    document.addEventListener("touchstart", unlock, { once: true });
+    document.addEventListener("click", unlock, { once: true });
+    return () => {
+      document.removeEventListener("touchstart", unlock);
+      document.removeEventListener("click", unlock);
+    };
+  }, []);
 
   // Recarrega vidas a cada minuto
   useEffect(() => {
@@ -1570,8 +1790,13 @@ export default function App() {
       onEscolher={t => { setTrilha(t); setTela("mapa"); }}
       onArmadura={() => setTela("armadura")}
       onPersonagem={() => setTela("criar_personagem")}
+      onRanking={() => setTela("ranking")}
       onSair={handleSair}
     />
+  );
+
+  if (tela === "ranking") return (
+    <TelaRanking perfil={perfil} onVoltar={() => setTela("home")} />
   );
 
   if (tela === "mapa") return (
@@ -1597,6 +1822,7 @@ export default function App() {
       acertos={resultadoState.acertos}
       total={resultadoState.total}
       xpGanho={resultadoState.xp}
+      streakDias={perfil.sequencia}
       talentosGanho={resultadoState.talentos}
       novasPecas={resultadoState.novasPecas}
       onReiniciar={() => setTela("jogo")}
