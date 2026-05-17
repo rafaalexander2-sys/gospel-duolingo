@@ -1331,7 +1331,9 @@ export default function App() {
 
   async function handleConcluirQuiz(acertos: number, xpGanho: number, talentosGanho: number) {
     if (!perfil || !capitulo) return;
-    const completo = acertos >= Math.ceil(capitulo.perguntas.length * 0.7);
+    // Chegar ao fim sem perder todas as vidas = capítulo completo. Quem perde
+    // todas as vidas vai para onSemVidas e nunca chama onConcluir.
+    const completo = true;
 
     // Salva progresso
     await salvarProgresso(perfil.id, trilha, String(capitulo.id), acertos, completo);
