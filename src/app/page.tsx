@@ -975,21 +975,21 @@ function TelaHome({
         {/* Nav */}
         <div className="banner-faixa" style={{ borderRadius: "0 0 8px 8px", padding: "8px 0", display: "flex", justifyContent: "space-around" }}>
           {([
-            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke={DS.douradoClaro} strokeWidth="1.5"/><line x1="12" y1="2" x2="12" y2="22" stroke={DS.douradoClaro} strokeWidth="1"/><line x1="2" y1="12" x2="22" y2="12" stroke={DS.douradoClaro} strokeWidth="1"/><circle cx="12" cy="12" r="2.5" fill={DS.douradoClaro}/><path d="M12 5 L13.5 9 L12 8 L10.5 9 Z" fill={DS.douradoClaro}/></svg>, label: "Início", action: () => {}, badge: false },
-            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><rect x="3" y="4" width="12" height="16" rx="1.5" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="3" y="4" width="4" height="16" rx="1.5" fill={DS.douradoSombra} opacity="0.6"/><line x1="9" y1="8" x2="14" y2="8" stroke={DS.douradoSombra} strokeWidth="1"/><line x1="9" y1="11" x2="14" y2="11" stroke={DS.douradoSombra} strokeWidth="1"/><line x1="9" y1="14" x2="14" y2="14" stroke={DS.douradoSombra} strokeWidth="1"/><path d="M16 6 C18 6 21 7 21 10 C21 13 18 14 16 14" stroke={DS.douradoClaro} strokeWidth="1.5" fill="none" strokeLinecap="round"/></svg>, label: "Trilhas", action: onTrilhas, badge: false },
-            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 3 L14 8 L8 6 L13 10 L7 10 L12 14 L9 19 L12 16 L15 19 L12 14 L17 10 L11 10 L16 6 L10 8 Z" fill={DS.douradoClaro}/><circle cx="12" cy="12" r="2" fill={DS.douradoSombra}/></svg>, label: "Missões", action: onMissoes, badge: !missaoConcluidaHoje },
-            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2 L14.5 8.5 L22 9.3 L16.5 14.2 L18.2 21.5 L12 17.8 L5.8 21.5 L7.5 14.2 L2 9.3 L9.5 8.5 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="10" y="19" width="4" height="4" rx="1" fill={DS.douradoSombra}/><rect x="8" y="22" width="8" height="2" rx="1" fill={DS.douradoSombra}/></svg>, label: "Ranking", action: onRanking, badge: false },
-            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2 L4 6 L4 13 C4 18 7.5 22 12 23 C16.5 22 20 18 20 13 L20 6 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><path d="M12 7 L8 11 L10 13 L12 11 L16 8 Z" fill={DS.douradoSombra}/></svg>, label: "Armadura", action: onArmadura, badge: false },
+            { icon: <svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke={DS.douradoClaro} strokeWidth="1.5"/><line x1="12" y1="2" x2="12" y2="22" stroke={DS.douradoClaro} strokeWidth="1"/><line x1="2" y1="12" x2="22" y2="12" stroke={DS.douradoClaro} strokeWidth="1"/><circle cx="12" cy="12" r="2.5" fill={DS.douradoClaro}/><path d="M12 5 L13.5 9 L12 8 L10.5 9 Z" fill={DS.douradoClaro}/></svg>, label: "Início", action: () => {}, badge: false },
+            { icon: <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3 L14 8 L8 6 L13 10 L7 10 L12 14 L9 19 L12 16 L15 19 L12 14 L17 10 L11 10 L16 6 L10 8 Z" fill={DS.douradoClaro}/><circle cx="12" cy="12" r="2" fill={DS.douradoSombra}/></svg>, label: "Missões", action: onMissoes, badge: !missaoConcluidaHoje },
+            { icon: <svg width="22" height="22" viewBox="0 0 24 24"><path d="M3 19 L5 10 L9 14 L12 7 L15 14 L19 10 L21 19 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="3" y="19" width="18" height="2.5" rx="1" fill={DS.douradoClaro}/><circle cx="5" cy="10" r="1.3" fill="#ffe080"/><circle cx="12" cy="7" r="1.3" fill="#ffe080"/><circle cx="19" cy="10" r="1.3" fill="#ffe080"/></svg>, label: "Premium", action: onPlanos, badge: false },
+            { icon: <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 2 L14.5 8.5 L22 9.3 L16.5 14.2 L18.2 21.5 L12 17.8 L5.8 21.5 L7.5 14.2 L2 9.3 L9.5 8.5 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="10" y="19" width="4" height="4" rx="1" fill={DS.douradoSombra}/><rect x="8" y="22" width="8" height="2" rx="1" fill={DS.douradoSombra}/></svg>, label: "Ranking", action: onRanking, badge: false },
+            { icon: <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 2 L4 6 L4 13 C4 18 7.5 22 12 23 C16.5 22 20 18 20 13 L20 6 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><path d="M12 7 L8 11 L10 13 L12 11 L16 8 Z" fill={DS.douradoSombra}/></svg>, label: "Armadura", action: onArmadura, badge: false },
           ] as { icon: React.ReactNode; label: string; action: () => void; badge: boolean }[]).map(nav => (
             <button key={nav.label} onClick={nav.action}
-              style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", padding: "4px 8px" }}>
+              style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", padding: "4px 6px" }}>
               <div style={{ position: "relative" }}>
                 {nav.icon}
                 {nav.badge && (
                   <span style={{ position: "absolute", top: "-2px", right: "-2px", width: "8px", height: "8px", borderRadius: "50%", background: "#c04040", border: "1.5px solid #1a0a02" }} />
                 )}
               </div>
-              <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "9px", color: DS.off }}>{nav.label}</span>
+              <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "9px", color: nav.label === "Premium" ? DS.douradoClaro : DS.off }}>{nav.label}</span>
             </button>
           ))}
         </div>
@@ -2656,6 +2656,16 @@ export default function App() {
     setPerfil(p => p ? { ...p, xp: novoXp, talentos: novosTalentos } : p);
   }
 
+  async function handleSemVidas() {
+    if (!perfil) return;
+    const agora = new Date().toISOString();
+    await atualizarPerfil(perfil.id, { vidas: 0, vidas_ultima_recarga: agora });
+    const perfilAtualizado = { ...perfil, vidas: 0, vidas_ultima_recarga: agora };
+    setPerfil(perfilAtualizado);
+    setVidasAtivas(0);
+    setTela("sem_vidas");
+  }
+
   async function handleSair() {
     await supabase.auth.signOut();
   }
@@ -2754,6 +2764,7 @@ export default function App() {
       progressoCompleto={progressoIds}
       progressoEtapas={progressoEtapas}
       onCapitulo={(cap) => {
+        if (vidasAtivas <= 0) { setTela("sem_vidas"); return; }
         setCapitulo(cap);
         if (cap.etapas && cap.etapas.length > 0) {
           setTela("etapas");
@@ -2771,7 +2782,7 @@ export default function App() {
       capitulo={capitulo}
       trilha={trilha}
       progressoEtapas={progressoEtapas[`${trilha}_${capitulo.id}`] ?? 0}
-      onEtapa={(idx) => { setEtapaAtual(idx); setTela("jogo"); }}
+      onEtapa={(idx) => { if (vidasAtivas <= 0) { setTela("sem_vidas"); return; } setEtapaAtual(idx); setTela("jogo"); }}
       onVoltar={() => setTela("mapa")}
     />
   );
@@ -2781,7 +2792,7 @@ export default function App() {
       capitulo={capitulo} trilha={trilha} perfil={perfil} vidas={vidasAtivas}
       questoes={capitulo.etapas ? capitulo.etapas[etapaAtual] : undefined}
       onConcluir={handleConcluirQuiz}
-      onSemVidas={() => setTela("sem_vidas")}
+      onSemVidas={handleSemVidas}
     />
   );
 
