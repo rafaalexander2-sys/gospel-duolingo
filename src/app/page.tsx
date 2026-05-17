@@ -296,7 +296,10 @@ function TelaCadastro({ onCadastrado, onVoltar }: { onCadastrado: () => void; on
       options: { data: { nome } },
     });
     if (error) setErro(error.message);
-    else onCadastrado();
+    else {
+      localStorage.setItem("gq_novo_usuario", "1");
+      onCadastrado();
+    }
     setCarregando(false);
   }
 
@@ -359,6 +362,7 @@ function TelaCriarPersonagem({ userId, onConcluir }: { userId: string; onConclui
   async function confirmar() {
     setCarregando(true);
     await atualizarPerfil(userId, { personagem_tipo: tipoSel, personagem_cor: corSel });
+    localStorage.removeItem("gq_novo_usuario");
     onConcluir(tipoSel, corSel);
   }
 
@@ -1088,7 +1092,8 @@ export default function App() {
       atualizarVidas(perfilAtual);
       const prog = await carregarProgresso(p.id);
       setProgressoIds(new Set(prog.filter(r => r.completo).map(r => `${r.trilha}_${r.capitulo_id}`)));
-      setTela(!p.personagem_tipo ? "criar_personagem" : "home");
+      const novoUsuario = localStorage.getItem("gq_novo_usuario") === "1";
+      setTela(novoUsuario ? "criar_personagem" : "home");
     }
   }
 
