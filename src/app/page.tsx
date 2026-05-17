@@ -736,7 +736,7 @@ function AnelProgresso({ completas, total = 5 }: { completas: number; total?: nu
         return (
           <path key={i}
             d={`M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`}
-            stroke={i < completas ? DS.douradoClaro : "#3a2808"}
+            stroke={i < completas ? DS.douradoClaro : "rgba(255,255,255,0.15)"}
             strokeWidth="5.5" fill="none" strokeLinecap="round"
           />
         );
@@ -979,7 +979,7 @@ function TelaMapa({
                 </div>
 
                 {/* Botão capítulo + anel de etapas */}
-                <div style={{ position: "relative", width: "76px", height: "76px", flexShrink: 0 }}>
+                <div style={{ position: "relative", width: "76px", height: "76px", flexShrink: 0, overflow: "visible" }}>
                   <button
                     disabled={bloqueado}
                     onClick={() => !bloqueado && onCapitulo(cap, idx)}
@@ -994,7 +994,14 @@ function TelaMapa({
                     {bloqueado ? "🔒" : cap.icone}
                   </button>
                   {!bloqueado && cap.etapas && cap.etapas.length > 0 && (
-                    <AnelProgresso completas={progressoEtapas[`${trilha}_${cap.id}`] ?? 0} total={cap.etapas.length} />
+                    <AnelProgresso
+                      completas={
+                        completo
+                          ? cap.etapas.length
+                          : (progressoEtapas[`${trilha}_${cap.id}`] ?? 0)
+                      }
+                      total={cap.etapas.length}
+                    />
                   )}
                 </div>
 
@@ -1867,10 +1874,10 @@ export default function App() {
     return () => sub.subscription.unsubscribe();
   }, [atualizarVidas]);
 
-  // Desbloquear audio no primeiro clique/toque
+  // Desbloquear AudioContext no primeiro gesto (iOS exige ser síncrono)
   useEffect(() => {
-    const unlock = () => { import("@/lib/sounds").then(m => m.sfxClick()); };
-    document.addEventListener("touchstart", unlock, { once: true });
+    const unlock = () => { try { sfxClick(); } catch {} };
+    document.addEventListener("touchstart", unlock, { once: true, passive: true });
     document.addEventListener("click", unlock, { once: true });
     return () => {
       document.removeEventListener("touchstart", unlock);

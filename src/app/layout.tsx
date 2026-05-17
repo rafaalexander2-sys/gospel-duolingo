@@ -17,6 +17,16 @@ const garamond = EB_Garamond({
 export const metadata: Metadata = {
   title: "Discypulo",
   description: "Embarque numa jornada épica pela Palavra de Deus",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Discypulo",
+  },
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/icon-192.png",
+  },
 };
 
 export const viewport = {
