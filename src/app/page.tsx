@@ -646,9 +646,17 @@ function TelaHome({
             <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "12px", color: DS.douradoClaro, maxWidth: "80px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{perfil.nome}</span>
           </button>
           <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-            <span style={{ fontSize: "13px", color: "#f0d898" }}>🔥 {perfil.sequencia}</span>
-            <span style={{ fontSize: "13px", color: "#f0a0a0" }}>{"❤️".repeat(vidas)}{"🖤".repeat(VIDAS_MAX - vidas)}</span>
-            <span style={{ fontSize: "13px", color: DS.douradoClaro }}>🪙 {perfil.talentos}</span>
+            <span style={{ fontSize: "13px", color: "#f0d898", display: "flex", alignItems: "center", gap: "3px" }}>
+              <svg width="12" height="14" viewBox="0 0 12 14"><path d="M6 0 C4 3 1 5 1 8 a5 5 0 0 0 10 0 C11 5 8 3 6 0Z" fill="#f0a040"/><path d="M6 4 C5 6 3 7 3 9 a3 3 0 0 0 6 0 C9 7 7 6 6 4Z" fill="#ffe080"/></svg>
+              {perfil.sequencia}
+            </span>
+            <span style={{ fontSize: "12px", color: "#f0a0a0", letterSpacing: "1px" }}>
+              {"♥".repeat(vidas)}{"♡".repeat(VIDAS_MAX - vidas)}
+            </span>
+            <span style={{ fontSize: "13px", color: DS.douradoClaro, display: "flex", alignItems: "center", gap: "3px" }}>
+              <svg width="13" height="13" viewBox="0 0 13 13"><circle cx="6.5" cy="6.5" r="6" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="1"/><circle cx="6.5" cy="6.5" r="3.5" fill={DS.douradoSombra} opacity="0.5"/><text x="6.5" y="9.5" textAnchor="middle" fontSize="6" fill={DS.douradoClaro} fontWeight="bold">D</text></svg>
+              {perfil.talentos}
+            </span>
             <BotaoBgm />
           </div>
         </div>
@@ -685,7 +693,7 @@ function TelaHome({
                 {ARQUETIPOS.find(a => a.id === perfil.personagem_tipo)?.nome ?? perfil.personagem_tipo}
               </div>
             </div>
-            <span style={{ fontSize: "12px", color: DS.dourado, fontFamily: "var(--font-cinzel)" }}>✏️ Editar</span>
+            <span style={{ fontSize: "12px", color: DS.dourado, fontFamily: "var(--font-cinzel)" }}>Editar</span>
           </div>
         </button>
 
@@ -693,7 +701,10 @@ function TelaHome({
 
         {/* Bíblia */}
         <div className="card-pergaminho" style={{ padding: "16px 20px", marginBottom: "12px" }}>
-          <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", color: DS.titulo, marginBottom: "10px" }}>📖 A Bíblia</p>
+          <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", color: DS.titulo, marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
+            <svg width="14" height="16" viewBox="0 0 14 16"><rect x="2" y="1" width="10" height="14" rx="1.5" fill="#c8a860" stroke="#8a6030" strokeWidth="1"/><rect x="1" y="1" width="3" height="14" rx="1" fill="#a07840"/><line x1="5" y1="5" x2="11" y2="5" stroke="#8a6030" strokeWidth="0.8"/><line x1="5" y1="7.5" x2="11" y2="7.5" stroke="#8a6030" strokeWidth="0.8"/><line x1="5" y1="10" x2="11" y2="10" stroke="#8a6030" strokeWidth="0.8"/><line x1="5" y1="12.5" x2="9" y2="12.5" stroke="#8a6030" strokeWidth="0.8"/></svg>
+            A Bíblia
+          </p>
           <p style={{ fontSize: "13px", color: DS.corpo, marginBottom: "14px", lineHeight: 1.5 }}>
             Explore o Velho e o Novo Testamento com quizzes sobre todos os livros sagrados.
           </p>
@@ -729,7 +740,7 @@ function TelaHome({
         {/* XP bar */}
         <div style={{ padding: "0 4px", marginBottom: "8px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: DS.off, marginBottom: "4px" }}>
-            <span>⚡ {perfil.xp.toLocaleString()} XP</span>
+            <span>◆ {perfil.xp.toLocaleString()} XP</span>
             <span>Nv. {Math.floor(perfil.xp / 500) + 1}</span>
           </div>
           <div className="barra-progress-track">
@@ -741,15 +752,15 @@ function TelaHome({
 
         {/* Nav */}
         <div className="banner-faixa" style={{ borderRadius: "0 0 8px 8px", padding: "8px 0", display: "flex", justifyContent: "space-around" }}>
-          {[
-            { icon: "🏠", label: "Início", action: () => {} },
-            { icon: "🛡️", label: "Armadura", action: onArmadura },
-            { icon: "🧙", label: "Personagem", action: onPersonagem },
-            { icon: "↩️", label: "Sair", action: onSair },
-          ].map(nav => (
+          {([
+            { icon: <svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 2 L2 8 L2 16 L7 16 L7 11 L11 11 L11 16 L16 16 L16 8 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="7" y="11" width="4" height="5" fill={DS.douradoSombra}/></svg>, label: "Início", action: () => {} },
+            { icon: <svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 2 L3 5 L3 10 C3 14 6 17 9 18 C12 17 15 14 15 10 L15 5 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><path d="M9 6 L6 9 L8 11 L9 10 L12 7 Z" fill={DS.douradoSombra}/></svg>, label: "Armadura", action: onArmadura },
+            { icon: <svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="6" r="4" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><path d="M3 17 C3 12 15 12 15 17" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/></svg>, label: "Personagem", action: onPersonagem },
+            { icon: <svg width="18" height="18" viewBox="0 0 18 18"><path d="M7 9 L14 9 M14 9 L11 6 M14 9 L11 12" stroke={DS.douradoClaro} strokeWidth="1.8" strokeLinecap="round"/><path d="M10 4 L4 4 L4 14 L10 14" stroke={DS.douradoClaro} strokeWidth="1.5" strokeLinecap="round" fill="none"/></svg>, label: "Sair", action: onSair },
+          ] as { icon: React.ReactNode; label: string; action: () => void }[]).map(nav => (
             <button key={nav.label} onClick={nav.action}
               style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", padding: "4px 10px" }}>
-              <span style={{ fontSize: "18px" }}>{nav.icon}</span>
+              {nav.icon}
               <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "9px", color: DS.off }}>{nav.label}</span>
             </button>
           ))}
