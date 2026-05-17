@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { Questao, Capitulo } from "@/types";
 import { velhoTestamento } from "@/data/velho-testamento";
 import { novoTestamento } from "@/data/novo-testamento";
@@ -12,6 +12,11 @@ import {
   carregarPerfil, garantirPerfil, salvarProgresso, carregarProgresso,
   atualizarPerfil, registrarLoginDiario, verificarArmaduraDesbloqueios,
 } from "@/lib/gameEngine";
+import {
+  sfxAcerto, sfxErro, sfxCapituloCompleto, sfxUnlock,
+  sfxClick, sfxRevisao, sfxVidaPerdida, startBgm, stopBgm,
+  toggleBgm, isBgmAtivo,
+} from "@/lib/sounds";
 
 // ── Design tokens ─────────────────────────────────────────────────
 const DS = {
@@ -590,6 +595,26 @@ function TelaArmadura({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => vo
   );
 }
 
+// ── BGM toggle ────────────────────────────────────────────────────
+function BotaoBgm() {
+  const [ativo, setAtivo] = useState(false);
+  return (
+    <button
+      onClick={() => { const on = toggleBgm(); setAtivo(on); }}
+      title={ativo ? "Pausar música" : "Tocar música"}
+      style={{
+        background: ativo ? "rgba(212,160,20,0.2)" : "rgba(255,255,255,0.05)",
+        border: `1px solid ${ativo ? DS.douradoClaro : DS.off}`,
+        borderRadius: "50%", width: "26px", height: "26px",
+        cursor: "pointer", fontSize: "13px", display: "flex",
+        alignItems: "center", justifyContent: "center",
+        color: ativo ? DS.douradoClaro : DS.off,
+        transition: "all 0.2s",
+      }}
+    >{ativo ? "🎵" : "🔇"}</button>
+  );
+}
+
 // ── Tela HOME ─────────────────────────────────────────────────────
 function TelaHome({
   perfil, vidas, onEscolher, onArmadura, onPersonagem, onSair,
@@ -620,10 +645,11 @@ function TelaHome({
             <SvgPersonagem tipo={perfil.personagem_tipo} cor={perfil.personagem_cor} size={32} />
             <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "12px", color: DS.douradoClaro, maxWidth: "80px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{perfil.nome}</span>
           </button>
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
             <span style={{ fontSize: "13px", color: "#f0d898" }}>🔥 {perfil.sequencia}</span>
             <span style={{ fontSize: "13px", color: "#f0a0a0" }}>{"❤️".repeat(vidas)}{"🖤".repeat(VIDAS_MAX - vidas)}</span>
             <span style={{ fontSize: "13px", color: DS.douradoClaro }}>🪙 {perfil.talentos}</span>
+            <BotaoBgm />
           </div>
         </div>
 
@@ -824,7 +850,7 @@ function TelaQuiz({
   onConcluir: (acertos: number, xpGanho: number, talentosGanho: number) => void;
   onSemVidas: () => void;
 }) {
-  const questoes = capitulo.perguntas;
+  const questoesPrincipais = capitulo.perguntas;
   const [idx, setIdx] = useState(0);
   const [selecionada, setSelecionada] = useState<number | null>(null);
   const [confirmada, setConfirmada] = useState(false);
@@ -835,79 +861,128 @@ function TelaQuiz({
   const [feedback, setFeedback] = useState<{ certa: boolean; explicacao: string } | null>(null);
   const [pistaIdx, setPistaIdx] = useState(1);
   const [ordemToque, setOrdemToque] = useState<number[]>([]);
+  const [wrongList, setWrongList] = useState<Questao[]>([]);
+  const [phase, setPhase] = useState<"main" | "review-intro" | "review">("main");
+  const [reviewList, setReviewList] = useState<Questao[]>([]);
+  const [reviewIdx, setReviewIdx] = useState(0);
+  const [aviso, setAviso] = useState<string | null>(null);
+  const avisoRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const q = questoes[idx];
-  const opcoes = getOpcoes(q);
-  const correta = getCorreta(q);
-  const progresso = (idx / questoes.length) * 100;
-  const isOrdenar = q.tipo === "ordenar_eventos";
+  function mostrarAviso(msg: string) {
+    if (avisoRef.current) clearTimeout(avisoRef.current);
+    setAviso(msg);
+    avisoRef.current = setTimeout(() => setAviso(null), 2800);
+  }
+
+  useEffect(() => {
+    if (phase !== "review-intro") return;
+    const t = setTimeout(() => setPhase("review"), 2500);
+    return () => clearTimeout(t);
+  }, [phase]);
+
+  const isReview = phase === "review";
+  const questoes = isReview ? reviewList : questoesPrincipais;
+  const questaoAtual = isReview ? reviewIdx : idx;
+  const q = questoes[questaoAtual];
+  const opcoes = q ? getOpcoes(q) : [];
+  const correta = q ? getCorreta(q) : 0;
+  const progressoPct = questoes.length > 0 ? (questaoAtual / questoes.length) * 100 : 0;
+  const isOrdenar = q?.tipo === "ordenar_eventos";
+
+  function resetQuestao() {
+    setFeedback(null); setSelecionada(null); setConfirmada(false);
+    setPistaIdx(1); setOrdemToque([]);
+  }
 
   function confirmar() {
+    if (!q) return;
     if (isOrdenar) {
       if (ordemToque.length < opcoes.length) return;
-      const corretaOrdem = (q as any).ordemCorreta as number[];
-      const certa = ordemToque.every((v, i) => v === corretaOrdem[i]);
-      setConfirmada(true);
+      const ordemCorreta = (q as any).ordemCorreta as number[];
+      const certa = ordemToque.every((v, i) => v === ordemCorreta[i]);
+      setConfirmada(true); setSelecionada(ordemCorreta[0]);
       if (certa) {
-        setAcertos(a => a + 1);
-        setXpGanho(x => x + XP_QUESTAO_CERTA);
-        setTalentosGanho(t => t + TALENTOS_QUESTAO_CERTA);
-        setSelecionada(corretaOrdem[0]);
+        sfxAcerto();
+        if (!isReview) { setAcertos(a => a + 1); setXpGanho(x => x + XP_QUESTAO_CERTA); setTalentosGanho(t => t + TALENTOS_QUESTAO_CERTA); }
       } else {
-        const novasVidas = vidasRestantes - 1;
-        setVidasRestantes(novasVidas);
-        setSelecionada(-1);
-        if (novasVidas <= 0) { setTimeout(onSemVidas, 1200); return; }
+        sfxErro();
+        if (!isReview) {
+          setWrongList(prev => [...prev, q]);
+          const nv = vidasRestantes - 1; setVidasRestantes(nv); sfxVidaPerdida();
+          mostrarAviso(`❤️ ${nv} vida${nv !== 1 ? "s" : ""} restante${nv !== 1 ? "s" : ""}!`);
+          if (nv <= 0) { setTimeout(onSemVidas, 1200); return; }
+        }
       }
-      setFeedback({ certa, explicacao: (q as any).explicacao ?? "" });
-      return;
+      setFeedback({ certa, explicacao: (q as any).explicacao ?? "" }); return;
     }
     if (selecionada === null) return;
     const certa = selecionada === correta;
     setConfirmada(true);
     if (certa) {
-      setAcertos(a => a + 1);
-      setXpGanho(x => x + XP_QUESTAO_CERTA);
-      setTalentosGanho(t => t + TALENTOS_QUESTAO_CERTA);
+      sfxAcerto();
+      if (!isReview) { setAcertos(a => a + 1); setXpGanho(x => x + XP_QUESTAO_CERTA); setTalentosGanho(t => t + TALENTOS_QUESTAO_CERTA); }
     } else {
-      const novasVidas = vidasRestantes - 1;
-      setVidasRestantes(novasVidas);
-      if (novasVidas <= 0) { setTimeout(onSemVidas, 1200); return; }
+      sfxErro();
+      if (!isReview) {
+        setWrongList(prev => [...prev, q]);
+        const nv = vidasRestantes - 1; setVidasRestantes(nv); sfxVidaPerdida();
+        mostrarAviso(`❤️ ${nv} vida${nv !== 1 ? "s" : ""} restante${nv !== 1 ? "s" : ""}!`);
+        if (nv <= 0) { setTimeout(onSemVidas, 1200); return; }
+      }
     }
     setFeedback({ certa, explicacao: (q as any).explicacao ?? "" });
   }
 
   function proximo() {
-    setFeedback(null);
-    setSelecionada(null);
-    setConfirmada(false);
-    setPistaIdx(1);
-    setOrdemToque([]);
-    if (idx + 1 >= questoes.length) {
-      const bonusPerfeito = acertos === questoes.length ? 50 : 0;
-      onConcluir(
-        acertos,
-        xpGanho + bonusPerfeito,
-        talentosGanho + (acertos === questoes.length ? TALENTOS_CAPITULO_COMPLETO : 0)
-      );
-    } else {
-      setIdx(i => i + 1);
+    resetQuestao();
+    if (isReview) {
+      if (reviewIdx + 1 >= reviewList.length) {
+        sfxCapituloCompleto();
+        onConcluir(acertos, xpGanho, talentosGanho);
+      } else { setReviewIdx(i => i + 1); }
+      return;
     }
+    if (idx + 1 >= questoesPrincipais.length) {
+      const erros = wrongList.filter((q2, i, arr) => arr.indexOf(q2) === i);
+      if (erros.length > 0) {
+        sfxRevisao();
+        setReviewList(erros); setReviewIdx(0); setPhase("review-intro");
+      } else {
+        const bonus = acertos === questoesPrincipais.length ? 50 : 0;
+        sfxCapituloCompleto();
+        onConcluir(acertos, xpGanho + bonus, talentosGanho + (acertos === questoesPrincipais.length ? TALENTOS_CAPITULO_COMPLETO : 0));
+      }
+    } else { setIdx(i => i + 1); }
   }
 
   const corFeedback = feedback?.certa ? DS.acerto : DS.erro;
   const bordaFeedback = feedback?.certa ? DS.verde : DS.vermelho;
+  const podeVerificar = isOrdenar ? ordemToque.length === opcoes.length : selecionada !== null;
 
-  // ── Enunciado especializado ────────────────────────────────────
+  if (phase === "review-intro") return (
+    <div style={{ position: "fixed", inset: 0, background: `linear-gradient(145deg,${DS.vermelhoEsc},#1a0808)`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "20px", padding: "32px" }}>
+      <style>{`@keyframes rl { from{width:0%} to{width:100%} }`}</style>
+      <div style={{ fontSize: "52px" }}>🔄</div>
+      <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "24px", color: "#ffdddd", fontWeight: "900", letterSpacing: "2px", textAlign: "center" }}>Revisão de Erros</h2>
+      <p style={{ color: "#ffaaaa", fontSize: "15px", textAlign: "center", lineHeight: 1.6 }}>
+        Você errou <strong style={{ color: "#ff6666" }}>{reviewList.length}</strong> questão{reviewList.length !== 1 ? "ões" : ""}.<br />
+        Vamos revisar para fixar o aprendizado!
+      </p>
+      <div style={{ width: "60px", height: "6px", borderRadius: "3px", background: "rgba(255,255,255,0.15)", overflow: "hidden" }}>
+        <div style={{ height: "100%", background: "#ff8888", borderRadius: "3px", animation: "rl 2.5s linear forwards" }} />
+      </div>
+    </div>
+  );
+
+  if (!q) return null;
+
   function renderEnunciado() {
     if (q.tipo === "quem_disse") {
       return (
         <div style={{ marginBottom: "16px" }}>
           <div className="card-pergaminho" style={{ padding: "20px 22px", position: "relative" }}>
             <span style={{ position: "absolute", top: "10px", left: "14px", fontSize: "40px", color: DS.dourado, opacity: 0.3, lineHeight: 1, fontFamily: "Georgia" }}>"</span>
-            <p style={{ fontSize: "17px", color: DS.titulo, lineHeight: 1.7, fontStyle: "italic", textAlign: "center", padding: "14px 10px 4px" }}>
-              {sub((q as any).frase, perfil.nome)}
-            </p>
+            <p style={{ fontSize: "17px", color: DS.titulo, lineHeight: 1.7, fontStyle: "italic", textAlign: "center", padding: "14px 10px 4px" }}>{sub((q as any).frase, perfil.nome)}</p>
             <span style={{ position: "absolute", bottom: "10px", right: "14px", fontSize: "40px", color: DS.dourado, opacity: 0.3, lineHeight: 1, fontFamily: "Georgia" }}>"</span>
           </div>
           <p style={{ textAlign: "center", fontSize: "12px", color: DS.off, marginTop: "8px" }}>Quem pronunciou estas palavras?</p>
@@ -915,23 +990,15 @@ function TelaQuiz({
       );
     }
     if (q.tipo === "completar_versiculo") {
-      const versiculoComBlank = sub((q as any).versiculo, perfil.nome);
-      const partes = versiculoComBlank.split("___");
-      const palavraSelecionada = selecionada !== null ? opcoes[selecionada] : null;
+      const partes = sub((q as any).versiculo, perfil.nome).split("___");
+      const palavraSel = selecionada !== null ? opcoes[selecionada] : null;
       return (
         <div className="card-pergaminho" style={{ padding: "18px 20px", marginBottom: "16px" }}>
-          <p style={{ fontSize: "11px", color: DS.dourado, fontFamily: "var(--font-cinzel)", marginBottom: "10px", letterSpacing: "1px" }}>
-            {(q as any).referencia}
-          </p>
+          <p style={{ fontSize: "11px", color: DS.dourado, fontFamily: "var(--font-cinzel)", marginBottom: "10px", letterSpacing: "1px" }}>{(q as any).referencia}</p>
           <p style={{ fontSize: "16px", color: DS.titulo, lineHeight: 1.8, fontStyle: "italic" }}>
             {partes[0]}
-            <span style={{
-              display: "inline-block", minWidth: "80px", textAlign: "center",
-              borderBottom: `2px solid ${confirmada ? (selecionada === correta ? DS.verde : DS.vermelho) : DS.dourado}`,
-              padding: "0 8px", fontStyle: "normal", fontWeight: "700",
-              color: confirmada ? (selecionada === correta ? DS.verde : DS.vermelho) : DS.douradoClaro,
-            }}>
-              {palavraSelecionada ?? "___"}
+            <span style={{ display: "inline-block", minWidth: "80px", textAlign: "center", borderBottom: `2px solid ${confirmada ? (selecionada === correta ? DS.verde : DS.vermelho) : DS.dourado}`, padding: "0 8px", fontStyle: "normal", fontWeight: "700", color: confirmada ? (selecionada === correta ? DS.verde : DS.vermelho) : DS.douradoClaro }}>
+              {palavraSel ?? "___"}
             </span>
             {partes[1] ?? ""}
           </p>
@@ -940,31 +1007,18 @@ function TelaQuiz({
     }
     if (q.tipo === "personagem_misterio") {
       const pistas = (q as any).pistas as string[];
-      const pistasVisiveis = pistas.slice(0, pistaIdx);
       return (
         <div style={{ marginBottom: "16px" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "10px" }}>
-            {pistasVisiveis.map((pista: string, i: number) => (
+            {pistas.slice(0, pistaIdx).map((pista: string, i: number) => (
               <div key={i} className="card-pergaminho" style={{ padding: "12px 16px", display: "flex", gap: "10px", alignItems: "flex-start" }}>
-                <span style={{
-                  width: "24px", height: "24px", borderRadius: "50%", flexShrink: 0,
-                  background: DS.douradoSombra, color: "#fff8e0",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontFamily: "var(--font-cinzel)", fontSize: "11px", fontWeight: "700",
-                }}>{i + 1}</span>
+                <span style={{ width: "24px", height: "24px", borderRadius: "50%", flexShrink: 0, background: DS.douradoSombra, color: "#fff8e0", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-cinzel)", fontSize: "11px", fontWeight: "700" }}>{i + 1}</span>
                 <p style={{ fontSize: "14px", color: DS.corpo, lineHeight: 1.5, fontStyle: "italic", flex: 1 }}>{sub(pista, perfil.nome)}</p>
               </div>
             ))}
           </div>
           {!confirmada && pistaIdx < pistas.length && (
-            <button
-              onClick={() => setPistaIdx(p => p + 1)}
-              style={{
-                width: "100%", padding: "10px", borderRadius: "8px",
-                border: `1.5px dashed ${DS.borda}`, background: "transparent",
-                color: DS.off, fontSize: "13px", cursor: "pointer",
-                fontFamily: "var(--font-garamond)",
-              }}>
+            <button onClick={() => setPistaIdx(p => p + 1)} style={{ width: "100%", padding: "10px", borderRadius: "8px", border: `1.5px dashed ${DS.borda}`, background: "transparent", color: DS.off, fontSize: "13px", cursor: "pointer", fontFamily: "var(--font-garamond)" }}>
               🔍 Ver próxima pista ({pistas.length - pistaIdx} restante{pistas.length - pistaIdx !== 1 ? "s" : ""})
             </button>
           )}
@@ -975,29 +1029,21 @@ function TelaQuiz({
       return (
         <div style={{ marginBottom: "16px" }}>
           <div className="card-pergaminho" style={{ padding: "12px 16px", marginBottom: "12px" }}>
-            <p style={{ fontSize: "14px", color: DS.corpo, lineHeight: 1.5, fontStyle: "italic" }}>
-              {sub((q as any).enunciado, perfil.nome)}
-            </p>
+            <p style={{ fontSize: "14px", color: DS.corpo, lineHeight: 1.5, fontStyle: "italic" }}>{sub((q as any).enunciado, perfil.nome)}</p>
           </div>
-          <p style={{ fontSize: "11px", color: DS.off, marginBottom: "8px", textAlign: "center" }}>
-            Toque nos eventos na ordem correta (do 1º ao último):
-          </p>
+          <p style={{ fontSize: "11px", color: DS.off, marginBottom: "8px", textAlign: "center" }}>Toque na ordem correta (do 1º ao último):</p>
         </div>
       );
     }
     return (
       <div className="card-pergaminho" style={{ padding: "16px 20px", marginBottom: "16px", display: "flex", gap: "12px", alignItems: "flex-start" }}>
         <SvgPersonagem tipo={perfil.personagem_tipo} cor={perfil.personagem_cor} size={56} />
-        <p style={{ fontSize: "15px", color: DS.corpo, lineHeight: 1.6, fontStyle: "italic", flex: 1 }}>
-          {getEnunciado(q, perfil.nome)}
-        </p>
+        <p style={{ fontSize: "15px", color: DS.corpo, lineHeight: 1.6, fontStyle: "italic", flex: 1 }}>{getEnunciado(q, perfil.nome)}</p>
       </div>
     );
   }
 
-  // ── Opções especializadas ──────────────────────────────────────
   function renderOpcoes() {
-    // Fato/Fake e Verdade/Mito: dois botões grandes lado a lado
     if (q.tipo === "fato_fake" || q.tipo === "verdade_mito") {
       const labels = q.tipo === "fato_fake"
         ? [{ emoji: "✅", texto: "É FATO!" }, { emoji: "❌", texto: "É FAKE!" }]
@@ -1006,8 +1052,7 @@ function TelaQuiz({
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
           {labels.map((label, i) => {
             let bg = i === 0 ? `linear-gradient(145deg,#1a5c1a,#0e3a0e)` : `linear-gradient(145deg,#5c1a1a,#3a0e0e)`;
-            let borda = i === 0 ? "#2a8c2a" : "#8c2a2a";
-            let cor = i === 0 ? "#b0ffb0" : "#ffb0b0";
+            let borda = i === 0 ? "#2a8c2a" : "#8c2a2a"; let cor = i === 0 ? "#b0ffb0" : "#ffb0b0";
             if (confirmada) {
               if (i === correta) { bg = `linear-gradient(145deg,#1a5c1a,#0e3a0e)`; borda = DS.verde; cor = "#b0ffb0"; }
               else if (i === selecionada) { bg = `linear-gradient(145deg,#5c1a1a,#3a0e0e)`; borda = DS.vermelho; cor = "#ffb0b0"; }
@@ -1017,46 +1062,24 @@ function TelaQuiz({
               borda = i === 0 ? "#5adf5a" : "#df5a5a";
             }
             return (
-              <button key={i} onClick={() => !confirmada && setSelecionada(i)} style={{
-                padding: "20px 10px", borderRadius: "12px", cursor: confirmada ? "default" : "pointer",
-                border: `2px solid ${borda}`, background: bg,
-                display: "flex", flexDirection: "column", alignItems: "center", gap: "8px",
-                transition: "all 0.15s",
-                boxShadow: i === selecionada && !confirmada ? `0 0 16px ${borda}88` : "0 3px 8px rgba(0,0,0,0.3)",
-              }}>
+              <button key={i} onClick={() => !confirmada && setSelecionada(i)} style={{ padding: "20px 10px", borderRadius: "12px", cursor: confirmada ? "default" : "pointer", border: `2px solid ${borda}`, background: bg, display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", transition: "all 0.15s", boxShadow: i === selecionada && !confirmada ? `0 0 16px ${borda}88` : "0 3px 8px rgba(0,0,0,0.3)" }}>
                 <span style={{ fontSize: "32px", lineHeight: 1 }}>{label.emoji}</span>
-                <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", fontWeight: "700", color: cor, letterSpacing: "0.5px" }}>
-                  {label.texto}
-                </span>
+                <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", fontWeight: "700", color: cor, letterSpacing: "0.5px" }}>{label.texto}</span>
               </button>
             );
           })}
         </div>
       );
     }
-
-    // Completar versículo: opções como pílulas de palavras
     if (q.tipo === "completar_versiculo") {
       return (
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "16px", justifyContent: "center" }}>
           {opcoes.map((op, i) => {
-            let bg = DS.bgCard;
-            let borda = DS.borda;
-            let cor = DS.titulo;
-            if (confirmada) {
-              if (i === correta) { bg = DS.acerto; borda = DS.verde; cor = DS.verde; }
-              else if (i === selecionada) { bg = DS.erro; borda = DS.vermelho; cor = DS.vermelho; }
-            } else if (i === selecionada) {
-              bg = "linear-gradient(145deg,#fdf6e3,#f0e4c0)"; borda = DS.douradoClaro; cor = DS.douradoSombra;
-            }
+            let bg = DS.bgCard, borda = DS.borda, cor = DS.titulo;
+            if (confirmada) { if (i === correta) { bg = DS.acerto; borda = DS.verde; cor = DS.verde; } else if (i === selecionada) { bg = DS.erro; borda = DS.vermelho; cor = DS.vermelho; } }
+            else if (i === selecionada) { bg = "linear-gradient(145deg,#fdf6e3,#f0e4c0)"; borda = DS.douradoClaro; cor = DS.douradoSombra; }
             return (
-              <button key={i} onClick={() => !confirmada && setSelecionada(i)} style={{
-                padding: "10px 22px", borderRadius: "24px", cursor: confirmada ? "default" : "pointer",
-                border: `2px solid ${borda}`, background: bg, color: cor,
-                fontFamily: "var(--font-garamond)", fontSize: "15px", fontWeight: "700",
-                transition: "all 0.15s",
-                boxShadow: i === selecionada && !confirmada ? `0 0 12px rgba(212,160,20,0.5)` : "0 2px 4px rgba(0,0,0,0.15)",
-              }}>
+              <button key={i} onClick={() => !confirmada && setSelecionada(i)} style={{ padding: "10px 22px", borderRadius: "24px", cursor: confirmada ? "default" : "pointer", border: `2px solid ${borda}`, background: bg, color: cor, fontFamily: "var(--font-garamond)", fontSize: "15px", fontWeight: "700", transition: "all 0.15s", boxShadow: i === selecionada && !confirmada ? `0 0 12px rgba(212,160,20,0.5)` : "0 2px 4px rgba(0,0,0,0.15)" }}>
                 {confirmada && i === correta ? "✓ " : confirmada && i === selecionada && i !== correta ? "✗ " : ""}{op}
               </button>
             );
@@ -1064,88 +1087,37 @@ function TelaQuiz({
         </div>
       );
     }
-
-    // Ordenar eventos: cards numerados tap-to-order
     if (isOrdenar) {
       const ordemCorreta = (q as any).ordemCorreta as number[];
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "16px" }}>
           {opcoes.map((ev, i) => {
-            const posicaoNaOrdem = ordemToque.indexOf(i);
-            const foiTocado = posicaoNaOrdem !== -1;
-            let bg = DS.bgCard;
-            let borda = DS.borda;
-            let cor = DS.titulo;
-            let badge = foiTocado ? String(posicaoNaOrdem + 1) : "·";
-            let badgeBg = foiTocado ? DS.douradoSombra : DS.off;
-            if (confirmada) {
-              const estaCorreto = ordemCorreta[posicaoNaOrdem] === i;
-              if (foiTocado && estaCorreto) { bg = DS.acerto; borda = DS.verde; cor = DS.verde; badgeBg = DS.verde; badge = "✓"; }
-              else if (foiTocado && !estaCorreto) { bg = DS.erro; borda = DS.vermelho; cor = DS.vermelho; badgeBg = DS.vermelho; badge = "✗"; }
-            } else if (foiTocado) {
-              bg = "linear-gradient(145deg,#fdf6e3,#f0e4c0)"; borda = DS.douradoClaro;
-            }
+            const pos = ordemToque.indexOf(i); const tocado = pos !== -1;
+            let bg = DS.bgCard, borda = DS.borda, cor = DS.titulo, badge = tocado ? String(pos + 1) : "·", badgeBg = tocado ? DS.douradoSombra : DS.off;
+            if (confirmada && tocado) { const ok = ordemCorreta[pos] === i; if (ok) { bg = DS.acerto; borda = DS.verde; cor = DS.verde; badgeBg = DS.verde; badge = "✓"; } else { bg = DS.erro; borda = DS.vermelho; cor = DS.vermelho; badgeBg = DS.vermelho; badge = "✗"; } }
+            else if (tocado) { bg = "linear-gradient(145deg,#fdf6e3,#f0e4c0)"; borda = DS.douradoClaro; }
             return (
-              <button key={i} onClick={() => {
-                if (confirmada) return;
-                if (foiTocado) {
-                  setOrdemToque(prev => prev.filter(x => x !== i));
-                } else {
-                  setOrdemToque(prev => [...prev, i]);
-                }
-              }} style={{
-                padding: "12px 16px", borderRadius: "8px", cursor: confirmada ? "default" : "pointer",
-                display: "flex", alignItems: "center", gap: "12px", textAlign: "left",
-                border: `1.5px solid ${borda}`, background: bg,
-                fontFamily: "var(--font-garamond)", fontSize: "14px", color: cor,
-                transition: "all 0.15s", width: "100%",
-                boxShadow: foiTocado && !confirmada ? `0 0 8px rgba(212,160,20,0.3)` : "0 2px 6px rgba(0,0,0,0.1)",
-              }}>
-                <span style={{
-                  width: "28px", height: "28px", borderRadius: "50%", flexShrink: 0,
-                  background: badgeBg, color: "white",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontFamily: "var(--font-cinzel)", fontSize: "13px", fontWeight: "700",
-                }}>{badge}</span>
+              <button key={i} onClick={() => { if (confirmada) return; tocado ? setOrdemToque(p => p.filter(x => x !== i)) : setOrdemToque(p => [...p, i]); }} style={{ padding: "12px 16px", borderRadius: "8px", cursor: confirmada ? "default" : "pointer", display: "flex", alignItems: "center", gap: "12px", textAlign: "left", border: `1.5px solid ${borda}`, background: bg, fontFamily: "var(--font-garamond)", fontSize: "14px", color: cor, transition: "all 0.15s", width: "100%", boxShadow: tocado && !confirmada ? `0 0 8px rgba(212,160,20,0.3)` : "0 2px 6px rgba(0,0,0,0.1)" }}>
+                <span style={{ width: "28px", height: "28px", borderRadius: "50%", flexShrink: 0, background: badgeBg, color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-cinzel)", fontSize: "13px", fontWeight: "700" }}>{badge}</span>
                 <span style={{ flex: 1 }}>{ev}</span>
               </button>
             );
           })}
           {!confirmada && ordemToque.length > 0 && ordemToque.length < opcoes.length && (
-            <p style={{ fontSize: "11px", color: DS.off, textAlign: "center", marginTop: "4px" }}>
-              {ordemToque.length}/{opcoes.length} selecionados — toque para ordenar todos
-            </p>
+            <p style={{ fontSize: "11px", color: DS.off, textAlign: "center", marginTop: "4px" }}>{ordemToque.length}/{opcoes.length} — toque para ordenar todos</p>
           )}
         </div>
       );
     }
-
-    // Padrão: A/B/C/D
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "16px" }}>
         {opcoes.map((op, i) => {
-          let estilo: React.CSSProperties = {
-            padding: "13px 16px", borderRadius: "8px", cursor: confirmada ? "default" : "pointer",
-            display: "flex", alignItems: "center", gap: "12px", textAlign: "left",
-            border: `1.5px solid ${DS.borda}`, background: DS.bgCard,
-            fontFamily: "var(--font-garamond)", fontSize: "15px", color: DS.titulo,
-            transition: "all 0.15s", width: "100%",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-          };
-          if (confirmada) {
-            if (i === correta) estilo = { ...estilo, background: DS.acerto, border: `1.5px solid ${DS.verde}`, color: DS.verde };
-            else if (i === selecionada) estilo = { ...estilo, background: DS.erro, border: `1.5px solid ${DS.vermelho}`, color: DS.vermelho };
-          } else if (i === selecionada) {
-            estilo = { ...estilo, background: "linear-gradient(145deg,#fdf6e3,#f0e4c0)", border: `1.5px solid ${DS.douradoClaro}`, boxShadow: `0 0 10px rgba(212,160,20,0.3)` };
-          }
+          let s: React.CSSProperties = { padding: "13px 16px", borderRadius: "8px", cursor: confirmada ? "default" : "pointer", display: "flex", alignItems: "center", gap: "12px", textAlign: "left", border: `1.5px solid ${DS.borda}`, background: DS.bgCard, fontFamily: "var(--font-garamond)", fontSize: "15px", color: DS.titulo, transition: "all 0.15s", width: "100%", boxShadow: "0 2px 6px rgba(0,0,0,0.1)" };
+          if (confirmada) { if (i === correta) s = { ...s, background: DS.acerto, border: `1.5px solid ${DS.verde}`, color: DS.verde }; else if (i === selecionada) s = { ...s, background: DS.erro, border: `1.5px solid ${DS.vermelho}`, color: DS.vermelho }; }
+          else if (i === selecionada) { s = { ...s, background: "linear-gradient(145deg,#fdf6e3,#f0e4c0)", border: `1.5px solid ${DS.douradoClaro}`, boxShadow: `0 0 10px rgba(212,160,20,0.3)` }; }
           return (
-            <button key={i} style={estilo} onClick={() => !confirmada && setSelecionada(i)}>
-              <span style={{
-                width: "28px", height: "28px", borderRadius: "50%", flexShrink: 0,
-                background: confirmada && i === correta ? DS.verde : confirmada && i === selecionada ? DS.vermelho : selecionada === i ? DS.douradoSombra : DS.off,
-                color: "white", display: "flex", alignItems: "center", justifyContent: "center",
-                fontFamily: "var(--font-cinzel)", fontSize: "12px", fontWeight: "700",
-              }}>
+            <button key={i} style={s} onClick={() => !confirmada && setSelecionada(i)}>
+              <span style={{ width: "28px", height: "28px", borderRadius: "50%", flexShrink: 0, background: confirmada && i === correta ? DS.verde : confirmada && i === selecionada ? DS.vermelho : selecionada === i ? DS.douradoSombra : DS.off, color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-cinzel)", fontSize: "12px", fontWeight: "700" }}>
                 {confirmada && i === correta ? "✓" : confirmada && i === selecionada && i !== correta ? "✗" : String.fromCharCode(65 + i)}
               </span>
               <span style={{ flex: 1 }}>{op}</span>
@@ -1156,71 +1128,50 @@ function TelaQuiz({
     );
   }
 
-  const podeVerificar = isOrdenar ? ordemToque.length === opcoes.length : selecionada !== null;
-
   return (
     <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: DS.bg }}>
+      <style>{`@keyframes fi { from{opacity:0;transform:translateX(-50%) translateY(-8px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }`}</style>
+      {aviso && (
+        <div style={{ position: "absolute", top: "68px", left: "50%", transform: "translateX(-50%)", background: DS.vermelhoEsc, color: "#ffcccc", padding: "10px 20px", borderRadius: "20px", fontSize: "13px", fontFamily: "var(--font-cinzel)", zIndex: 100, boxShadow: "0 4px 12px rgba(0,0,0,0.4)", animation: "fi 0.2s ease", whiteSpace: "nowrap" }}>{aviso}</div>
+      )}
       {/* Header */}
       <div className="banner-faixa" style={{ padding: "10px 16px", display: "flex", alignItems: "center", gap: "10px" }}>
-        <button onClick={() => onConcluir(acertos, xpGanho, talentosGanho)}
-          style={{ background: "none", border: "none", color: DS.off, fontSize: "18px", cursor: "pointer", lineHeight: 1 }}>✕</button>
+        <button onClick={() => onConcluir(acertos, xpGanho, talentosGanho)} style={{ background: "none", border: "none", color: DS.off, fontSize: "18px", cursor: "pointer", lineHeight: 1 }}>✕</button>
         <div className="barra-progress-track" style={{ flex: 1 }}>
-          <div className="barra-progress-fill" style={{ width: `${progresso}%` }} />
+          <div className="barra-progress-fill" style={{ width: `${progressoPct}%`, background: isReview ? "#ff8888" : undefined }} />
         </div>
-        <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "11px", color: DS.dourado, whiteSpace: "nowrap" }}>
-          ✦ {idx + 1}/{questoes.length}
+        <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "11px", color: isReview ? "#ff8888" : DS.dourado, whiteSpace: "nowrap" }}>
+          {isReview ? "🔄" : "✦"} {questaoAtual + 1}/{questoes.length}
         </span>
-        <span style={{ fontSize: "12px", color: "#f0a0a0" }}>{"❤️".repeat(vidasRestantes)}</span>
+        <span style={{ fontSize: "12px", color: "#f0a0a0" }}>{"❤️".repeat(vidasRestantes)}{"🖤".repeat(Math.max(0, VIDAS_MAX - vidasRestantes))}</span>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 20px" }}>
-        {/* Badge capítulo + tipo */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-          <span style={{
-            background: `linear-gradient(135deg, ${DS.vermelho}, ${DS.vermelhoEsc})`,
-            color: "#ffcccc", fontSize: "11px", padding: "3px 10px", borderRadius: "12px",
-            fontFamily: "var(--font-cinzel)", letterSpacing: "0.5px",
-          }}>📖 {capitulo.titulo.toUpperCase()}</span>
+          <span style={{ background: isReview ? `linear-gradient(135deg,#7a1515,#4a0a0a)` : `linear-gradient(135deg,${DS.vermelho},${DS.vermelhoEsc})`, color: isReview ? "#ffaaaa" : "#ffcccc", fontSize: "11px", padding: "3px 10px", borderRadius: "12px", fontFamily: "var(--font-cinzel)", letterSpacing: "0.5px" }}>
+            {isReview ? "🔄 REVISÃO" : `📖 ${capitulo.titulo.toUpperCase()}`}
+          </span>
           {xpGanho > 0 && <span style={{ fontSize: "11px", color: DS.dourado }}>+{xpGanho} XP</span>}
         </div>
-
-        <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "20px", color: DS.titulo, marginBottom: "16px", lineHeight: 1.3 }}>
-          {getTitulo(q)}
-        </h2>
-
+        <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "20px", color: DS.titulo, marginBottom: "16px", lineHeight: 1.3 }}>{getTitulo(q)}</h2>
         {renderEnunciado()}
-
-        {/* Feedback */}
         {feedback && (
-          <div style={{
-            background: corFeedback, border: `1.5px solid ${bordaFeedback}`,
-            borderRadius: "8px", padding: "12px 16px", marginBottom: "14px",
-          }}>
+          <div style={{ background: corFeedback, border: `1.5px solid ${bordaFeedback}`, borderRadius: "8px", padding: "12px 16px", marginBottom: "14px" }}>
             <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", fontWeight: "700", color: feedback.certa ? DS.verde : DS.vermelho, marginBottom: feedback.explicacao ? "6px" : 0 }}>
-              {feedback.certa ? "✓ Correto!" : "✗ Errado!"}
+              {feedback.certa ? "✓ Correto!" : `✗ Errado!${isReview ? " (Revisão)" : ""}`}
             </p>
-            {feedback.explicacao && (
-              <p style={{ fontSize: "12px", color: DS.corpo, lineHeight: 1.5 }}>{feedback.explicacao}</p>
-            )}
+            {feedback.explicacao && <p style={{ fontSize: "12px", color: DS.corpo, lineHeight: 1.5 }}>{feedback.explicacao}</p>}
           </div>
         )}
-
         {renderOpcoes()}
       </div>
 
-      {/* Footer */}
       <div className="banner-faixa" style={{ padding: "12px 20px" }}>
         {!confirmada ? (
-          <button
-            onClick={confirmar} disabled={!podeVerificar}
-            className="btn-medieval btn-dourado"
-            style={{ width: "100%", padding: "14px", fontSize: "14px", opacity: podeVerificar ? 1 : 0.5 }}>
-            Verificar
-          </button>
+          <button onClick={confirmar} disabled={!podeVerificar} className="btn-medieval btn-dourado" style={{ width: "100%", padding: "14px", fontSize: "14px", opacity: podeVerificar ? 1 : 0.5 }}>Verificar</button>
         ) : (
-          <button onClick={proximo} className="btn-medieval btn-dourado"
-            style={{ width: "100%", padding: "14px", fontSize: "14px" }}>
-            {idx + 1 >= questoes.length ? "Ver Resultado ✦" : "Continuar →"}
+          <button onClick={proximo} className="btn-medieval btn-dourado" style={{ width: "100%", padding: "14px", fontSize: "14px" }}>
+            {isReview ? (reviewIdx + 1 >= reviewList.length ? "Finalizar ✦" : "Próxima →") : (idx + 1 >= questoesPrincipais.length ? (wrongList.length > 0 ? "Revisar Erros 🔄" : "Ver Resultado ✦") : "Continuar →")}
           </button>
         )}
       </div>

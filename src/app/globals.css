@@ -94,65 +94,129 @@ h1, h2, h3, .titulo {
   border: none;
   cursor: pointer;
   text-transform: uppercase;
-  transition: transform 0.1s, box-shadow 0.1s;
+  transition: transform 0.12s, filter 0.12s, box-shadow 0.12s;
   overflow: hidden;
 }
 
+/* pincelada de luz diagonal — efeito tinta a óleo */
 .btn-medieval::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg,
-    rgba(255,255,255,0.18) 0%,
-    rgba(255,255,255,0.05) 40%,
-    rgba(0,0,0,0.05) 60%,
-    rgba(0,0,0,0.15) 100%
-  );
+  background:
+    linear-gradient(
+      128deg,
+      rgba(255,255,255,0.30) 0%,
+      rgba(255,255,255,0.10) 28%,
+      transparent 50%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08) 0%,
+      transparent 60%
+    );
   pointer-events: none;
+  border-radius: inherit;
+}
+
+/* traço de pincel horizontal — textura impasto */
+.btn-medieval::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      88deg,
+      transparent 0px,
+      rgba(255,255,255,0.025) 1px,
+      transparent 2px,
+      transparent 6px
+    ),
+    repeating-linear-gradient(
+      -4deg,
+      transparent 0px,
+      rgba(0,0,0,0.018) 1px,
+      transparent 2px,
+      transparent 10px
+    );
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.btn-medieval:hover {
+  filter: brightness(1.12) saturate(1.1);
 }
 
 .btn-medieval:active {
-  transform: translateY(3px);
-  box-shadow: none !important;
+  transform: scale(0.97);
+  filter: brightness(0.92);
 }
 
 /* ── Botão dourado ── */
 .btn-dourado {
-  background: linear-gradient(180deg, #d4a820 0%, #b8860b 50%, #9a7000 100%);
+  background: linear-gradient(160deg,
+    #f0c840 0%,
+    #d4a020 25%,
+    #b8860b 55%,
+    #9a7000 80%,
+    #7a5600 100%
+  );
   color: #fff8e0;
   box-shadow:
-    0 5px 0 #5a3e00,
-    0 6px 8px rgba(0,0,0,0.4),
-    inset 0 1px 0 rgba(255,220,100,0.5);
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-  border-radius: 6px;
-  border: 1px solid #8a6200;
+    0 0 14px rgba(220,160,20,0.55),
+    0 0 30px rgba(180,120,0,0.28),
+    0 2px 6px rgba(0,0,0,0.45),
+    inset 0 2px 3px rgba(255,235,130,0.65),
+    inset 0 -1px 2px rgba(60,30,0,0.5);
+  text-shadow:
+    0 0 10px rgba(255,220,60,0.7),
+    0 1px 2px rgba(0,0,0,0.6);
+  border-radius: 8px;
+  border: 1.5px solid rgba(210,150,10,0.9);
 }
 
 /* ── Botão vermelho/perigo ── */
 .btn-vermelho {
-  background: linear-gradient(180deg, #9a2020 0%, #7a1515 50%, #5a0e0e 100%);
+  background: linear-gradient(160deg,
+    #c83030 0%,
+    #9a2020 25%,
+    #7a1515 55%,
+    #5a0e0e 100%
+  );
   color: #ffe8e8;
   box-shadow:
-    0 5px 0 #320808,
-    0 6px 8px rgba(0,0,0,0.4),
-    inset 0 1px 0 rgba(255,160,160,0.3);
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-  border-radius: 6px;
-  border: 1px solid #5a0e0e;
+    0 0 14px rgba(160,30,30,0.55),
+    0 0 30px rgba(100,10,10,0.28),
+    0 2px 6px rgba(0,0,0,0.45),
+    inset 0 2px 3px rgba(255,160,160,0.40),
+    inset 0 -1px 2px rgba(60,0,0,0.5);
+  text-shadow:
+    0 0 10px rgba(255,100,100,0.5),
+    0 1px 2px rgba(0,0,0,0.6);
+  border-radius: 8px;
+  border: 1.5px solid rgba(130,20,20,0.9);
 }
 
 /* ── Botão escuro ── */
 .btn-escuro {
-  background: linear-gradient(180deg, #3a1a08 0%, #2c1205 50%, #1a0a02 100%);
+  background: linear-gradient(160deg,
+    #4a2210 0%,
+    #3a1a08 30%,
+    #2c1205 65%,
+    #1a0a02 100%
+  );
   color: #f0d898;
   box-shadow:
-    0 5px 0 #0a0400,
-    0 6px 8px rgba(0,0,0,0.4),
-    inset 0 1px 0 rgba(200,150,60,0.3);
-  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
-  border-radius: 6px;
-  border: 1px solid #1a0a02;
+    0 0 12px rgba(80,40,10,0.50),
+    0 0 24px rgba(40,20,0,0.25),
+    0 2px 6px rgba(0,0,0,0.5),
+    inset 0 2px 3px rgba(200,150,60,0.35),
+    inset 0 -1px 2px rgba(20,8,0,0.6);
+  text-shadow:
+    0 0 8px rgba(220,180,60,0.5),
+    0 1px 2px rgba(0,0,0,0.7);
+  border-radius: 8px;
+  border: 1.5px solid rgba(80,40,10,0.9);
 }
 
 /* ── Divisor ornamentado ── */
