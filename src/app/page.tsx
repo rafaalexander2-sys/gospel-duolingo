@@ -41,67 +41,140 @@ function sub(texto: string, nome: string) {
 
 // ── SVG Personagens ───────────────────────────────────────────────
 function SvgPersonagem({ tipo, cor, size = 80 }: { tipo: TipoPersonagem; cor: string; size?: number }) {
-  const skin = "#f2b97a";
-  const configs: Record<TipoPersonagem, { hairColor: string; accessory: React.ReactNode; bg: string }> = {
+  const skin = "#d4844a";
+  const sash = "#6a3008";
+  const sandal = "#7a3808";
+
+  const configs: Record<TipoPersonagem, {
+    hairColor: string; hasBeard: boolean; hasVeil: boolean;
+    hairWavy: boolean; accessory: React.ReactNode; bg: string;
+  }> = {
     peregrino: {
-      hairColor: "#5c3010", bg: "#d4e8d0",
-      accessory: <line x1="72" y1="30" x2="72" y2="90" stroke="#8a5a20" strokeWidth="3" strokeLinecap="round" />,
+      hairColor: "#3c2010", hasBeard: false, hasVeil: false, hairWavy: true, bg: "#d4e8d0",
+      accessory: <line x1="70" y1="32" x2="70" y2="94" stroke={sash} strokeWidth="4" strokeLinecap="round" />,
     },
     profeta: {
-      hairColor: "#3a2010", bg: "#f0dcc0",
-      accessory: <ellipse cx="22" cy="58" rx="8" ry="5" fill="#e8dcc0" />,
+      hairColor: "#2a1408", hasBeard: true, hasVeil: false, hairWavy: true, bg: "#f0dcc0",
+      accessory: (
+        <g>
+          <rect x="5" y="60" width="11" height="16" rx="2" fill="#e8dcc0" stroke="#8a6030" strokeWidth="1.2" />
+          <line x1="5" y1="64" x2="16" y2="64" stroke="#8a6030" strokeWidth="0.8" />
+          <line x1="5" y1="68" x2="16" y2="68" stroke="#8a6030" strokeWidth="0.8" />
+          <line x1="5" y1="72" x2="16" y2="72" stroke="#8a6030" strokeWidth="0.8" />
+        </g>
+      ),
     },
     guerreiro: {
-      hairColor: "#2c1010", bg: "#dce0f0",
-      accessory: <><path d="M16 40 L20 50 L16 60" stroke="#888" strokeWidth="3" fill="none" strokeLinecap="round" /></>,
+      hairColor: "#1c0e08", hasBeard: false, hasVeil: false, hairWavy: false, bg: "#dce0f0",
+      accessory: (
+        <g>
+          <rect x="66" y="40" width="5" height="34" rx="1.5" fill="#b0b8cc" />
+          <rect x="62" y="48" width="13" height="4" rx="1.5" fill="#c8b040" />
+          <rect x="65" y="37" width="7" height="6" rx="2" fill="#c8b040" />
+        </g>
+      ),
     },
     sabia: {
-      hairColor: "#3a0050", bg: "#e8d4f0",
-      accessory: <rect x="64" y="45" width="10" height="14" rx="1" fill="#e8dcc0" stroke="#a08060" strokeWidth="1" />,
+      hairColor: "#2a1040", hasBeard: false, hasVeil: true, hairWavy: false, bg: "#e8d4f0",
+      accessory: (
+        <g>
+          <rect x="61" y="57" width="14" height="18" rx="2" fill="#d4c090" stroke="#8a6820" strokeWidth="1.2" />
+          <line x1="64" y1="57" x2="64" y2="75" stroke="#8a6820" strokeWidth="1" />
+          <line x1="64" y1="61" x2="75" y2="61" stroke="#8a6820" strokeWidth="0.8" />
+          <line x1="64" y1="65" x2="75" y2="65" stroke="#8a6820" strokeWidth="0.8" />
+          <line x1="64" y1="69" x2="75" y2="69" stroke="#8a6820" strokeWidth="0.8" />
+        </g>
+      ),
     },
   };
-  const { hairColor, accessory, bg } = configs[tipo];
-  const temBarba = tipo === "profeta";
-  const temVeu = tipo === "sabia";
+  const { hairColor, hasBeard, hasVeil, hairWavy, accessory, bg } = configs[tipo];
 
   return (
-    <svg width={size} height={size} viewBox="0 0 90 90">
-      <circle cx="45" cy="45" r="44" fill={DS.douradoSombra} />
-      <circle cx="45" cy="45" r="41" fill={bg} />
-      {/* roupa */}
-      <ellipse cx="45" cy="80" rx="26" ry="18" fill={cor} />
-      <ellipse cx="45" cy="80" rx="14" ry="16" fill={cor} opacity="0.7" />
-      {/* pescoço */}
-      <rect x="40" y="60" width="10" height="10" rx="3" fill={skin} />
-      {/* cabeça */}
-      <circle cx="45" cy="44" r="20" fill={skin} />
-      {/* cabelo */}
-      {temVeu ? (
-        <ellipse cx="45" cy="30" rx="22" ry="12" fill={hairColor} opacity="0.9" />
+    <svg width={size} height={Math.round(size * 1.2)} viewBox="0 0 80 96">
+      {/* bg circle */}
+      <circle cx="40" cy="44" r="38" fill={bg} opacity="0.7" />
+
+      {/* ── ROBE ──────────────────────────── */}
+      <path d="M22 40 Q12 66 10 94 L70 94 Q68 66 58 40 Z" fill={cor} />
+      <path d="M33 40 Q29 62 28 94 L52 94 Q51 62 47 40 Z" fill={cor} opacity="0.55" />
+      <path d="M38 40 Q37 62 36 94 L44 94 Q43 62 42 40 Z" fill="white" opacity="0.13" />
+      {/* Sash */}
+      <path d="M18 56 Q40 61 62 56 L60 64 Q40 69 20 64 Z" fill={sash} />
+      <circle cx="40" cy="60" r="4" fill={sash} />
+      <circle cx="40" cy="60" r="2.5" fill="#8a4010" />
+
+      {/* ── ARMS ──────────────────────────── */}
+      <path d="M22 46 Q8 60 6 76" stroke={cor} strokeWidth="13" strokeLinecap="round" fill="none" />
+      <path d="M22 46 Q8 60 6 76" stroke={skin} strokeWidth="9" strokeLinecap="round" fill="none" />
+      <path d="M58 46 Q72 60 74 76" stroke={cor} strokeWidth="13" strokeLinecap="round" fill="none" />
+      <path d="M58 46 Q72 60 74 76" stroke={skin} strokeWidth="9" strokeLinecap="round" fill="none" />
+      <ellipse cx="6" cy="78" rx="5.5" ry="4.5" fill={skin} />
+      <ellipse cx="74" cy="78" rx="5.5" ry="4.5" fill={skin} />
+
+      {/* ── NECK ──────────────────────────── */}
+      <rect x="36" y="36" width="8" height="8" rx="3" fill={skin} />
+
+      {/* ── SANDALS ───────────────────────── */}
+      <ellipse cx="27" cy="93" rx="11" ry="5" fill={sandal} />
+      <ellipse cx="53" cy="93" rx="11" ry="5" fill={sandal} />
+      <path d="M20 91 Q27 87 34 91" stroke={sandal} strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M46 91 Q53 87 60 91" stroke={sandal} strokeWidth="2" fill="none" strokeLinecap="round" />
+
+      {/* ── HAIR (atrás da cabeça) ─────────── */}
+      {hasVeil ? (
+        <>
+          <ellipse cx="40" cy="12" rx="20" ry="13" fill={hairColor} />
+          <path d="M20 18 Q16 30 18 44" stroke={hairColor} strokeWidth="8" strokeLinecap="round" fill="none" opacity="0.9" />
+          <path d="M60 18 Q64 30 62 44" stroke={hairColor} strokeWidth="8" strokeLinecap="round" fill="none" opacity="0.9" />
+        </>
       ) : (
         <>
-          <ellipse cx="45" cy="28" rx="21" ry="10" fill={hairColor} />
-          <ellipse cx="27" cy="44" rx="5" ry="11" fill={hairColor} />
-          <ellipse cx="63" cy="44" rx="5" ry="11" fill={hairColor} />
+          <ellipse cx="40" cy="8" rx="18" ry="10" fill={hairColor} />
+          {hairWavy ? (
+            <>
+              <path d="M22 20 C 18 28, 22 34, 18 42 C 16 46, 18 50, 20 52" stroke={hairColor} strokeWidth="8" strokeLinecap="round" fill="none" />
+              <path d="M58 20 C 62 28, 58 34, 62 42 C 64 46, 62 50, 60 52" stroke={hairColor} strokeWidth="8" strokeLinecap="round" fill="none" />
+            </>
+          ) : (
+            <>
+              <ellipse cx="22" cy="22" rx="4" ry="9" fill={hairColor} />
+              <ellipse cx="58" cy="22" rx="4" ry="9" fill={hairColor} />
+            </>
+          )}
         </>
       )}
-      {/* olhos */}
-      <ellipse cx="38" cy="43" rx="4" ry="4.5" fill="white" />
-      <ellipse cx="52" cy="43" rx="4" ry="4.5" fill="white" />
-      <circle cx="38.5" cy="43.5" r="2.5" fill="#3a200a" />
-      <circle cx="52.5" cy="43.5" r="2.5" fill="#3a200a" />
-      <circle cx="39.3" cy="42.6" r="1" fill="white" />
-      <circle cx="53.3" cy="42.6" r="1" fill="white" />
-      {/* sobrancelhas */}
-      <path d="M34 38 Q38 36 42 38" stroke={hairColor} strokeWidth="1.5" fill="none" strokeLinecap="round" />
-      <path d="M48 38 Q52 36 56 38" stroke={hairColor} strokeWidth="1.5" fill="none" strokeLinecap="round" />
-      {/* nariz */}
-      <path d="M44 47 Q45 51 46 47" stroke="#c07848" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-      {/* boca */}
-      <path d="M39 54 Q45 59 51 54" stroke="#a06030" strokeWidth="1.8" fill="none" strokeLinecap="round" />
-      {/* barba */}
-      {temBarba && <ellipse cx="45" cy="61" rx="11" ry="6" fill={hairColor} opacity="0.4" />}
-      {/* acessório */}
+
+      {/* ── FACE ──────────────────────────── */}
+      <ellipse cx="40" cy="22" rx="17" ry="18" fill={skin} />
+      {/* Bochechas */}
+      <ellipse cx="26" cy="30" rx="4.5" ry="3" fill="#e06040" opacity="0.22" />
+      <ellipse cx="54" cy="30" rx="4.5" ry="3" fill="#e06040" opacity="0.22" />
+      {/* Sobrancelhas */}
+      <path d="M26 14 Q31 12 36 14" stroke={hairColor} strokeWidth="2.2" fill="none" strokeLinecap="round" />
+      <path d="M44 14 Q49 12 54 14" stroke={hairColor} strokeWidth="2.2" fill="none" strokeLinecap="round" />
+      {/* Olhos */}
+      <ellipse cx="32" cy="21" rx="5.5" ry="6" fill="white" />
+      <ellipse cx="48" cy="21" rx="5.5" ry="6" fill="white" />
+      <circle cx="32.5" cy="21.5" r="3.5" fill="#3a200a" />
+      <circle cx="48.5" cy="21.5" r="3.5" fill="#3a200a" />
+      <circle cx="32.5" cy="21.5" r="2" fill="#1a0a04" />
+      <circle cx="48.5" cy="21.5" r="2" fill="#1a0a04" />
+      <circle cx="33.8" cy="19.8" r="1.4" fill="white" />
+      <circle cx="49.8" cy="19.8" r="1.4" fill="white" />
+      {/* Nariz */}
+      <path d="M37 28 Q40 33 43 28" stroke="#b06840" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+      {/* Sorriso */}
+      <path d="M31 34 Q40 41 49 34" stroke="#904820" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+      {/* Barba */}
+      {hasBeard && (
+        <path d="M24 32 Q28 44 40 46 Q52 44 56 32 Q50 39 40 41 Q30 39 24 32 Z" fill={hairColor} opacity="0.72" />
+      )}
+      {/* Véu */}
+      {hasVeil && (
+        <path d="M20 18 Q40 10 60 18 L56 36 Q40 30 24 36 Z" fill={hairColor} opacity="0.82" />
+      )}
+
+      {/* Acessório */}
       {accessory}
     </svg>
   );
@@ -519,11 +592,12 @@ function TelaArmadura({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => vo
 
 // ── Tela HOME ─────────────────────────────────────────────────────
 function TelaHome({
-  perfil, vidas, onEscolher, onArmadura, onSair,
+  perfil, vidas, onEscolher, onArmadura, onPersonagem, onSair,
 }: {
   perfil: Perfil; vidas: number;
   onEscolher: (t: Trilha) => void;
   onArmadura: () => void;
+  onPersonagem: () => void;
   onSair: () => void;
 }) {
   const pecasTotal = Object.values(perfil.armadura).filter(Boolean).length;
@@ -541,10 +615,10 @@ function TelaHome({
       <main style={{ width: "100%", maxWidth: "450px", padding: "24px 20px" }}>
         {/* Header */}
         <div className="banner-faixa" style={{ borderRadius: "8px 8px 0 0", padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0" }}>
-          <button onClick={onArmadura} title="Armadura de Deus"
+          <button onClick={onPersonagem} title="Personalizar personagem"
             style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
             <SvgPersonagem tipo={perfil.personagem_tipo} cor={perfil.personagem_cor} size={32} />
-            <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", color: DS.douradoClaro, maxWidth: "90px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{perfil.nome}</span>
+            <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "12px", color: DS.douradoClaro, maxWidth: "80px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{perfil.nome}</span>
           </button>
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
             <span style={{ fontSize: "13px", color: "#f0d898" }}>🔥 {perfil.sequencia}</span>
@@ -632,11 +706,11 @@ function TelaHome({
           {[
             { icon: "🏠", label: "Início", action: () => {} },
             { icon: "🛡️", label: "Armadura", action: onArmadura },
-            { icon: "👤", label: "Perfil", action: onArmadura },
+            { icon: "🧙", label: "Personagem", action: onPersonagem },
             { icon: "↩️", label: "Sair", action: onSair },
           ].map(nav => (
             <button key={nav.label} onClick={nav.action}
-              style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", padding: "4px 12px" }}>
+              style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", padding: "4px 10px" }}>
               <span style={{ fontSize: "18px" }}>{nav.icon}</span>
               <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "9px", color: DS.off }}>{nav.label}</span>
             </button>
@@ -1290,7 +1364,8 @@ export default function App() {
           // carrega progresso
           const prog = await carregarProgresso(p.id);
           setProgressoIds(new Set(prog.filter(r => r.completo).map(r => `${r.trilha}_${r.capitulo_id}`)));
-          setTela(!p.personagem_tipo ? "criar_personagem" : "home");
+          const novo = localStorage.getItem("gq_novo_usuario") === "1";
+          setTela(novo ? "criar_personagem" : "home");
         } else {
           setTela("login");
         }
@@ -1414,6 +1489,7 @@ export default function App() {
       vidas={vidasAtivas}
       onEscolher={t => { setTrilha(t); setTela("mapa"); }}
       onArmadura={() => setTela("armadura")}
+      onPersonagem={() => setTela("criar_personagem")}
       onSair={handleSair}
     />
   );
