@@ -27,7 +27,7 @@ const DS = {
   verde: "#1a4a1a", acerto: "#c8e6c0", erro: "#f0c8c8", off: "#9a8060",
 };
 
-type Tela = "login" | "cadastro" | "criar_personagem" | "home" | "mapa" | "jogo" | "resultado" | "armadura" | "ranking";
+type Tela = "login" | "cadastro" | "criar_personagem" | "home" | "trilhas" | "mapa" | "jogo" | "resultado" | "armadura" | "ranking";
 type Trilha = "VT" | "NT" | "JESUS";
 type TipoPersonagem = "peregrino" | "profeta" | "guerreiro" | "sabia";
 
@@ -723,13 +723,14 @@ function BotaoBgm() {
 
 // ── Tela HOME ─────────────────────────────────────────────────────
 function TelaHome({
-  perfil, vidas, onEscolher, onArmadura, onPersonagem, onRanking, onSair,
+  perfil, vidas, onEscolher, onArmadura, onPersonagem, onRanking, onTrilhas, onSair,
 }: {
   perfil: Perfil; vidas: number;
   onEscolher: (t: Trilha) => void;
   onArmadura: () => void;
   onPersonagem: () => void;
   onRanking: () => void;
+  onTrilhas: () => void;
   onSair: () => void;
 }) {
   const pecasTotal = Object.values(perfil.armadura).filter(Boolean).length;
@@ -842,7 +843,7 @@ function TelaHome({
         <div className="banner-faixa" style={{ borderRadius: "0 0 8px 8px", padding: "8px 0", display: "flex", justifyContent: "space-around" }}>
           {([
             { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 3 L3 10 L3 21 L9 21 L9 15 L15 15 L15 21 L21 21 L21 10 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="9" y="15" width="6" height="6" fill={DS.douradoSombra}/></svg>, label: "Início", action: () => {} },
-            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><rect x="3" y="4" width="12" height="16" rx="1.5" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="3" y="4" width="4" height="16" rx="1.5" fill={DS.douradoSombra} opacity="0.6"/><line x1="9" y1="8" x2="14" y2="8" stroke={DS.douradoSombra} strokeWidth="1"/><line x1="9" y1="11" x2="14" y2="11" stroke={DS.douradoSombra} strokeWidth="1"/><line x1="9" y1="14" x2="14" y2="14" stroke={DS.douradoSombra} strokeWidth="1"/><path d="M16 6 C18 6 21 7 21 10 C21 13 18 14 16 14" stroke={DS.douradoClaro} strokeWidth="1.5" fill="none" strokeLinecap="round"/></svg>, label: "Trilhas", action: () => {} },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24"><rect x="3" y="4" width="12" height="16" rx="1.5" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="3" y="4" width="4" height="16" rx="1.5" fill={DS.douradoSombra} opacity="0.6"/><line x1="9" y1="8" x2="14" y2="8" stroke={DS.douradoSombra} strokeWidth="1"/><line x1="9" y1="11" x2="14" y2="11" stroke={DS.douradoSombra} strokeWidth="1"/><line x1="9" y1="14" x2="14" y2="14" stroke={DS.douradoSombra} strokeWidth="1"/><path d="M16 6 C18 6 21 7 21 10 C21 13 18 14 16 14" stroke={DS.douradoClaro} strokeWidth="1.5" fill="none" strokeLinecap="round"/></svg>, label: "Trilhas", action: onTrilhas },
             { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2 L4 6 L4 13 C4 18 7.5 22 12 23 C16.5 22 20 18 20 13 L20 6 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><path d="M12 7 L8 11 L10 13 L12 11 L16 8 Z" fill={DS.douradoSombra}/></svg>, label: "Armadura", action: onArmadura },
             { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2 L14.5 8.5 L22 9.3 L16.5 14.2 L18.2 21.5 L12 17.8 L5.8 21.5 L7.5 14.2 L2 9.3 L9.5 8.5 Z" fill={DS.douradoClaro} stroke={DS.douradoSombra} strokeWidth="0.8"/><rect x="10" y="19" width="4" height="4" rx="1" fill={DS.douradoSombra}/><rect x="8" y="22" width="8" height="2" rx="1" fill={DS.douradoSombra}/></svg>, label: "Ranking", action: onRanking },
             { icon: <svg width="24" height="24" viewBox="0 0 24 24"><path d="M10 12 L18 12 M18 12 L14 8 M18 12 L14 16" stroke={DS.douradoClaro} strokeWidth="2" strokeLinecap="round"/><path d="M14 5 L5 5 L5 19 L14 19" stroke={DS.douradoClaro} strokeWidth="2" strokeLinecap="round" fill="none"/></svg>, label: "Sair", action: onSair },
@@ -1556,6 +1557,40 @@ function TelaResultado({
   );
 }
 
+// ── Tela TRILHAS ──────────────────────────────────────────────────
+function TelaTrilhas({ onEscolher, onVoltar }: { onEscolher: (t: Trilha) => void; onVoltar: () => void }) {
+  const opcoes: { trilha: Trilha; titulo: string; sub: string; cor: string; corBorda: string }[] = [
+    { trilha: "VT", titulo: "Velho Testamento", sub: "Gênesis ao Malaquias — 9 capítulos", cor: `linear-gradient(145deg, ${DS.bgCard}, #f0e4c0)`, corBorda: DS.douradoClaro },
+    { trilha: "NT", titulo: "Novo Testamento", sub: "Mateus ao Apocalipse — 9 capítulos", cor: `linear-gradient(145deg, #e8f0f8, #d0e0f0)`, corBorda: "#6090c0" },
+    { trilha: "JESUS", titulo: "Jornada de Jesus", sub: "Do nascimento à ressurreição — 7 capítulos", cor: `linear-gradient(145deg, ${DS.vermelhoEsc}, #3a0a0a)`, corBorda: "#c06060" },
+  ];
+  return (
+    <div className="tela-scroll">
+      <main style={{ width: "100%", maxWidth: "450px", padding: "16px 20px" }}>
+        <div className="banner-faixa" style={{ borderRadius: "8px", padding: "12px 16px", display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
+          <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.douradoClaro, fontSize: "20px", cursor: "pointer" }}>←</button>
+          <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "16px", color: DS.douradoClaro, fontWeight: "700", letterSpacing: "1px" }}>Escolher Trilha</span>
+        </div>
+        {opcoes.map(o => (
+          <button key={o.trilha} onClick={() => { sfxClick(); onEscolher(o.trilha); }}
+            style={{ width: "100%", background: "none", border: "none", cursor: "pointer", padding: "0", marginBottom: "14px" }}>
+            <div style={{ background: o.cor, border: `2px solid ${o.corBorda}`, borderRadius: "12px", padding: "20px 22px", textAlign: "left", boxShadow: `0 0 14px ${o.corBorda}44, 0 4px 10px rgba(0,0,0,0.3)`, transition: "transform 0.15s", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ width: "52px", height: "52px", borderRadius: "50%", background: o.corBorda, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: `0 0 12px ${o.corBorda}88` }}>
+                <svg width="28" height="28" viewBox="0 0 24 24"><rect x="3" y="4" width="12" height="16" rx="1.5" fill="white" opacity="0.9"/><rect x="3" y="4" width="4" height="16" rx="1.5" fill="rgba(0,0,0,0.2)"/><line x1="9" y1="8" x2="14" y2="8" stroke="rgba(0,0,0,0.3)" strokeWidth="1"/><line x1="9" y1="11" x2="14" y2="11" stroke="rgba(0,0,0,0.3)" strokeWidth="1"/><line x1="9" y1="14" x2="14" y2="14" stroke="rgba(0,0,0,0.3)" strokeWidth="1"/></svg>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "16px", fontWeight: "700", color: o.trilha === "JESUS" ? "#ffcccc" : DS.titulo, marginBottom: "4px" }}>{o.titulo}</div>
+                <div style={{ fontSize: "12px", color: o.trilha === "JESUS" ? "#ffaaaa" : DS.off }}>{o.sub}</div>
+              </div>
+              <svg width="20" height="20" viewBox="0 0 20 20"><path d="M7 4 L13 10 L7 16" stroke={o.trilha === "JESUS" ? "#ffcccc" : DS.douradoClaro} strokeWidth="2" strokeLinecap="round" fill="none"/></svg>
+            </div>
+          </button>
+        ))}
+      </main>
+    </div>
+  );
+}
+
 // ── Tela RANKING ──────────────────────────────────────────────────
 function TelaRanking({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => void }) {
   const jogadores = [
@@ -1812,7 +1847,15 @@ export default function App() {
       onArmadura={() => setTela("armadura")}
       onPersonagem={() => setTela("criar_personagem")}
       onRanking={() => setTela("ranking")}
+      onTrilhas={() => setTela("trilhas")}
       onSair={handleSair}
+    />
+  );
+
+  if (tela === "trilhas") return (
+    <TelaTrilhas
+      onEscolher={t => { setTrilha(t); setTela("mapa"); }}
+      onVoltar={() => setTela("home")}
     />
   );
 
