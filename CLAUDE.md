@@ -11,7 +11,7 @@ App de gamificação bíblica estilo Duolingo. Stack: Next.js 16 (App Router, `"
 - **Estado local**: localStorage para etapas (`gq_etapas`) e missões (`gq_missoes`)
 - **Tema**: medieval/pergaminho — tokens no objeto `DS` no topo de `page.tsx`
 - **Sons**: Web Audio API procedural em `src/lib/sounds.ts` (sem arquivos de áudio)
-- **Pontuação**: XP (nível = XP / 500 + 1) + Talentos (moeda). Lógica em `src/lib/gameEngine.ts`
+- **Pontuação**: Maná — nome de exibição do XP (variável interna continua `xp`). Nível = xp / 500 + 1. Talentos = moeda. Lógica em `src/lib/gameEngine.ts`
 
 ## Telas disponíveis (`type Tela`)
 
@@ -49,6 +49,14 @@ App de gamificação bíblica estilo Duolingo. Stack: Next.js 16 (App Router, `"
 **Infraestrutura**
 - `gameEngine.ts`: adicionado `carregarRanking`, `carregarTodosPerfis`, `resetarPerfilAdmin`, `deletarProgressoAdmin`
 - `supabase-admin-migration.sql`: políticas RLS para ranking público e operações admin — **já executado no Supabase**
+
+---
+
+### [2026-05-17] XP renomeado para Maná
+
+- Toda a interface agora exibe "Maná" no lugar de "XP" (ex: "+80 Maná", "faltam 120 Maná para o próximo nível")
+- Variáveis internas no código continuam como `xp`, `xpGanho` etc — só o rótulo visual mudou
+- Nome do app ainda a definir (candidatos: Elyon, Hagios, Kairos, Pneuma…)
 
 ---
 

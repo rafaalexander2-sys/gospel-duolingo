@@ -935,8 +935,8 @@ function TelaHome({
         {/* XP bar */}
         <div style={{ padding: "0 4px", marginBottom: "8px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: DS.off, marginBottom: "4px" }}>
-            <span>◆ {perfil.xp.toLocaleString()} XP · Nv. {Math.floor(perfil.xp / 500) + 1}</span>
-            <span>{500 - (perfil.xp % 500)} XP p/ próximo nível</span>
+            <span>◆ {perfil.xp.toLocaleString()} Maná · Nv. {Math.floor(perfil.xp / 500) + 1}</span>
+            <span>{500 - (perfil.xp % 500)} Maná p/ próximo nível</span>
           </div>
           <div className="barra-progress-track">
             <div className="barra-progress-fill" style={{ width: `${(perfil.xp % 500) / 5}%` }} />
@@ -1175,7 +1175,7 @@ function TelaMissoes({
           boxShadow: `0 0 32px rgba(212,160,20,0.25)`,
         }}>
           <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "34px", fontWeight: "900", color: DS.douradoClaro }}>
-            +{recompensas.xp} XP
+            +{recompensas.xp} Maná
           </div>
           <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "18px", color: DS.dourado, marginTop: "4px" }}>
             +{recompensas.talentos} Talentos
@@ -1236,7 +1236,7 @@ function TelaMissoes({
                 borderRadius: "20px", padding: "4px 12px",
                 fontFamily: "var(--font-cinzel)", fontSize: "11px", fontWeight: "700", color: DS.titulo,
               }}>
-                +{missao.xp} XP · +{missao.talentos} Talentos
+                +{missao.xp} Maná · +{missao.talentos} Talentos
               </div>
               {jaConcluidaHoje && (
                 <div style={{ background: DS.verde, borderRadius: "20px", padding: "4px 12px", fontFamily: "var(--font-cinzel)", fontSize: "11px", color: "white" }}>
@@ -1340,7 +1340,7 @@ function TelaMissoes({
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
                       <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "12px", fontWeight: "700", color: DS.titulo }}>{m.titulo}</span>
                       <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                        <span style={{ fontSize: "10px", color: DS.dourado }}>+{mc.xpGanho} XP</span>
+                        <span style={{ fontSize: "10px", color: DS.dourado }}>+{mc.xpGanho} Maná</span>
                         <span style={{ fontSize: "11px", color: DS.off }}>{dataFmt}</span>
                       </div>
                     </div>
@@ -1824,7 +1824,7 @@ function TelaQuiz({
           <span style={{ background: isReview ? `linear-gradient(135deg,#7a1515,#4a0a0a)` : `linear-gradient(135deg,${DS.vermelho},${DS.vermelhoEsc})`, color: isReview ? "#ffaaaa" : "#ffcccc", fontSize: "11px", padding: "3px 10px", borderRadius: "12px", fontFamily: "var(--font-cinzel)", letterSpacing: "0.5px" }}>
             {isReview ? "↺ REVISÃO" : capitulo.titulo.toUpperCase()}
           </span>
-          {xpGanho > 0 && <span style={{ fontSize: "11px", color: DS.dourado }}>+{xpGanho} XP</span>}
+          {xpGanho > 0 && <span style={{ fontSize: "11px", color: DS.dourado }}>+{xpGanho} Maná</span>}
         </div>
         <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "20px", color: DS.titulo, marginBottom: "16px", lineHeight: 1.3 }}>{getTitulo(q)}</h2>
         {renderEnunciado()}
@@ -1910,7 +1910,7 @@ function TelaResultado({
             <div style={{ width: "1px", background: DS.borda }} />
             <div>
               <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "24px", color: DS.douradoClaro }}>+{xpGanho}</div>
-              <div style={{ fontSize: "11px", color: DS.off }}>XP</div>
+              <div style={{ fontSize: "11px", color: DS.off }}>Maná</div>
             </div>
             <div style={{ width: "1px", background: DS.borda }} />
             <div>
@@ -2119,7 +2119,7 @@ function TelaRanking({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => voi
           <div style={{ fontSize: "12px", color: DS.off, marginTop: "4px" }}>
             {!carregando && posicao > 0 ? `${posicao}º lugar` : carregando ? "Calculando posição..." : "Faça um quiz para entrar no ranking!"}
           </div>
-          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "14px", color: DS.douradoClaro, marginTop: "6px" }}>{perfil.xp.toLocaleString()} XP</div>
+          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "14px", color: DS.douradoClaro, marginTop: "6px" }}>{perfil.xp.toLocaleString()} Maná</div>
         </div>
 
         {carregando ? (
@@ -2152,7 +2152,7 @@ function TelaRanking({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => voi
                   <SvgPersonagem tipo={j.personagem_tipo as TipoPersonagem} cor={j.personagem_cor} size={28} />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", fontWeight: "700", color: DS.titulo }}>{j.nome}</div>
-                    <div style={{ fontSize: "12px", color: DS.dourado, marginTop: "2px" }}>{j.xp.toLocaleString()} XP</div>
+                    <div style={{ fontSize: "12px", color: DS.dourado, marginTop: "2px" }}>{j.xp.toLocaleString()} Maná</div>
                   </div>
                   {j.sequencia > 0 && (
                     <span style={{ fontSize: "11px", color: "#f0a040" }}>🔥 {j.sequencia}</span>
@@ -2281,7 +2281,7 @@ function TelaAdmin({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => void 
                   )}
                 </div>
                 <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", fontSize: "11px", color: DS.dourado }}>
-                  <span>⭐ {u.xp.toLocaleString()} XP</span>
+                  <span>⭐ {u.xp.toLocaleString()} Maná</span>
                   <span>💰 {u.talentos}</span>
                   <span>🔥 {u.sequencia}d</span>
                   <span style={{ marginLeft: "auto", color: DS.off }}>Desde {dataReg}</span>
