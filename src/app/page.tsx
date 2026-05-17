@@ -1340,11 +1340,32 @@ function TelaQuiz({
         <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "20px", color: DS.titulo, marginBottom: "16px", lineHeight: 1.3 }}>{getTitulo(q)}</h2>
         {renderEnunciado()}
         {feedback && (
-          <div style={{ background: corFeedback, border: `1.5px solid ${bordaFeedback}`, borderRadius: "8px", padding: "12px 16px", marginBottom: "14px" }}>
-            <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", fontWeight: "700", color: feedback.certa ? DS.verde : DS.vermelho, marginBottom: feedback.explicacao ? "6px" : 0 }}>
-              {feedback.certa ? "✓ Correto!" : `✗ Errado!${isReview ? " (Revisão)" : ""}`}
+          <div style={{
+            background: corFeedback,
+            border: `2px solid ${bordaFeedback}`,
+            borderLeft: `5px solid ${feedback.certa ? DS.verde : DS.vermelho}`,
+            borderRadius: "10px",
+            padding: "14px 16px",
+            marginBottom: "14px",
+          }}>
+            <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "14px", fontWeight: "700", color: feedback.certa ? DS.verde : DS.vermelho, marginBottom: "6px" }}>
+              {feedback.certa ? "✓ Correto!" : "✗ Resposta errada"}
             </p>
-            {feedback.explicacao && <p style={{ fontSize: "12px", color: DS.corpo, lineHeight: 1.5 }}>{feedback.explicacao}</p>}
+            {!feedback.certa && opcoes[correta] && (
+              <div style={{ background: DS.acerto, border: `1px solid ${DS.verde}`, borderRadius: "6px", padding: "8px 12px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "11px", color: DS.verde, fontFamily: "var(--font-cinzel)", fontWeight: "700" }}>RESPOSTA CORRETA</span>
+                <p style={{ fontSize: "13px", color: DS.verde, fontWeight: "600", marginTop: "2px" }}>{opcoes[correta]}</p>
+              </div>
+            )}
+            {feedback.explicacao ? (
+              <p style={{ fontSize: "12px", color: DS.corpo, lineHeight: 1.6, borderTop: `1px solid ${bordaFeedback}`, paddingTop: "8px", marginTop: "4px" }}>
+                {feedback.explicacao}
+              </p>
+            ) : !feedback.certa && (
+              <p style={{ fontSize: "12px", color: DS.corpo, lineHeight: 1.6, fontStyle: "italic" }}>
+                Não desanime — essa questão aparecerá novamente na revisão!
+              </p>
+            )}
           </div>
         )}
         {renderOpcoes()}
