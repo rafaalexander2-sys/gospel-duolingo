@@ -143,6 +143,13 @@ export async function carregarPerfil(userId: string): Promise<Perfil | null> {
   return data as Perfil;
 }
 
+export async function garantirPerfil(userId: string, nome: string, email: string): Promise<Perfil | null> {
+  const existente = await carregarPerfil(userId);
+  if (existente) return existente;
+  await supabase.from("perfis").insert({ id: userId, nome, email });
+  return carregarPerfil(userId);
+}
+
 export async function salvarProgresso(
   userId: string,
   trilha: "VT" | "NT" | "JESUS",

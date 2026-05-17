@@ -9,7 +9,7 @@ import {
   VIDAS_MAX, XP_QUESTAO_CERTA, TALENTOS_QUESTAO_CERTA,
   TALENTOS_CAPITULO_COMPLETO, PECAS_ARMADURA,
   calcularVidasAtuais, minutosProxVida,
-  carregarPerfil, salvarProgresso, carregarProgresso,
+  carregarPerfil, garantirPerfil, salvarProgresso, carregarProgresso,
   atualizarPerfil, registrarLoginDiario, verificarArmaduraDesbloqueios,
 } from "@/lib/gameEngine";
 
@@ -225,7 +225,7 @@ function TelaLogin({ onLogin, onCadastro }: { onLogin: () => void; onCadastro: (
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
           <MascoteFlutuante />
           <h1 style={{ fontFamily: "var(--font-cinzel)", fontSize: "28px", fontWeight: "900", color: DS.douradoClaro, marginTop: "12px", letterSpacing: "3px" }}>
-            GOSPEL QUEST
+            DISCYPULO
           </h1>
           <p style={{ color: DS.off, fontStyle: "italic", fontSize: "14px" }}>Uma jornada épica pela Palavra de Deus</p>
         </div>
@@ -559,7 +559,7 @@ function TelaHome({
             fontSize: "34px",
           }}>✝</div>
           <h1 className="titulo-hero" style={{ fontFamily: "var(--font-cinzel)", fontSize: "30px", fontWeight: "900", color: DS.douradoClaro, margin: "0 0 4px", letterSpacing: "3px" }}>
-            GOSPEL QUEST
+            DISCYPULO
           </h1>
           <p style={{ color: DS.off, fontStyle: "italic", fontSize: "13px" }}>Uma jornada épica pela Palavra de Deus</p>
 
@@ -1044,7 +1044,8 @@ export default function App() {
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (data.session?.user) {
-        const p = await carregarPerfil(data.session.user.id);
+        const u = data.session.user;
+        const p = await garantirPerfil(u.id, u.user_metadata?.nome ?? u.email?.split("@")[0] ?? "Peregrino", u.email ?? "");
         if (p) {
           const updates = await registrarLoginDiario(p);
           const perfilAtual = { ...p, ...updates };
@@ -1078,7 +1079,8 @@ export default function App() {
   async function handleLogin() {
     const { data } = await supabase.auth.getSession();
     if (!data.session) return;
-    const p = await carregarPerfil(data.session.user.id);
+    const u = data.session.user;
+    const p = await garantirPerfil(u.id, u.user_metadata?.nome ?? u.email?.split("@")[0] ?? "Peregrino", u.email ?? "");
     if (p) {
       const updates = await registrarLoginDiario(p);
       const perfilAtual = { ...p, ...updates };
