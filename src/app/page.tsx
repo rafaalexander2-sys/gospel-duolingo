@@ -29,7 +29,7 @@ const DS = {
   verde: "#1a4a1a", acerto: "#c8e6c0", erro: "#f0c8c8", off: "#9a8060",
 };
 
-type Tela = "login" | "cadastro" | "criar_personagem" | "home" | "trilhas" | "mapa" | "etapas" | "jogo" | "resultado" | "armadura" | "ranking" | "missoes" | "admin";
+type Tela = "login" | "cadastro" | "criar_personagem" | "home" | "trilhas" | "mapa" | "etapas" | "jogo" | "resultado" | "armadura" | "ranking" | "missoes" | "admin" | "planos" | "sem_vidas";
 const ADMIN_EMAILS = ["rafaalexander2@gmail.com", "santosaline2802@gmail.com"];
 type Trilha = "VT" | "NT" | "JESUS";
 type TipoPersonagem = "peregrino" | "profeta" | "guerreiro" | "sabia";
@@ -806,7 +806,7 @@ function AnelProgresso({ completas, total = 5 }: { completas: number; total?: nu
 // ── Tela HOME ─────────────────────────────────────────────────────
 function TelaHome({
   perfil, vidas, onEscolher, onArmadura, onPersonagem, onRanking, onTrilhas, onMissoes, onSair,
-  missaoConcluidaHoje, onAdmin,
+  missaoConcluidaHoje, onAdmin, onPlanos,
 }: {
   perfil: Perfil; vidas: number;
   onEscolher: (t: Trilha) => void;
@@ -818,6 +818,7 @@ function TelaHome({
   onSair: () => void;
   missaoConcluidaHoje?: boolean;
   onAdmin?: () => void;
+  onPlanos: () => void;
 }) {
   const pecasTotal = Object.values(perfil.armadura).filter(Boolean).length;
   const missaoHoje = getMissaoHoje();
@@ -943,7 +944,22 @@ function TelaHome({
           </div>
         </div>
 
-        <SlotAnuncio altura={70} label="banner" />
+        {/* Banner Premium */}
+        <button onClick={onPlanos} style={{
+          width: "100%", padding: "12px 16px", borderRadius: "8px", cursor: "pointer",
+          background: `linear-gradient(145deg, rgba(212,160,20,0.14), rgba(212,160,20,0.05))`,
+          border: `1px solid rgba(212,160,20,0.35)`,
+          display: "flex", alignItems: "center", gap: "12px",
+          marginBottom: "8px", textAlign: "left",
+          boxShadow: `0 0 12px rgba(212,160,20,0.08)`,
+        }}>
+          <span style={{ fontSize: "22px" }}>👑</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "12px", color: DS.douradoClaro, fontWeight: "700" }}>Discípulo Premium</div>
+            <div style={{ fontSize: "11px", color: DS.off, marginTop: "2px" }}>Vidas ilimitadas · Sem anúncios · A partir de R$ 7,49/mês</div>
+          </div>
+          <span style={{ fontSize: "11px", color: DS.douradoClaro, fontFamily: "var(--font-cinzel)" }}>Ver →</span>
+        </button>
 
         {onAdmin && (
           <button onClick={onAdmin} style={{
@@ -2170,6 +2186,159 @@ function TelaRanking({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => voi
   );
 }
 
+// ── Tela PLANOS ───────────────────────────────────────────────────
+function TelaPlanos({ onVoltar }: { onVoltar: () => void }) {
+  const [plano, setPlano] = useState<"anual" | "mensal">("anual");
+  const [avisado, setAvisado] = useState(false);
+
+  const features = [
+    { icon: "♥", text: "Vidas ilimitadas — jogue sem parar" },
+    { icon: "✗", text: "Sem anúncios" },
+    { icon: "✦", text: "+50% Maná em todos os quiz" },
+    { icon: "⚜", text: "Badge exclusivo no Ranking" },
+    { icon: "📖", text: "Acesso antecipado a novos conteúdos" },
+  ];
+
+  return (
+    <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: `linear-gradient(160deg, #120600, #2c1505)` }}>
+      <div style={{ padding: "14px 20px", display: "flex", alignItems: "center" }}>
+        <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.douradoClaro, fontSize: "20px", cursor: "pointer", padding: "4px 8px" }}>←</button>
+      </div>
+
+      <div style={{ flex: 1, overflowY: "auto", padding: "0 20px 40px" }}>
+        {/* Hero */}
+        <div style={{ textAlign: "center", paddingBottom: "28px" }}>
+          <div style={{ fontSize: "52px", marginBottom: "12px", filter: `drop-shadow(0 0 20px rgba(212,160,20,0.5))` }}>👑</div>
+          <h1 style={{ fontFamily: "var(--font-cinzel)", fontSize: "24px", fontWeight: "900", color: DS.douradoClaro, marginBottom: "6px", letterSpacing: "2px" }}>
+            Discípulo Premium
+          </h1>
+          <p style={{ color: "rgba(200,180,140,0.7)", fontSize: "14px" }}>Sua jornada bíblica sem limites</p>
+        </div>
+
+        {/* Planos */}
+        <div style={{ display: "flex", gap: "10px", marginBottom: "16px" }}>
+          {/* Anual */}
+          <button onClick={() => setPlano("anual")} style={{
+            flex: 1, padding: "16px 10px", borderRadius: "12px", cursor: "pointer", textAlign: "center",
+            border: plano === "anual" ? `2px solid ${DS.douradoClaro}` : `2px solid rgba(212,160,20,0.25)`,
+            background: plano === "anual" ? `linear-gradient(145deg, rgba(212,160,20,0.18), rgba(212,160,20,0.05))` : "transparent",
+            position: "relative", overflow: "hidden",
+          }}>
+            {plano === "anual" && (
+              <div style={{ position: "absolute", top: 0, right: 0, background: DS.douradoClaro, color: "#1a0a02", fontSize: "9px", fontFamily: "var(--font-cinzel)", fontWeight: "700", padding: "3px 8px", borderRadius: "0 10px 0 8px" }}>
+                MELHOR VALOR
+              </div>
+            )}
+            <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "10px", color: DS.dourado, marginBottom: "6px", letterSpacing: "1.5px" }}>ANUAL</div>
+            <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "22px", fontWeight: "900", color: DS.douradoClaro }}>R$ 89,90</div>
+            <div style={{ fontSize: "11px", color: "rgba(200,180,140,0.6)", marginTop: "2px" }}>por ano</div>
+            <div style={{ fontSize: "11px", color: "rgba(200,180,140,0.5)", marginTop: "1px" }}>≈ R$ 7,49/mês</div>
+            <div style={{ fontSize: "10px", color: "#90e090", marginTop: "6px", fontFamily: "var(--font-cinzel)" }}>50% de desconto</div>
+          </button>
+
+          {/* Mensal */}
+          <button onClick={() => setPlano("mensal")} style={{
+            flex: 1, padding: "16px 10px", borderRadius: "12px", cursor: "pointer", textAlign: "center",
+            border: plano === "mensal" ? `2px solid ${DS.douradoClaro}` : `2px solid rgba(212,160,20,0.25)`,
+            background: plano === "mensal" ? `linear-gradient(145deg, rgba(212,160,20,0.18), rgba(212,160,20,0.05))` : "transparent",
+          }}>
+            <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "10px", color: DS.dourado, marginBottom: "6px", letterSpacing: "1.5px" }}>MENSAL</div>
+            <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "22px", fontWeight: "900", color: DS.douradoClaro }}>R$ 14,90</div>
+            <div style={{ fontSize: "11px", color: "rgba(200,180,140,0.6)", marginTop: "2px" }}>por mês</div>
+          </button>
+        </div>
+
+        {/* CTA */}
+        {avisado ? (
+          <div style={{ background: "rgba(212,160,20,0.08)", border: `1px solid rgba(212,160,20,0.3)`, borderRadius: "10px", padding: "16px", marginBottom: "16px", textAlign: "center" }}>
+            <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", color: DS.douradoClaro, marginBottom: "4px" }}>Em breve!</p>
+            <p style={{ fontSize: "12px", color: "rgba(200,180,140,0.6)", lineHeight: 1.6 }}>Os pagamentos serão ativados em breve. Obrigado pelo interesse!</p>
+          </div>
+        ) : (
+          <button onClick={() => setAvisado(true)} className="btn-medieval btn-dourado"
+            style={{ width: "100%", padding: "16px", fontSize: "15px", marginBottom: "16px", letterSpacing: "1px" }}>
+            Começar Premium ✦
+          </button>
+        )}
+
+        {/* Features */}
+        <div style={{ marginBottom: "20px" }}>
+          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "10px", color: DS.dourado, letterSpacing: "2px", marginBottom: "12px", textAlign: "center" }}>O QUE ESTÁ INCLUÍDO</div>
+          {features.map((f, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: "14px", padding: "11px 0", borderBottom: i < features.length - 1 ? `1px solid rgba(212,160,20,0.1)` : "none" }}>
+              <span style={{ fontSize: "15px", width: "22px", textAlign: "center", color: DS.douradoClaro }}>{f.icon}</span>
+              <span style={{ fontSize: "13px", color: "rgba(200,180,140,0.85)", lineHeight: 1.4 }}>{f.text}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Plano gratuito */}
+        <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: "8px", padding: "14px 16px", marginBottom: "16px" }}>
+          <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "10px", color: DS.off, marginBottom: "8px", letterSpacing: "1px" }}>PLANO GRATUITO INCLUI</p>
+          <p style={{ fontSize: "12px", color: "rgba(200,180,140,0.45)", lineHeight: 1.7 }}>
+            Acesso a todos os quizzes · 5 vidas (recarga 30 min) · Ranking público · Anúncios ativos
+          </p>
+        </div>
+
+        <p style={{ textAlign: "center", fontSize: "11px", color: "rgba(200,180,140,0.35)" }}>Cancele quando quiser</p>
+      </div>
+    </div>
+  );
+}
+
+// ── Tela SEM VIDAS ─────────────────────────────────────────────────
+function TelaSemVidas({ minutosProxima, onVoltar, onPremium }: {
+  minutosProxima: number;
+  onVoltar: () => void;
+  onPremium: () => void;
+}) {
+  return (
+    <div style={{ position: "fixed", inset: 0, background: `linear-gradient(160deg, #120600, #2c1505)`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 24px" }}>
+      <div style={{ fontSize: "36px", letterSpacing: "8px", marginBottom: "24px", opacity: 0.35 }}>{"♡".repeat(5)}</div>
+
+      <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "22px", fontWeight: "900", color: DS.douradoClaro, textAlign: "center", marginBottom: "8px", letterSpacing: "1px" }}>
+        Suas vidas acabaram
+      </h2>
+      <p style={{ fontSize: "13px", color: "rgba(200,180,140,0.55)", fontStyle: "italic", textAlign: "center", marginBottom: "36px", maxWidth: "280px", lineHeight: 1.7 }}>
+        &ldquo;Esperai no Senhor, tende bom ânimo e Ele fortalecerá o vosso coração.&rdquo;
+        <br /><span style={{ fontSize: "11px", fontFamily: "var(--font-cinzel)", fontStyle: "normal", color: DS.douradoSombra }}>— Salmos 27:14</span>
+      </p>
+
+      {/* Opção esperar */}
+      <button onClick={onVoltar} style={{
+        width: "100%", maxWidth: "320px", padding: "14px 20px", borderRadius: "10px", marginBottom: "12px",
+        background: "rgba(255,255,255,0.05)", border: `1px solid rgba(200,180,140,0.15)`,
+        color: "rgba(200,180,140,0.6)", fontFamily: "var(--font-cinzel)", fontSize: "13px",
+        cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center",
+      }}>
+        <span>⏱ Esperar recarga gratuita</span>
+        <span style={{ fontSize: "12px" }}>{minutosProxima} min</span>
+      </button>
+
+      {/* Upsell Premium */}
+      <button onClick={onPremium} style={{
+        width: "100%", maxWidth: "320px", padding: "18px 20px", borderRadius: "10px", marginBottom: "20px",
+        background: `linear-gradient(145deg, rgba(212,160,20,0.2), rgba(212,160,20,0.08))`,
+        border: `1.5px solid ${DS.douradoClaro}`,
+        cursor: "pointer", textAlign: "left",
+        boxShadow: `0 0 24px rgba(212,160,20,0.18)`,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "5px" }}>
+          <span style={{ fontSize: "18px" }}>👑</span>
+          <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "14px", fontWeight: "700", color: DS.douradoClaro }}>Discípulo Premium</span>
+        </div>
+        <p style={{ fontSize: "12px", color: "rgba(200,180,140,0.65)", margin: 0, paddingLeft: "28px", lineHeight: 1.5 }}>
+          Vidas ilimitadas · Sem anúncios · A partir de R$ 7,49/mês
+        </p>
+      </button>
+
+      <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.off, fontSize: "12px", cursor: "pointer", padding: "8px", fontFamily: "var(--font-cinzel)" }}>
+        ← Voltar ao Mapa
+      </button>
+    </div>
+  );
+}
+
 // ── Tela ADMIN ────────────────────────────────────────────────────
 function TelaAdmin({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => void }) {
   const [usuarios, setUsuarios] = useState<PerfilAdmin[]>([]);
@@ -2539,6 +2708,7 @@ export default function App() {
       onSair={handleSair}
       missaoConcluidaHoje={missaoConcluidaHoje}
       onAdmin={ADMIN_EMAILS.includes(perfil.email) ? () => setTela("admin") : undefined}
+      onPlanos={() => setTela("planos")}
     />
   );
 
@@ -2555,6 +2725,18 @@ export default function App() {
 
   if (tela === "admin" && ADMIN_EMAILS.includes(perfil.email)) return (
     <TelaAdmin perfil={perfil} onVoltar={() => setTela("home")} />
+  );
+
+  if (tela === "planos") return (
+    <TelaPlanos onVoltar={() => setTela("home")} />
+  );
+
+  if (tela === "sem_vidas") return (
+    <TelaSemVidas
+      minutosProxima={minutosProxVida(perfil)}
+      onVoltar={() => setTela("mapa")}
+      onPremium={() => setTela("planos")}
+    />
   );
 
   if (tela === "missoes") return (
@@ -2599,7 +2781,7 @@ export default function App() {
       capitulo={capitulo} trilha={trilha} perfil={perfil} vidas={vidasAtivas}
       questoes={capitulo.etapas ? capitulo.etapas[etapaAtual] : undefined}
       onConcluir={handleConcluirQuiz}
-      onSemVidas={() => setTela("mapa")}
+      onSemVidas={() => setTela("sem_vidas")}
     />
   );
 

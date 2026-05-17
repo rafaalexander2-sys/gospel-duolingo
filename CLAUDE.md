@@ -52,6 +52,24 @@ App de gamificação bíblica estilo Duolingo. Stack: Next.js 16 (App Router, `"
 
 ---
 
+### [2026-05-17] Monetização — Telas de Planos e Bloqueio por Vidas
+
+**Telas novas**
+- `TelaPlanos` — tela de planos (Grátis · Premium Mensal R$14,90 · Premium Anual R$89,90). Botão "Começar Premium" exibe aviso "Em breve" — pagamento ainda não integrado
+- `TelaSemVidas` — bloqueio estilo Duolingo quando vidas chegam a 0 durante quiz; opções: esperar recarga, ir para TelaPlanos ou voltar ao mapa
+
+**Home**
+- Banner "Discípulo Premium" substituiu o SlotAnuncio (placeholder de anúncio) no home
+- TelaPlanos acessível pelo banner e pela tela de vidas zeradas
+
+**Preços atuais** (alterar diretamente no componente `TelaPlanos`):
+- Mensal: R$ 14,90/mês
+- Anual: R$ 89,90/ano (≈ R$ 7,49/mês)
+
+**TODO**: Integrar gateway de pagamento (Stripe recomendado) e adicionar campo `premium` na tabela `perfis`
+
+---
+
 ### [2026-05-17] XP renomeado para Maná
 
 - Toda a interface agora exibe "Maná" no lugar de "XP" (ex: "+80 Maná", "faltam 120 Maná para o próximo nível")
