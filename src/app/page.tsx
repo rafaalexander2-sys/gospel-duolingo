@@ -9,7 +9,7 @@ import {
   VIDAS_MAX, XP_QUESTAO_CERTA, TALENTOS_QUESTAO_CERTA,
   TALENTOS_CAPITULO_COMPLETO, PECAS_ARMADURA,
   calcularVidasAtuais, minutosProxVida,
-  carregarPerfil, salvarProgresso, carregarProgresso,
+  carregarPerfil, garantirPerfil, salvarProgresso, carregarProgresso,
   atualizarPerfil, registrarLoginDiario, verificarArmaduraDesbloqueios,
 } from "@/lib/gameEngine";
 
@@ -1044,7 +1044,8 @@ export default function App() {
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (data.session?.user) {
-        const p = await carregarPerfil(data.session.user.id);
+        const u = data.session.user;
+        const p = await garantirPerfil(u.id, u.user_metadata?.nome ?? u.email?.split("@")[0] ?? "Peregrino", u.email ?? "");
         if (p) {
           const updates = await registrarLoginDiario(p);
           const perfilAtual = { ...p, ...updates };
@@ -1078,7 +1079,8 @@ export default function App() {
   async function handleLogin() {
     const { data } = await supabase.auth.getSession();
     if (!data.session) return;
-    const p = await carregarPerfil(data.session.user.id);
+    const u = data.session.user;
+    const p = await garantirPerfil(u.id, u.user_metadata?.nome ?? u.email?.split("@")[0] ?? "Peregrino", u.email ?? "");
     if (p) {
       const updates = await registrarLoginDiario(p);
       const perfilAtual = { ...p, ...updates };
