@@ -2051,47 +2051,43 @@ function TelaResultado({
   const arcaBonus = talentosGanho + 15;
 
   if (step === "pontos") return (
-    <div style={{ position: "fixed", inset: 0, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px" }}>
-      <style>{`
-        @keyframes shine { 0%,100%{opacity:0.6} 50%{opacity:1} }
-        .shine { animation: shine 1.5s ease-in-out infinite; }
-      `}</style>
+    <div style={{ position: "fixed", inset: 0, background: "var(--bg)", display: "flex", justifyContent: "center", alignItems: "center", padding: "20px" }}>
       <main style={{ width: "100%", maxWidth: "420px" }}>
-        <div className="card-pergaminho" style={{ padding: "28px 24px", textAlign: "center" }}>
+        <div className="card-verbum" style={{ padding: "28px 24px", textAlign: "center" }}>
           <div style={{ fontSize: "52px", marginBottom: "8px" }}>{perfeito ? "🏆" : pct >= 70 ? "⭐" : "📖"}</div>
-          <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "22px", color: DS.titulo, marginBottom: "4px" }}>
+          <h2 style={{ fontSize: "22px", fontWeight: "800", color: DS.t0, marginBottom: "4px", letterSpacing: "-0.02em" }}>
             {perfeito ? "Perfeito!" : pct >= 70 ? "Muito bem!" : "Continue praticando"}
           </h2>
-          <p style={{ color: DS.off, fontSize: "13px", marginBottom: "20px" }}>{capitulo.titulo}</p>
+          <p style={{ color: DS.t2, fontSize: "13px", marginBottom: "20px" }}>{capitulo.titulo}</p>
 
           <div style={{ display: "flex", justifyContent: "center", gap: "24px", marginBottom: "20px" }}>
             <div>
-              <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "28px", fontWeight: "900", color: perfeito ? DS.douradoClaro : DS.titulo }}>{pct}%</div>
-              <div style={{ fontSize: "11px", color: DS.off }}>{acertos}/{total} certas</div>
+              <div style={{ fontSize: "28px", fontWeight: "800", color: perfeito ? DS.warn : DS.t0 }}>{pct}%</div>
+              <div style={{ fontSize: "11px", color: DS.t2 }}>{acertos}/{total} certas</div>
             </div>
-            <div style={{ width: "1px", background: DS.borda }} />
+            <div style={{ width: "1px", background: DS.border }} />
             <div>
-              <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "24px", color: DS.douradoClaro }}>+{xpGanho}</div>
-              <div style={{ fontSize: "11px", color: DS.off }}>Maná</div>
+              <div style={{ fontSize: "24px", fontWeight: "800", color: DS.blue }}>+{xpGanho}</div>
+              <div style={{ fontSize: "11px", color: DS.t2 }}>Maná</div>
             </div>
-            <div style={{ width: "1px", background: DS.borda }} />
+            <div style={{ width: "1px", background: DS.border }} />
             <div>
-              <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "24px", color: DS.dourado }}>+{talentosGanho}</div>
-              <div style={{ fontSize: "11px", color: DS.off }}>Talentos</div>
+              <div style={{ fontSize: "24px", fontWeight: "800", color: DS.warn }}>+{talentosGanho}</div>
+              <div style={{ fontSize: "11px", color: DS.t2 }}>Talentos</div>
             </div>
           </div>
 
           {novasPecas.length > 0 && (
-            <div style={{ background: `linear-gradient(145deg, #fdf6e3, #f0e4c0)`, border: `1.5px solid ${DS.douradoClaro}`, borderRadius: "8px", padding: "14px", marginBottom: "16px" }}>
-              <p className="shine" style={{ fontFamily: "var(--font-cinzel)", fontSize: "12px", color: DS.dourado, marginBottom: "8px" }}>✦ ARMADURA DESBLOQUEADA ✦</p>
+            <div style={{ background: DS.blueTint, border: `1.5px solid ${DS.blueLt}`, borderRadius: "12px", padding: "14px", marginBottom: "16px" }}>
+              <p style={{ fontSize: "12px", fontWeight: 700, color: DS.blue, marginBottom: "8px" }}>✦ ARMADURA DESBLOQUEADA ✦</p>
               {novasPecas.map(id => {
                 const peca = PECAS_ARMADURA.find(p => p.id === id)!;
                 return (
                   <div key={id} style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
                     <span style={{ fontSize: "20px" }}>{peca.icone}</span>
                     <div style={{ textAlign: "left" }}>
-                      <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "12px", color: DS.titulo }}>{peca.nome}</div>
-                      <div style={{ fontSize: "11px", color: DS.verde }}>{peca.bonus}</div>
+                      <div style={{ fontSize: "12px", fontWeight: "700", color: DS.t0 }}>{peca.nome}</div>
+                      <div style={{ fontSize: "11px", color: DS.success }}>{peca.bonus}</div>
                     </div>
                   </div>
                 );
@@ -2099,32 +2095,30 @@ function TelaResultado({
             </div>
           )}
 
-          <button onClick={() => setStep("ofensiva")} className="btn-medieval btn-dourado"
+          <button onClick={() => setStep("ofensiva")} className="btn-primary"
             style={{ width: "100%", padding: "13px", fontSize: "14px" }}>
             Ver Progresso →
           </button>
         </div>
-        <SlotAnuncio altura={90} label="banner" />
       </main>
     </div>
   );
 
   if (step === "ofensiva") return (
-    <div style={{ position: "fixed", inset: 0, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", background: `linear-gradient(145deg, #1a0a00, #2a1200)` }}>
+    <div style={{ position: "fixed", inset: 0, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", background: `linear-gradient(150deg, #38BDF8 0%, #1A7FFF 45%, #0062E0 100%)` }}>
       <main style={{ width: "100%", maxWidth: "420px", textAlign: "center" }}>
-        <svg width="80" height="100" viewBox="0 0 80 100" style={{ marginBottom: "16px" }}>
-          <path d="M40 5 C30 20 10 30 10 50 C10 72 23 90 40 95 C57 90 70 72 70 50 C70 30 50 20 40 5Z" fill="#ff6a00" opacity="0.9"/>
-          <path d="M40 20 C33 32 20 40 20 55 C20 70 29 82 40 86 C51 82 60 70 60 55 C60 40 47 32 40 20Z" fill="#ffb800" opacity="0.85"/>
-          <path d="M40 35 C36 43 28 48 28 58 C28 67 33 75 40 78 C47 75 52 67 52 58 C52 48 44 43 40 35Z" fill="#fff176" opacity="0.8"/>
-        </svg>
-        <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "28px", fontWeight: "900", color: "#ffb800", marginBottom: "8px", letterSpacing: "1px" }}>
-          Ofensiva de {streakDias ?? 1} {(streakDias ?? 1) === 1 ? "dia" : "dias"}!
+        <div style={{ fontSize: "64px", marginBottom: "16px" }}>🔥</div>
+        <h2 style={{ fontSize: "28px", fontWeight: "800", color: "white", marginBottom: "8px", letterSpacing: "-0.02em" }}>
+          {streakDias ?? 1} {(streakDias ?? 1) === 1 ? "dia" : "dias"} seguidos!
         </h2>
-        <p style={{ color: "#ffddaa", fontSize: "15px", lineHeight: 1.6, marginBottom: "32px" }}>
+        <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "15px", lineHeight: 1.6, marginBottom: "32px", fontFamily: "var(--font-verse)", fontStyle: "italic" }}>
           Continue assim! Cada dia dedicado fortalece sua fé e sabedoria.
         </p>
-        <button onClick={() => setStep("arca")} className="btn-medieval btn-dourado"
-          style={{ width: "100%", padding: "14px", fontSize: "14px", maxWidth: "360px" }}>
+        <button onClick={() => setStep("arca")} style={{
+          width: "100%", maxWidth: "360px", padding: "14px", fontSize: "14px", fontWeight: 700,
+          background: "white", color: DS.blue, border: "none", borderRadius: "var(--r-md)",
+          cursor: "pointer", boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
+        }}>
           Abrir Arca →
         </button>
       </main>
@@ -2132,40 +2126,18 @@ function TelaResultado({
   );
 
   if (step === "arca") return (
-    <div style={{ position: "fixed", inset: 0, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", background: `linear-gradient(145deg, #0a0806, #1a1204)` }}>
-      <style>{`
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-        .float-arca { animation: float 2.4s ease-in-out infinite; }
-      `}</style>
+    <div style={{ position: "fixed", inset: 0, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", background: "var(--bg)" }}>
       <main style={{ width: "100%", maxWidth: "420px", textAlign: "center" }}>
-        <div className="float-arca" style={{ marginBottom: "20px" }}>
-          <svg width="120" height="90" viewBox="0 0 120 90">
-            <rect x="10" y="40" width="100" height="48" rx="6" fill="#8a5c20" stroke="#d4a017" strokeWidth="2"/>
-            <rect x="10" y="40" width="100" height="12" rx="4" fill="#b87830" stroke="#d4a017" strokeWidth="1.5"/>
-            <path d="M10 52 Q60 30 110 52" fill="#c88c30" stroke="#d4a017" strokeWidth="2"/>
-            <rect x="20" y="54" width="25" height="28" rx="3" fill="#7a4c18" stroke="#b8860b" strokeWidth="1"/>
-            <rect x="75" y="54" width="25" height="28" rx="3" fill="#7a4c18" stroke="#b8860b" strokeWidth="1"/>
-            <rect x="50" y="56" width="20" height="26" rx="3" fill="#7a4c18" stroke="#b8860b" strokeWidth="1"/>
-            <rect x="52" y="60" width="16" height="6" rx="2" fill="#d4a017" opacity="0.8"/>
-            <circle cx="60" cy="63" r="3" fill="#ffcc00"/>
-            <line x1="10" y1="52" x2="110" y2="52" stroke="#d4a017" strokeWidth="1.5"/>
-            <rect x="5" y="56" width="8" height="26" rx="2" fill="#6a3c10" stroke="#b8860b" strokeWidth="1"/>
-            <rect x="107" y="56" width="8" height="26" rx="2" fill="#6a3c10" stroke="#b8860b" strokeWidth="1"/>
-          </svg>
-        </div>
-        <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "24px", fontWeight: "900", color: DS.douradoClaro, marginBottom: "8px", letterSpacing: "1px" }}>
+        <div style={{ animation: "missao-float 2.4s ease-in-out infinite", marginBottom: "20px", fontSize: "72px" }}>🎁</div>
+        <h2 style={{ fontSize: "24px", fontWeight: "800", color: DS.t0, marginBottom: "8px", letterSpacing: "-0.02em" }}>
           Arca Recompensa!
         </h2>
-        <p style={{ color: DS.off, fontSize: "14px", marginBottom: "8px" }}>Recompensa acumulada:</p>
-        <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "32px", color: DS.douradoClaro, marginBottom: "28px", fontWeight: "900" }}>
+        <p style={{ color: DS.t2, fontSize: "14px", marginBottom: "8px" }}>Recompensa acumulada:</p>
+        <p style={{ fontSize: "36px", fontWeight: "800", color: DS.warn, marginBottom: "28px" }}>
           +{arcaBonus} talentos
         </p>
-        <button onClick={() => setStep("fim")} style={{
+        <button onClick={() => setStep("fim")} className="btn-primary" style={{
           width: "100%", maxWidth: "360px", padding: "15px", fontSize: "15px",
-          background: `linear-gradient(145deg, ${DS.douradoClaro}, ${DS.douradoSombra})`,
-          border: `2px solid ${DS.douradoClaro}`, borderRadius: "8px", cursor: "pointer",
-          fontFamily: "var(--font-cinzel)", fontWeight: "700", color: "#1a0a00",
-          boxShadow: `0 0 20px rgba(212,160,20,0.5)`,
         }}>
           Abrir Arca
         </button>
@@ -2175,29 +2147,17 @@ function TelaResultado({
 
   // step === "fim"
   return (
-    <div style={{ position: "fixed", inset: 0, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", background: `linear-gradient(145deg, #1a1208, #2a1c08)` }}>
-      <style>{`
-        @keyframes sparkle { 0%,100%{opacity:0;transform:scale(0.5)} 50%{opacity:1;transform:scale(1.2)} }
-        .sp1{animation:sparkle 1.2s ease-in-out infinite 0s}
-        .sp2{animation:sparkle 1.2s ease-in-out infinite 0.4s}
-        .sp3{animation:sparkle 1.2s ease-in-out infinite 0.8s}
-      `}</style>
+    <div style={{ position: "fixed", inset: 0, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", background: "var(--bg)" }}>
       <main style={{ width: "100%", maxWidth: "420px", textAlign: "center" }}>
-        <div style={{ position: "relative", display: "inline-block", marginBottom: "24px" }}>
-          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "48px", fontWeight: "900", color: DS.douradoClaro, textShadow: `0 0 30px rgba(212,160,20,0.8)` }}>
-            +{arcaBonus}
-          </div>
-          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "18px", color: DS.dourado }}>talentos</div>
-          <div className="sp1" style={{ position: "absolute", top: "-10px", right: "-15px", fontSize: "20px", color: DS.douradoClaro }}>✦</div>
-          <div className="sp2" style={{ position: "absolute", top: "10px", left: "-20px", fontSize: "16px", color: DS.douradoClaro }}>✦</div>
-          <div className="sp3" style={{ position: "absolute", bottom: "-5px", right: "0px", fontSize: "14px", color: DS.douradoClaro }}>✦</div>
-        </div>
+        <div style={{ fontSize: "56px", marginBottom: "8px" }}>🎉</div>
+        <div style={{ fontSize: "48px", fontWeight: "800", color: DS.warn, marginBottom: "4px" }}>+{arcaBonus}</div>
+        <div style={{ fontSize: "18px", fontWeight: "600", color: DS.t1, marginBottom: "32px" }}>talentos ganhos!</div>
         <div style={{ display: "flex", flexDirection: "column", gap: "12px", maxWidth: "360px", margin: "0 auto" }}>
-          <button onClick={onReiniciar} className="btn-medieval btn-dourado"
+          <button onClick={onReiniciar} className="btn-primary"
             style={{ width: "100%", padding: "14px", fontSize: "14px" }}>
             Repetir
           </button>
-          <button onClick={onVoltar} className="btn-medieval btn-escuro"
+          <button onClick={onVoltar} className="btn-outline"
             style={{ width: "100%", padding: "12px", fontSize: "13px" }}>
             Continuar
           </button>
@@ -2209,33 +2169,60 @@ function TelaResultado({
 
 // ── Tela TRILHAS ──────────────────────────────────────────────────
 function TelaTrilhas({ onEscolher, onVoltar }: { onEscolher: (t: Trilha) => void; onVoltar: () => void }) {
-  const opcoes: { trilha: Trilha; titulo: string; sub: string; cor: string; corBorda: string }[] = [
-    { trilha: "VT", titulo: "Velho Testamento", sub: "Gênesis ao Malaquias — 9 capítulos", cor: `linear-gradient(145deg, ${DS.bgCard}, #f0e4c0)`, corBorda: DS.douradoClaro },
-    { trilha: "NT", titulo: "Novo Testamento", sub: "Mateus ao Apocalipse — 9 capítulos", cor: `linear-gradient(145deg, #e8f0f8, #d0e0f0)`, corBorda: "#6090c0" },
-    { trilha: "JESUS", titulo: "Jornada de Jesus", sub: "Do nascimento à ressurreição — 7 capítulos", cor: `linear-gradient(145deg, ${DS.vermelhoEsc}, #3a0a0a)`, corBorda: "#c06060" },
+  const opcoes = [
+    {
+      trilha: "VT" as Trilha,
+      titulo: "Velho Testamento",
+      sub: "Gênesis ao Malaquias — 9 capítulos",
+      grad: "linear-gradient(135deg, #0062E0, #1A7FFF)",
+      shadow: "0 8px 20px -4px rgba(26,127,255,0.35)",
+    },
+    {
+      trilha: "NT" as Trilha,
+      titulo: "Novo Testamento",
+      sub: "Mateus ao Apocalipse — 9 capítulos",
+      grad: "linear-gradient(135deg, #0D9488, #14B8A6)",
+      shadow: "0 8px 20px -4px rgba(20,184,166,0.35)",
+    },
+    {
+      trilha: "JESUS" as Trilha,
+      titulo: "Jornada de Jesus",
+      sub: "Do nascimento à ressurreição — 7 capítulos",
+      grad: "linear-gradient(135deg, #7C3AED, #8B5CF6)",
+      shadow: "0 8px 20px -4px rgba(139,92,246,0.35)",
+    },
   ];
   return (
     <div className="tela-scroll">
-      <main style={{ width: "100%", maxWidth: "450px", padding: "16px 20px 80px" }}>
-        <div className="banner-faixa" style={{ borderRadius: "8px", padding: "12px 16px", display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
-          <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.douradoClaro, fontSize: "20px", cursor: "pointer" }}>←</button>
-          <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "16px", color: DS.douradoClaro, fontWeight: "700", letterSpacing: "1px" }}>Escolher Trilha</span>
-        </div>
-        {opcoes.map(o => (
-          <button key={o.trilha} onClick={() => { sfxClick(); onEscolher(o.trilha); }}
-            style={{ width: "100%", background: "none", border: "none", cursor: "pointer", padding: "0", marginBottom: "14px" }}>
-            <div style={{ background: o.cor, border: `2px solid ${o.corBorda}`, borderRadius: "12px", padding: "20px 22px", textAlign: "left", boxShadow: `0 0 14px ${o.corBorda}44, 0 4px 10px rgba(0,0,0,0.3)`, transition: "transform 0.15s", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ width: "52px", height: "52px", borderRadius: "50%", background: o.corBorda, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: `0 0 12px ${o.corBorda}88` }}>
-                <svg width="28" height="28" viewBox="0 0 24 24"><rect x="3" y="4" width="12" height="16" rx="1.5" fill="white" opacity="0.9"/><rect x="3" y="4" width="4" height="16" rx="1.5" fill="rgba(0,0,0,0.2)"/><line x1="9" y1="8" x2="14" y2="8" stroke="rgba(0,0,0,0.3)" strokeWidth="1"/><line x1="9" y1="11" x2="14" y2="11" stroke="rgba(0,0,0,0.3)" strokeWidth="1"/><line x1="9" y1="14" x2="14" y2="14" stroke="rgba(0,0,0,0.3)" strokeWidth="1"/></svg>
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "16px", fontWeight: "700", color: o.trilha === "JESUS" ? "#ffcccc" : DS.titulo, marginBottom: "4px" }}>{o.titulo}</div>
-                <div style={{ fontSize: "12px", color: o.trilha === "JESUS" ? "#ffaaaa" : DS.off }}>{o.sub}</div>
-              </div>
-              <svg width="20" height="20" viewBox="0 0 20 20"><path d="M7 4 L13 10 L7 16" stroke={o.trilha === "JESUS" ? "#ffcccc" : DS.douradoClaro} strokeWidth="2" strokeLinecap="round" fill="none"/></svg>
-            </div>
+      <main style={{ width: "100%", maxWidth: "450px", padding: "0 0 80px" }}>
+        <div className="status-bar" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <button onClick={onVoltar} style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--text-2)" }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
-        ))}
+          <span style={{ fontSize: "17px", fontWeight: "800", color: DS.t0, letterSpacing: "-0.02em" }}>Escolher Trilha</span>
+        </div>
+        <div style={{ padding: "20px 16px 0" }}>
+          {opcoes.map(o => (
+            <button key={o.trilha} onClick={() => { sfxClick(); onEscolher(o.trilha); }}
+              style={{ width: "100%", background: "none", border: "none", cursor: "pointer", padding: "0", marginBottom: "14px" }}>
+              <div style={{
+                background: o.grad, borderRadius: "28px", padding: "20px 22px",
+                textAlign: "left", boxShadow: o.shadow, transition: "transform 0.15s",
+                display: "flex", alignItems: "center", gap: "16px", position: "relative", overflow: "hidden",
+              }}>
+                <div style={{ position: "absolute", top: 0, right: 0, width: 100, height: 100, background: "radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)", pointerEvents: "none" }} />
+                <div style={{ width: "52px", height: "52px", borderRadius: "16px", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: "16px", fontWeight: "800", color: "white", marginBottom: "4px", letterSpacing: "-0.02em" }}>{o.titulo}</div>
+                  <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)" }}>{o.sub}</div>
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            </button>
+          ))}
+        </div>
       </main>
     </div>
   );
@@ -2259,37 +2246,39 @@ function TelaRanking({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => voi
     pos === 1 ? `linear-gradient(145deg, #ffd700, #b8860b)`
     : pos === 2 ? `linear-gradient(145deg, #c0c0c0, #808080)`
     : pos === 3 ? `linear-gradient(145deg, #cd7f32, #8b4513)`
-    : `linear-gradient(145deg, ${DS.douradoSombra}, ${DS.corpo})`;
+    : `linear-gradient(145deg, ${DS.border}, ${DS.t3})`;
 
   return (
-    <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: DS.bg }}>
-      <div className="banner-faixa" style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: "12px", zIndex: 10 }}>
-        <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.douradoClaro, fontSize: "20px", cursor: "pointer", padding: "4px 8px" }}>←</button>
-        <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "18px", color: DS.douradoClaro, fontWeight: "700", letterSpacing: "2px" }}>
+    <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: "var(--bg)" }}>
+      <div className="status-bar" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <button onClick={onVoltar} style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--text-2)" }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <span style={{ fontSize: "17px", fontWeight: "800", color: DS.t0, letterSpacing: "-0.02em" }}>
           Ranking
         </span>
-        <span style={{ marginLeft: "auto", fontSize: "11px", color: DS.off }}>
-          {carregando ? "Carregando..." : `${jogadores.length} jogadores`}
+        <span style={{ marginLeft: "auto" }}>
+          <span className="badge badge-gray">{carregando ? "Carregando..." : `${jogadores.length} jogadores`}</span>
         </span>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 80px" }}>
         {/* Posição do usuário */}
-        <div className="card-pergaminho" style={{ padding: "16px 20px", marginBottom: "20px", textAlign: "center", border: `1.5px solid ${DS.douradoClaro}`, boxShadow: `0 0 12px rgba(212,160,20,0.25)` }}>
+        <div className="card-verbum" style={{ padding: "16px 20px", marginBottom: "20px", textAlign: "center", border: `1.5px solid ${DS.blueLt}`, boxShadow: DS.shBlue }}>
           <SvgPersonagem tipo={perfil.personagem_tipo} cor={perfil.personagem_cor} size={64} />
-          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "16px", fontWeight: "700", color: DS.titulo, marginTop: "8px" }}>{perfil.nome}</div>
-          <div style={{ fontSize: "12px", color: DS.off, marginTop: "4px" }}>
+          <div style={{ fontSize: "16px", fontWeight: "700", color: DS.t0, marginTop: "8px" }}>{perfil.nome}</div>
+          <div style={{ fontSize: "12px", color: DS.t2, marginTop: "4px" }}>
             {!carregando && posicao > 0 ? `${posicao}º lugar` : carregando ? "Calculando posição..." : "Faça um quiz para entrar no ranking!"}
           </div>
-          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "14px", color: DS.douradoClaro, marginTop: "6px" }}>{perfil.xp.toLocaleString()} Maná</div>
+          <div style={{ fontSize: "14px", fontWeight: 700, color: DS.blue, marginTop: "6px" }}>{perfil.xp.toLocaleString()} Maná</div>
         </div>
 
         {carregando ? (
-          <div style={{ textAlign: "center", padding: "40px", color: DS.off, fontSize: "13px", fontStyle: "italic" }}>
+          <div style={{ textAlign: "center", padding: "40px", color: DS.t2, fontSize: "13px", fontStyle: "italic" }}>
             Carregando ranking...
           </div>
         ) : jogadores.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "32px 16px", color: DS.off, fontSize: "13px", fontStyle: "italic" }}>
+          <div style={{ textAlign: "center", padding: "32px 16px", color: DS.t2, fontSize: "13px", fontStyle: "italic" }}>
             Nenhum jogador ainda. Seja o primeiro a concluir um capítulo!
           </div>
         ) : (
@@ -2298,35 +2287,33 @@ function TelaRanking({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => voi
               const pos = idx + 1;
               const ehVoce = j.id === perfil.id;
               return (
-                <div key={j.id} className="card-pergaminho" style={{
+                <div key={j.id} className="card-verbum" style={{
                   padding: "14px 16px", display: "flex", alignItems: "center", gap: "12px",
-                  border: ehVoce ? `1.5px solid ${DS.douradoClaro}` : undefined,
-                  background: ehVoce ? `linear-gradient(145deg, #fdf6e3, #f0e4c0)` : undefined,
+                  border: ehVoce ? `1.5px solid ${DS.blue}` : undefined,
+                  background: ehVoce ? DS.blueTint : undefined,
                 }}>
                   <div style={{
                     width: "34px", height: "34px", borderRadius: "50%", flexShrink: 0,
                     background: medalha(pos),
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    fontFamily: "var(--font-cinzel)", fontSize: pos <= 3 ? "14px" : "12px", fontWeight: "700", color: "white",
+                    fontSize: pos <= 3 ? "14px" : "12px", fontWeight: "700", color: "white",
                   }}>
                     {pos}
                   </div>
                   <SvgPersonagem tipo={j.personagem_tipo as TipoPersonagem} cor={j.personagem_cor} size={28} />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", fontWeight: "700", color: DS.titulo }}>{j.nome}</div>
-                    <div style={{ fontSize: "12px", color: DS.dourado, marginTop: "2px" }}>{j.xp.toLocaleString()} Maná</div>
+                    <div style={{ fontSize: "13px", fontWeight: "700", color: DS.t0 }}>{j.nome}</div>
+                    <div style={{ fontSize: "12px", color: DS.blue, marginTop: "2px" }}>{j.xp.toLocaleString()} Maná</div>
                   </div>
                   {j.sequencia > 0 && (
-                    <span style={{ fontSize: "11px", color: "#f0a040" }}>🔥 {j.sequencia}</span>
+                    <span style={{ fontSize: "11px", color: "#ea580c", fontWeight: 700 }}>🔥 {j.sequencia}</span>
                   )}
-                  {ehVoce && <span style={{ fontSize: "11px", color: DS.douradoClaro, fontFamily: "var(--font-cinzel)" }}>Você</span>}
+                  {ehVoce && <span className="badge badge-blue">Você</span>}
                 </div>
               );
             })}
           </div>
         )}
-
-        <SlotAnuncio altura={70} label="banner" />
       </div>
     </div>
   );
@@ -2346,87 +2333,93 @@ function TelaPlanos({ onVoltar }: { onVoltar: () => void }) {
   ];
 
   return (
-    <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: `linear-gradient(160deg, #120600, #2c1505)` }}>
+    <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: "linear-gradient(160deg, #F5F3FF, #EDE9FE)" }}>
       <div style={{ padding: "14px 20px", display: "flex", alignItems: "center" }}>
-        <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.douradoClaro, fontSize: "20px", cursor: "pointer", padding: "4px 8px" }}>←</button>
+        <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.t1, fontSize: "20px", cursor: "pointer", padding: "4px 8px", display: "flex", alignItems: "center" }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
         {/* Hero */}
         <div style={{ textAlign: "center", paddingBottom: "28px" }}>
-          <div style={{ fontSize: "52px", marginBottom: "12px", filter: `drop-shadow(0 0 20px rgba(212,160,20,0.5))` }}>👑</div>
-          <h1 style={{ fontFamily: "var(--font-cinzel)", fontSize: "24px", fontWeight: "900", color: DS.douradoClaro, marginBottom: "6px", letterSpacing: "2px" }}>
+          <div style={{ width: "72px", height: "72px", borderRadius: "50%", background: "linear-gradient(135deg, #A78BFA, #7C3AED)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px", boxShadow: DS.shPurp }}>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <h1 style={{ fontFamily: "var(--font-ui)", fontSize: "24px", fontWeight: "800", color: DS.lavDk, marginBottom: "6px" }}>
             Discípulo Premium
           </h1>
-          <p style={{ color: "rgba(200,180,140,0.7)", fontSize: "14px" }}>Sua jornada bíblica sem limites</p>
+          <p style={{ color: DS.t2, fontSize: "14px" }}>Sua jornada bíblica sem limites</p>
         </div>
 
         {/* Planos */}
         <div style={{ display: "flex", gap: "10px", marginBottom: "16px" }}>
           {/* Anual */}
           <button onClick={() => setPlano("anual")} style={{
-            flex: 1, padding: "16px 10px", borderRadius: "12px", cursor: "pointer", textAlign: "center",
-            border: plano === "anual" ? `2px solid ${DS.douradoClaro}` : `2px solid rgba(212,160,20,0.25)`,
-            background: plano === "anual" ? `linear-gradient(145deg, rgba(212,160,20,0.18), rgba(212,160,20,0.05))` : "transparent",
+            flex: 1, padding: "16px 10px", borderRadius: "16px", cursor: "pointer", textAlign: "center",
+            border: plano === "anual" ? `2px solid ${DS.lavDk}` : `2px solid ${DS.border}`,
+            background: plano === "anual" ? "linear-gradient(145deg, rgba(124,58,237,0.10), rgba(124,58,237,0.04))" : DS.white,
             position: "relative", overflow: "hidden",
+            boxShadow: plano === "anual" ? DS.shPurp : DS.shSm,
           }}>
             {plano === "anual" && (
-              <div style={{ position: "absolute", top: 0, right: 0, background: DS.douradoClaro, color: "#1a0a02", fontSize: "9px", fontFamily: "var(--font-cinzel)", fontWeight: "700", padding: "3px 8px", borderRadius: "0 10px 0 8px" }}>
+              <div style={{ position: "absolute", top: 0, right: 0, background: DS.lavDk, color: DS.white, fontSize: "9px", fontWeight: "700", padding: "3px 8px", borderRadius: "0 14px 0 8px" }}>
                 MELHOR VALOR
               </div>
             )}
-            <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "10px", color: DS.dourado, marginBottom: "6px", letterSpacing: "1.5px" }}>ANUAL</div>
-            <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "22px", fontWeight: "900", color: DS.douradoClaro }}>R$ 89,90</div>
-            <div style={{ fontSize: "11px", color: "rgba(200,180,140,0.6)", marginTop: "2px" }}>por ano</div>
-            <div style={{ fontSize: "11px", color: "rgba(200,180,140,0.5)", marginTop: "1px" }}>≈ R$ 7,49/mês</div>
-            <div style={{ fontSize: "10px", color: "#90e090", marginTop: "6px", fontFamily: "var(--font-cinzel)" }}>50% de desconto</div>
+            <div style={{ fontSize: "10px", fontWeight: "700", color: DS.lav, marginBottom: "6px", letterSpacing: "1.5px" }}>ANUAL</div>
+            <div style={{ fontSize: "22px", fontWeight: "800", color: DS.lavDk }}>R$ 89,90</div>
+            <div style={{ fontSize: "11px", color: DS.t2, marginTop: "2px" }}>por ano</div>
+            <div style={{ fontSize: "11px", color: DS.t2, marginTop: "1px" }}>≈ R$ 7,49/mês</div>
+            <div style={{ fontSize: "10px", color: DS.success, marginTop: "6px", fontWeight: "700" }}>50% de desconto</div>
           </button>
 
           {/* Mensal */}
           <button onClick={() => setPlano("mensal")} style={{
-            flex: 1, padding: "16px 10px", borderRadius: "12px", cursor: "pointer", textAlign: "center",
-            border: plano === "mensal" ? `2px solid ${DS.douradoClaro}` : `2px solid rgba(212,160,20,0.25)`,
-            background: plano === "mensal" ? `linear-gradient(145deg, rgba(212,160,20,0.18), rgba(212,160,20,0.05))` : "transparent",
+            flex: 1, padding: "16px 10px", borderRadius: "16px", cursor: "pointer", textAlign: "center",
+            border: plano === "mensal" ? `2px solid ${DS.lavDk}` : `2px solid ${DS.border}`,
+            background: plano === "mensal" ? "linear-gradient(145deg, rgba(124,58,237,0.10), rgba(124,58,237,0.04))" : DS.white,
+            boxShadow: plano === "mensal" ? DS.shPurp : DS.shSm,
           }}>
-            <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "10px", color: DS.dourado, marginBottom: "6px", letterSpacing: "1.5px" }}>MENSAL</div>
-            <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "22px", fontWeight: "900", color: DS.douradoClaro }}>R$ 14,90</div>
-            <div style={{ fontSize: "11px", color: "rgba(200,180,140,0.6)", marginTop: "2px" }}>por mês</div>
+            <div style={{ fontSize: "10px", fontWeight: "700", color: DS.lav, marginBottom: "6px", letterSpacing: "1.5px" }}>MENSAL</div>
+            <div style={{ fontSize: "22px", fontWeight: "800", color: DS.lavDk }}>R$ 14,90</div>
+            <div style={{ fontSize: "11px", color: DS.t2, marginTop: "2px" }}>por mês</div>
           </button>
         </div>
 
         {/* CTA */}
         {avisado ? (
-          <div style={{ background: "rgba(212,160,20,0.08)", border: `1px solid rgba(212,160,20,0.3)`, borderRadius: "10px", padding: "16px", marginBottom: "16px", textAlign: "center" }}>
-            <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", color: DS.douradoClaro, marginBottom: "4px" }}>Em breve!</p>
-            <p style={{ fontSize: "12px", color: "rgba(200,180,140,0.6)", lineHeight: 1.6 }}>Os pagamentos serão ativados em breve. Obrigado pelo interesse!</p>
+          <div style={{ background: "rgba(124,58,237,0.07)", border: `1px solid rgba(124,58,237,0.2)`, borderRadius: "14px", padding: "16px", marginBottom: "16px", textAlign: "center" }}>
+            <p style={{ fontSize: "14px", fontWeight: "700", color: DS.lavDk, marginBottom: "4px" }}>Em breve!</p>
+            <p style={{ fontSize: "12px", color: DS.t2, lineHeight: 1.6 }}>Os pagamentos serão ativados em breve. Obrigado pelo interesse!</p>
           </div>
         ) : (
-          <button onClick={() => setAvisado(true)} className="btn-medieval btn-dourado"
-            style={{ width: "100%", padding: "16px", fontSize: "15px", marginBottom: "16px", letterSpacing: "1px" }}>
+          <button onClick={() => setAvisado(true)}
+            style={{ width: "100%", padding: "16px", fontSize: "15px", fontWeight: "700", marginBottom: "16px", borderRadius: "14px", border: "none", cursor: "pointer", background: "linear-gradient(135deg, #A78BFA, #7C3AED)", color: DS.white, boxShadow: DS.shPurp, transition: "transform 0.15s" }}>
             Começar Premium ✦
           </button>
         )}
 
         {/* Features */}
-        <div style={{ marginBottom: "20px" }}>
-          <div style={{ fontFamily: "var(--font-cinzel)", fontSize: "10px", color: DS.dourado, letterSpacing: "2px", marginBottom: "12px", textAlign: "center" }}>O QUE ESTÁ INCLUÍDO</div>
+        <div style={{ background: DS.white, borderRadius: "16px", padding: "16px", marginBottom: "14px", boxShadow: DS.shSm }}>
+          <div style={{ fontSize: "10px", fontWeight: "700", color: DS.lav, letterSpacing: "1.5px", marginBottom: "12px", textAlign: "center" }}>O QUE ESTÁ INCLUÍDO</div>
           {features.map((f, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: "14px", padding: "11px 0", borderBottom: i < features.length - 1 ? `1px solid rgba(212,160,20,0.1)` : "none" }}>
-              <span style={{ fontSize: "15px", width: "22px", textAlign: "center", color: DS.douradoClaro }}>{f.icon}</span>
-              <span style={{ fontSize: "13px", color: "rgba(200,180,140,0.85)", lineHeight: 1.4 }}>{f.text}</span>
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: "14px", padding: "10px 0", borderBottom: i < features.length - 1 ? `1px solid ${DS.borderLt}` : "none" }}>
+              <span style={{ fontSize: "15px", width: "22px", textAlign: "center", color: DS.lavDk }}>{f.icon}</span>
+              <span style={{ fontSize: "13px", color: DS.t1, lineHeight: 1.4 }}>{f.text}</span>
             </div>
           ))}
         </div>
 
         {/* Plano gratuito */}
-        <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: "8px", padding: "14px 16px", marginBottom: "16px" }}>
-          <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "10px", color: DS.off, marginBottom: "8px", letterSpacing: "1px" }}>PLANO GRATUITO INCLUI</p>
-          <p style={{ fontSize: "12px", color: "rgba(200,180,140,0.45)", lineHeight: 1.7 }}>
+        <div style={{ background: DS.borderLt, borderRadius: "12px", padding: "14px 16px", marginBottom: "16px" }}>
+          <p style={{ fontSize: "10px", fontWeight: "700", color: DS.t3, marginBottom: "8px", letterSpacing: "1px" }}>PLANO GRATUITO INCLUI</p>
+          <p style={{ fontSize: "12px", color: DS.t2, lineHeight: 1.7 }}>
             Acesso a todos os quizzes · 5 vidas (recarga 30 min) · Ranking público · Anúncios ativos
           </p>
         </div>
 
-        <p style={{ textAlign: "center", fontSize: "11px", color: "rgba(200,180,140,0.35)" }}>Cancele quando quiser</p>
+        <p style={{ textAlign: "center", fontSize: "11px", color: DS.t3 }}>Cancele quando quiser</p>
       </div>
     </div>
   );
@@ -2439,48 +2432,56 @@ function TelaSemVidas({ minutosProxima, onVoltar, onPremium }: {
   onPremium: () => void;
 }) {
   return (
-    <div style={{ position: "fixed", inset: 0, background: `linear-gradient(160deg, #120600, #2c1505)`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 24px 90px" }}>
-      <div style={{ fontSize: "36px", letterSpacing: "8px", marginBottom: "24px", opacity: 0.35 }}>{"♡".repeat(5)}</div>
-
-      <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "22px", fontWeight: "900", color: DS.douradoClaro, textAlign: "center", marginBottom: "8px", letterSpacing: "1px" }}>
-        Suas vidas acabaram
-      </h2>
-      <p style={{ fontSize: "13px", color: "rgba(200,180,140,0.55)", fontStyle: "italic", textAlign: "center", marginBottom: "36px", maxWidth: "280px", lineHeight: 1.7 }}>
-        &ldquo;Esperai no Senhor, tende bom ânimo e Ele fortalecerá o vosso coração.&rdquo;
-        <br /><span style={{ fontSize: "11px", fontFamily: "var(--font-cinzel)", fontStyle: "normal", color: DS.douradoSombra }}>— Salmos 27:14</span>
-      </p>
-
-      {/* Opção esperar */}
-      <button onClick={onVoltar} style={{
-        width: "100%", maxWidth: "320px", padding: "14px 20px", borderRadius: "10px", marginBottom: "12px",
-        background: "rgba(255,255,255,0.05)", border: `1px solid rgba(200,180,140,0.15)`,
-        color: "rgba(200,180,140,0.6)", fontFamily: "var(--font-cinzel)", fontSize: "13px",
-        cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center",
-      }}>
-        <span>⏱ Esperar recarga gratuita</span>
-        <span style={{ fontSize: "12px" }}>{minutosProxima} min</span>
-      </button>
-
-      {/* Upsell Premium */}
-      <button onClick={onPremium} style={{
-        width: "100%", maxWidth: "320px", padding: "18px 20px", borderRadius: "10px", marginBottom: "20px",
-        background: `linear-gradient(145deg, rgba(212,160,20,0.2), rgba(212,160,20,0.08))`,
-        border: `1.5px solid ${DS.douradoClaro}`,
-        cursor: "pointer", textAlign: "left",
-        boxShadow: `0 0 24px rgba(212,160,20,0.18)`,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "5px" }}>
-          <span style={{ fontSize: "18px" }}>👑</span>
-          <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "14px", fontWeight: "700", color: DS.douradoClaro }}>Discípulo Premium</span>
+    <div style={{ position: "fixed", inset: 0, background: "#FFF1F2", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 24px 90px" }}>
+      <div className="card-verbum" style={{ width: "100%", maxWidth: "340px", padding: "32px 24px", textAlign: "center" }}>
+        {/* Heart icon */}
+        <div style={{ display: "flex", justifyContent: "center", gap: "6px", marginBottom: "24px" }}>
+          {[0,1,2,3,4].map(i => (
+            <svg key={i} width="24" height="24" viewBox="0 0 24 24" fill={DS.error} opacity={0.25} stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          ))}
         </div>
-        <p style={{ fontSize: "12px", color: "rgba(200,180,140,0.65)", margin: 0, paddingLeft: "28px", lineHeight: 1.5 }}>
-          Vidas ilimitadas · Sem anúncios · A partir de R$ 7,49/mês
-        </p>
-      </button>
 
-      <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.off, fontSize: "12px", cursor: "pointer", padding: "8px", fontFamily: "var(--font-cinzel)" }}>
-        ← Voltar ao Mapa
-      </button>
+        <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "#FEE2E2", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill={DS.error} stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+
+        <h2 style={{ fontSize: "20px", fontWeight: "800", color: DS.t0, marginBottom: "8px" }}>
+          Suas vidas acabaram
+        </h2>
+        <p style={{ fontSize: "13px", color: DS.t2, fontStyle: "italic", marginBottom: "28px", lineHeight: 1.7 }}>
+          &ldquo;Esperai no Senhor, tende bom ânimo e Ele fortalecerá o vosso coração.&rdquo;
+          <br /><span style={{ fontSize: "11px", fontStyle: "normal", color: DS.t3 }}>— Salmos 27:14</span>
+        </p>
+
+        {/* Opção esperar */}
+        <button onClick={onVoltar} className="btn-outline" style={{
+          width: "100%", padding: "14px 20px", marginBottom: "12px",
+          display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "13px",
+        }}>
+          <span>⏱ Esperar recarga gratuita</span>
+          <span style={{ color: DS.t2, fontWeight: "400" }}>{minutosProxima} min</span>
+        </button>
+
+        {/* Upsell Premium */}
+        <button onClick={onPremium} style={{
+          width: "100%", padding: "16px 20px", borderRadius: "14px", marginBottom: "20px",
+          background: "linear-gradient(135deg, #A78BFA, #7C3AED)",
+          border: "none", cursor: "pointer", textAlign: "left",
+          boxShadow: DS.shPurp,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span style={{ fontSize: "14px", fontWeight: "700", color: DS.white }}>Discípulo Premium</span>
+          </div>
+          <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.8)", margin: 0, paddingLeft: "28px", lineHeight: 1.5 }}>
+            Vidas ilimitadas · Sem anúncios · A partir de R$ 7,49/mês
+          </p>
+        </button>
+
+        <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.t3, fontSize: "13px", cursor: "pointer", padding: "8px" }}>
+          ← Voltar ao Mapa
+        </button>
+      </div>
     </div>
   );
 }
@@ -2525,81 +2526,83 @@ function TelaAdmin({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => void 
 
   return (
     <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: DS.bg }}>
-      <div className="banner-faixa" style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: "12px", zIndex: 10 }}>
-        <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.douradoClaro, fontSize: "20px", cursor: "pointer", padding: "4px 8px" }}>←</button>
-        <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "16px", color: DS.douradoClaro, fontWeight: "700", letterSpacing: "1px" }}>⚙ Painel Admin</span>
-        <span style={{ marginLeft: "auto", fontSize: "11px", color: DS.off }}>
+      <div className="status-bar" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <button onClick={onVoltar} style={{ background: "none", border: "none", color: DS.t1, cursor: "pointer", padding: "4px", display: "flex", alignItems: "center" }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <span style={{ fontSize: "16px", fontWeight: "700", color: DS.t0 }}>⚙ Painel Admin</span>
+        <span style={{ marginLeft: "auto", fontSize: "12px", color: DS.t3 }}>
           {carregando ? "Carregando..." : `${usuarios.length} usuários`}
         </span>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 80px" }}>
         {mensagem && (
-          <div style={{ background: "#1a4a1a", color: "#a0e0a0", padding: "12px 16px", borderRadius: "8px", marginBottom: "16px", fontFamily: "var(--font-cinzel)", fontSize: "12px", letterSpacing: "0.5px" }}>
+          <div style={{ background: "#ECFDF5", color: DS.success, border: `1px solid #86EFAC`, padding: "12px 16px", borderRadius: "10px", marginBottom: "16px", fontSize: "13px", fontWeight: "600" }}>
             {mensagem}
           </div>
         )}
 
         {!carregando && usuarios.length <= 1 && (
-          <div className="card-pergaminho" style={{ padding: "14px 16px", marginBottom: "16px", borderLeft: `4px solid ${DS.dourado}` }}>
-            <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "11px", color: DS.dourado, marginBottom: "6px" }}>⚠ MIGRAÇÃO SQL NECESSÁRIA</p>
-            <p style={{ fontSize: "12px", color: DS.corpo, lineHeight: 1.6 }}>
+          <div className="card-verbum" style={{ padding: "14px 16px", marginBottom: "16px", borderLeft: `4px solid ${DS.warn}` }}>
+            <p style={{ fontSize: "11px", fontWeight: "700", color: DS.warn, marginBottom: "6px" }}>⚠ MIGRAÇÃO SQL NECESSÁRIA</p>
+            <p style={{ fontSize: "12px", color: DS.t1, lineHeight: 1.6 }}>
               Para ver e gerenciar todos os usuários, execute o arquivo <strong>supabase-admin-migration.sql</strong> no painel SQL do Supabase.
             </p>
           </div>
         )}
 
         {!confirmarTodos ? (
-          <button onClick={() => setConfirmarTodos(true)} className="btn-medieval btn-vermelho"
-            style={{ width: "100%", padding: "13px", fontSize: "13px", marginBottom: "16px" }}>
+          <button onClick={() => setConfirmarTodos(true)}
+            style={{ width: "100%", padding: "13px", fontSize: "13px", fontWeight: "700", marginBottom: "16px", borderRadius: "12px", border: `1.5px solid ${DS.error}`, background: DS.white, color: DS.error, cursor: "pointer" }}>
             Resetar Todos os Usuários
           </button>
         ) : (
-          <div className="card-pergaminho" style={{ padding: "16px", marginBottom: "16px", borderLeft: `4px solid ${DS.vermelho}` }}>
-            <p style={{ fontFamily: "var(--font-cinzel)", fontSize: "12px", color: DS.vermelho, marginBottom: "12px" }}>
+          <div className="card-verbum" style={{ padding: "16px", marginBottom: "16px", borderLeft: `4px solid ${DS.error}` }}>
+            <p style={{ fontSize: "13px", fontWeight: "600", color: DS.error, marginBottom: "12px" }}>
               ⚠ Isso vai resetar {usuarios.length} usuário(s). Confirmar?
             </p>
             <div style={{ display: "flex", gap: "10px" }}>
-              <button onClick={() => setConfirmarTodos(false)} className="btn-medieval btn-escuro" style={{ flex: 1, padding: "10px", fontSize: "12px" }}>Cancelar</button>
-              <button onClick={executarResetTodos} className="btn-medieval btn-vermelho" style={{ flex: 2, padding: "10px", fontSize: "12px" }}>Confirmar Reset Geral</button>
+              <button onClick={() => setConfirmarTodos(false)} className="btn-outline" style={{ flex: 1, padding: "10px", fontSize: "12px" }}>Cancelar</button>
+              <button onClick={executarResetTodos} style={{ flex: 2, padding: "10px", fontSize: "12px", fontWeight: "700", borderRadius: "12px", border: "none", background: DS.error, color: DS.white, cursor: "pointer" }}>Confirmar Reset Geral</button>
             </div>
           </div>
         )}
 
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {carregando ? (
-            <div style={{ textAlign: "center", padding: "40px", color: DS.off, fontStyle: "italic" }}>Carregando usuários...</div>
+            <div style={{ textAlign: "center", padding: "40px", color: DS.t3, fontStyle: "italic" }}>Carregando usuários...</div>
           ) : usuarios.map(u => {
             const dataReg = new Date(u.criado_em).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "2-digit" });
             const ehAdminUser = ADMIN_EMAILS.includes(u.email);
             return (
-              <div key={u.id} className="card-pergaminho" style={{ padding: "14px 16px" }}>
+              <div key={u.id} className="card-verbum" style={{ padding: "14px 16px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                      <span style={{ fontFamily: "var(--font-cinzel)", fontSize: "13px", fontWeight: "700", color: DS.titulo }}>{u.nome}</span>
-                      {ehAdminUser && <span style={{ fontSize: "9px", background: DS.dourado, color: "white", padding: "1px 5px", borderRadius: "4px", fontFamily: "var(--font-cinzel)" }}>ADMIN</span>}
+                      <span style={{ fontSize: "13px", fontWeight: "700", color: DS.t0 }}>{u.nome}</span>
+                      {ehAdminUser && <span className="badge badge-purple">ADMIN</span>}
                     </div>
-                    <div style={{ fontSize: "11px", color: DS.off, marginTop: "2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{u.email}</div>
+                    <div style={{ fontSize: "11px", color: DS.t3, marginTop: "2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{u.email}</div>
                   </div>
                   {confirmarId === u.id ? (
                     <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
-                      <button onClick={() => setConfirmarId(null)} className="btn-medieval btn-escuro" style={{ padding: "5px 10px", fontSize: "10px" }}>✕</button>
-                      <button onClick={() => executarReset(u.id)} disabled={resettando === u.id} className="btn-medieval btn-vermelho" style={{ padding: "5px 10px", fontSize: "10px" }}>
+                      <button onClick={() => setConfirmarId(null)} className="btn-outline" style={{ padding: "5px 10px", fontSize: "10px" }}>✕</button>
+                      <button onClick={() => executarReset(u.id)} disabled={resettando === u.id} style={{ padding: "5px 10px", fontSize: "10px", fontWeight: "700", borderRadius: "8px", border: "none", background: DS.error, color: DS.white, cursor: "pointer" }}>
                         {resettando === u.id ? "..." : "Confirmar"}
                       </button>
                     </div>
                   ) : (
-                    <button onClick={() => setConfirmarId(u.id)} className="btn-medieval btn-escuro" style={{ padding: "5px 12px", fontSize: "11px", flexShrink: 0 }}>
+                    <button onClick={() => setConfirmarId(u.id)} className="btn-outline" style={{ padding: "5px 12px", fontSize: "11px", flexShrink: 0 }}>
                       Resetar
                     </button>
                   )}
                 </div>
-                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", fontSize: "11px", color: DS.dourado }}>
+                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", fontSize: "11px", color: DS.t2 }}>
                   <span>⭐ {u.xp.toLocaleString()} Maná</span>
                   <span>💰 {u.talentos}</span>
                   <span>🔥 {u.sequencia}d</span>
-                  <span style={{ marginLeft: "auto", color: DS.off }}>Desde {dataReg}</span>
+                  <span style={{ marginLeft: "auto", color: DS.t3 }}>Desde {dataReg}</span>
                 </div>
               </div>
             );
@@ -2614,18 +2617,18 @@ function TelaAdmin({ perfil, onVoltar }: { perfil: Perfil; onVoltar: () => void 
 function TelaSetup() {
   return (
     <div style={{ position: "fixed", inset: 0, display: "flex", justifyContent: "center", alignItems: "center", padding: "24px" }}>
-      <div className="card-pergaminho" style={{ padding: "28px 24px", maxWidth: "420px", width: "100%" }}>
+      <div className="card-verbum" style={{ padding: "28px 24px", maxWidth: "420px", width: "100%" }}>
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
           <div style={{ fontSize: "40px", marginBottom: "8px" }}>⚙️</div>
-          <h2 style={{ fontFamily: "var(--font-cinzel)", fontSize: "18px", color: DS.titulo }}>Configurar Backend</h2>
-          <p style={{ color: DS.off, fontSize: "13px", marginTop: "6px" }}>Crie o arquivo <code style={{ background: "#f0e4c0", padding: "2px 6px", borderRadius: "4px" }}>.env.local</code> na raiz do projeto</p>
+          <h2 style={{ fontSize: "18px", fontWeight: "700", color: DS.t0 }}>Configurar Backend</h2>
+          <p style={{ color: DS.t2, fontSize: "13px", marginTop: "6px" }}>Crie o arquivo <code style={{ background: DS.borderLt, padding: "2px 6px", borderRadius: "4px" }}>.env.local</code> na raiz do projeto</p>
         </div>
-        <div style={{ background: "#1a0a02", borderRadius: "8px", padding: "16px", fontFamily: "monospace", fontSize: "12px", color: "#f0d898", marginBottom: "16px", lineHeight: 1.8 }}>
-          <div style={{ color: DS.off, marginBottom: "4px" }}># .env.local</div>
-          <div>NEXT_PUBLIC_SUPABASE_URL=<span style={{ color: DS.douradoClaro }}>https://xxx.supabase.co</span></div>
-          <div>NEXT_PUBLIC_SUPABASE_ANON_KEY=<span style={{ color: DS.douradoClaro }}>sua_chave_aqui</span></div>
+        <div style={{ background: DS.t0, borderRadius: "10px", padding: "16px", fontFamily: "monospace", fontSize: "12px", color: "#a5f3fc", marginBottom: "16px", lineHeight: 1.8 }}>
+          <div style={{ color: DS.t3, marginBottom: "4px" }}># .env.local</div>
+          <div>NEXT_PUBLIC_SUPABASE_URL=<span style={{ color: DS.sky }}>https://xxx.supabase.co</span></div>
+          <div>NEXT_PUBLIC_SUPABASE_ANON_KEY=<span style={{ color: DS.sky }}>sua_chave_aqui</span></div>
         </div>
-        <ol style={{ fontSize: "13px", color: DS.corpo, paddingLeft: "20px", lineHeight: 2 }}>
+        <ol style={{ fontSize: "13px", color: DS.t1, paddingLeft: "20px", lineHeight: 2 }}>
           <li>Acesse <strong>supabase.com</strong> e crie um projeto gratuito</li>
           <li>Vá em <strong>Settings → API</strong> e copie URL + anon key</li>
           <li>Cole no <code>.env.local</code> e execute o <strong>supabase-schema.sql</strong></li>
