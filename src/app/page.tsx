@@ -62,245 +62,167 @@ function sub(texto: string, nome: string) {
 
 // ── SVG Personagens ───────────────────────────────────────────────
 function SvgPersonagem({ tipo, cor, size = 80 }: { tipo: TipoPersonagem; cor: string; size?: number }) {
-  const sash = "#6a3008";
-  const sandal = "#7a3808";
-
-  // Cada personagem tem pele, rosto e expressão únicos
-  const faces: Record<TipoPersonagem, React.ReactNode> = {
-    // ── PEREGRINO: jovem, rosto redondo, sorriso largo, olhos grandes ──
-    peregrino: (() => {
-      const skin = "#c8784a"; const hair = "#3c1808";
-      return (
-        <g>
-          {/* cabelo ondulado atrás */}
-          <ellipse cx="40" cy="8" rx="18" ry="11" fill={hair} />
-          <path d="M22 18 C17 26,21 33,17 42" stroke={hair} strokeWidth="9" strokeLinecap="round" fill="none" />
-          <path d="M58 18 C63 26,59 33,63 42" stroke={hair} strokeWidth="9" strokeLinecap="round" fill="none" />
-          {/* rosto redondo */}
-          <ellipse cx="40" cy="23" rx="18" ry="19" fill={skin} />
-          {/* bochechas rosadas */}
-          <ellipse cx="25" cy="31" rx="5" ry="3.5" fill="#e85030" opacity="0.20" />
-          <ellipse cx="55" cy="31" rx="5" ry="3.5" fill="#e85030" opacity="0.20" />
-          {/* sobrancelhas finas curvadas */}
-          <path d="M26 14 Q31 11 36 13" stroke={hair} strokeWidth="1.8" fill="none" strokeLinecap="round" />
-          <path d="M44 13 Q49 11 54 14" stroke={hair} strokeWidth="1.8" fill="none" strokeLinecap="round" />
-          {/* olhos grandes e redondos */}
-          <ellipse cx="31" cy="22" rx="6" ry="6.5" fill="white" />
-          <ellipse cx="49" cy="22" rx="6" ry="6.5" fill="white" />
-          <circle cx="31.5" cy="22.5" r="4" fill="#2a1408" />
-          <circle cx="49.5" cy="22.5" r="4" fill="#2a1408" />
-          <circle cx="31.5" cy="22.5" r="2.2" fill="#0a0404" />
-          <circle cx="49.5" cy="22.5" r="2.2" fill="#0a0404" />
-          <circle cx="33" cy="20.5" r="1.6" fill="white" />
-          <circle cx="51" cy="20.5" r="1.6" fill="white" />
-          {/* nariz pequeno arredondado */}
-          <ellipse cx="40" cy="30" rx="2.5" ry="2" fill="#a05828" opacity="0.6" />
-          {/* sorriso largo e aberto */}
-          <path d="M30 36 Q40 44 50 36" stroke="#803010" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-          <path d="M32 37 Q40 42 48 37" fill="#c04820" opacity="0.3" />
-        </g>
-      );
-    })(),
-
-    // ── PROFETA: idoso, rosto oval longo, barba espessa, olhos sábios ──
-    profeta: (() => {
-      const skin = "#b86838"; const hair = "#1a0c04";
-      return (
-        <g>
-          {/* cabelo longo até os ombros */}
-          <ellipse cx="40" cy="7" rx="17" ry="10" fill={hair} />
-          <path d="M23 15 C20 24,19 34,18 46" stroke={hair} strokeWidth="11" strokeLinecap="round" fill="none" />
-          <path d="M57 15 C60 24,61 34,62 46" stroke={hair} strokeWidth="11" strokeLinecap="round" fill="none" />
-          {/* rosto oval mais longo/estreito */}
-          <ellipse cx="40" cy="24" rx="15" ry="20" fill={skin} />
-          {/* sobrancelhas grossas e sérias */}
-          <path d="M25 13 Q31 10 37 12" stroke={hair} strokeWidth="3" fill="none" strokeLinecap="round" />
-          <path d="M43 12 Q49 10 55 13" stroke={hair} strokeWidth="3" fill="none" strokeLinecap="round" />
-          {/* olhos fundos e intensos — menores */}
-          <ellipse cx="31" cy="21" rx="5" ry="5" fill="white" />
-          <ellipse cx="49" cy="21" rx="5" ry="5" fill="white" />
-          <circle cx="31.5" cy="21.5" r="3.5" fill="#1a0808" />
-          <circle cx="49.5" cy="21.5" r="3.5" fill="#1a0808" />
-          <circle cx="31.5" cy="21.5" r="2" fill="#080404" />
-          <circle cx="49.5" cy="21.5" r="2" fill="#080404" />
-          <circle cx="32.5" cy="20" r="1.2" fill="white" />
-          <circle cx="50.5" cy="20" r="1.2" fill="white" />
-          {/* nariz pronunciado */}
-          <path d="M37 28 Q40 35 43 28" stroke="#904828" strokeWidth="2" fill="none" strokeLinecap="round" />
-          <path d="M36 33 Q40 36 44 33" stroke="#904828" strokeWidth="1.2" fill="none" />
-          {/* boca séria */}
-          <path d="M33 37 Q40 39 47 37" stroke="#703020" strokeWidth="2" fill="none" strokeLinecap="round" />
-          {/* barba espessa */}
-          <path d="M25 30 Q26 46 40 50 Q54 46 55 30 Q50 40 40 43 Q30 40 25 30 Z" fill={hair} opacity="0.85" />
-          {/* bigode */}
-          <path d="M30 35 Q40 38 50 35" stroke={hair} strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.9" />
-          {/* rugas */}
-          <path d="M26 17 Q28 15 30 17" stroke="#904828" strokeWidth="0.8" fill="none" opacity="0.5" />
-          <path d="M50 17 Q52 15 54 17" stroke="#904828" strokeWidth="0.8" fill="none" opacity="0.5" />
-        </g>
-      );
-    })(),
-
-    // ── GUERREIRO: adulto, queixo quadrado, olhos estreitos e sérios ──
-    guerreiro: (() => {
-      const skin = "#c07040"; const hair = "#140a04";
-      return (
-        <g>
-          {/* cabelo curto e duro */}
-          <rect x="22" y="4" width="36" height="14" rx="5" fill={hair} />
-          <rect x="19" y="10" width="8" height="16" rx="3" fill={hair} />
-          <rect x="53" y="10" width="8" height="16" rx="3" fill={hair} />
-          {/* rosto quadrado/angular — queixo forte */}
-          <path d="M24 20 L24 38 Q24 46 40 48 Q56 46 56 38 L56 20 Q56 8 40 8 Q24 8 24 20 Z" fill={skin} />
-          {/* sobrancelhas grossas e franzidas */}
-          <path d="M25 16 Q31 13 37 16" stroke={hair} strokeWidth="3.5" fill="none" strokeLinecap="round" />
-          <path d="M43 16 Q49 13 55 16" stroke={hair} strokeWidth="3.5" fill="none" strokeLinecap="round" />
-          {/* ângulo interno franzido */}
-          <path d="M35 15 L38 17" stroke={hair} strokeWidth="1.5" fill="none" strokeLinecap="round" />
-          <path d="M45 15 L42 17" stroke={hair} strokeWidth="1.5" fill="none" strokeLinecap="round" />
-          {/* olhos estreitos — semicerrados */}
-          <ellipse cx="31" cy="23" rx="6" ry="4" fill="white" />
-          <ellipse cx="49" cy="23" rx="6" ry="4" fill="white" />
-          <ellipse cx="31.5" cy="23.5" r="3" fill="#180808" />
-          <ellipse cx="49.5" cy="23.5" r="3" fill="#180808" />
-          <ellipse cx="31.5" cy="23.5" r="1.6" fill="#050202" />
-          <ellipse cx="49.5" cy="23.5" r="1.6" fill="#050202" />
-          <circle cx="32.5" cy="22.2" r="1" fill="white" />
-          <circle cx="50.5" cy="22.2" r="1" fill="white" />
-          {/* pálpebra franzida superior */}
-          <path d="M25 21 Q31 19 37 21" stroke={hair} strokeWidth="1.2" fill="none" opacity="0.6" />
-          <path d="M43 21 Q49 19 55 21" stroke={hair} strokeWidth="1.2" fill="none" opacity="0.6" />
-          {/* nariz largo */}
-          <path d="M37 29 Q40 34 43 29" stroke="#905030" strokeWidth="2" fill="none" strokeLinecap="round" />
-          <ellipse cx="36" cy="31" rx="2" ry="1.5" fill="#905030" opacity="0.4" />
-          <ellipse cx="44" cy="31" rx="2" ry="1.5" fill="#905030" opacity="0.4" />
-          {/* boca fechada, expressão firme */}
-          <path d="M33 38 Q40 40 47 38" stroke="#703020" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-          {/* cicatriz sutil */}
-          <path d="M50 26 L53 30" stroke="#904830" strokeWidth="1" fill="none" opacity="0.4" />
-        </g>
-      );
-    })(),
-
-    // ── SÁBIA: mulher, rosto oval suave, olhos amendoados, véu ──
-    sabia: (() => {
-      const skin = "#c87848"; const hair = "#1c0830";
-      return (
-        <g>
-          {/* véu cobrindo cabeça */}
-          <ellipse cx="40" cy="10" rx="21" ry="14" fill={hair} />
-          <path d="M19 18 Q15 30 17 46" stroke={hair} strokeWidth="9" strokeLinecap="round" fill="none" opacity="0.95" />
-          <path d="M61 18 Q65 30 63 46" stroke={hair} strokeWidth="9" strokeLinecap="round" fill="none" opacity="0.95" />
-          {/* rosto oval suave */}
-          <ellipse cx="40" cy="24" rx="16" ry="18" fill={skin} />
-          {/* véu sobre testa */}
-          <path d="M19 18 Q40 10 61 18 L58 28 Q40 22 22 28 Z" fill={hair} opacity="0.9" />
-          {/* sobrancelhas finas e arqueadas */}
-          <path d="M27 20 Q31 17 36 19" stroke={hair} strokeWidth="1.5" fill="none" strokeLinecap="round" />
-          <path d="M44 19 Q49 17 53 20" stroke={hair} strokeWidth="1.5" fill="none" strokeLinecap="round" />
-          {/* olhos amendoados grandes */}
-          <path d="M25 26 Q31 21 37 26 Q31 29 25 26 Z" fill="white" />
-          <path d="M43 26 Q49 21 55 26 Q49 29 43 26 Z" fill="white" />
-          <circle cx="31" cy="25.5" r="3.8" fill="#2a1040" />
-          <circle cx="49" cy="25.5" r="3.8" fill="#2a1040" />
-          <circle cx="31" cy="25.5" r="2.2" fill="#0c0418" />
-          <circle cx="49" cy="25.5" r="2.2" fill="#0c0418" />
-          <circle cx="32.2" cy="23.8" r="1.4" fill="white" />
-          <circle cx="50.2" cy="23.8" r="1.4" fill="white" />
-          {/* cílios superiores suaves */}
-          <path d="M25 24 Q31 20 37 24" stroke={hair} strokeWidth="1.2" fill="none" strokeLinecap="round" opacity="0.8" />
-          <path d="M43 24 Q49 20 55 24" stroke={hair} strokeWidth="1.2" fill="none" strokeLinecap="round" opacity="0.8" />
-          {/* nariz delicado */}
-          <path d="M38 31 Q40 34 42 31" stroke="#a06030" strokeWidth="1.3" fill="none" strokeLinecap="round" />
-          {/* bochechas rosadas */}
-          <ellipse cx="25" cy="32" rx="4.5" ry="3" fill="#e06050" opacity="0.22" />
-          <ellipse cx="55" cy="32" rx="4.5" ry="3" fill="#e06050" opacity="0.22" />
-          {/* sorriso gentil e fechado */}
-          <path d="M32 37 Q40 42 48 37" stroke="#803020" strokeWidth="2" fill="none" strokeLinecap="round" />
-          <path d="M33 37.5 Q40 41 47 37.5" fill="#c04030" opacity="0.25" />
-        </g>
-      );
-    })(),
+  const bgColors: Record<TipoPersonagem, string> = {
+    peregrino: "#DBEAFE",
+    profeta:   "#FEF3C7",
+    guerreiro: "#EDE9FE",
+    sabia:     "#FCE7F3",
   };
-
-  const bgs: Record<TipoPersonagem, string> = {
-    peregrino: "#d4e8d0",
-    profeta: "#e8d4b0",
-    guerreiro: "#d0d8e8",
-    sabia: "#e8d0e8",
+  const skinColors: Record<TipoPersonagem, string> = {
+    peregrino: "#FFCB99",
+    profeta:   "#D4956A",
+    guerreiro: "#E8A875",
+    sabia:     "#F8C8A0",
   };
+  const hairColors: Record<TipoPersonagem, string> = {
+    peregrino: "#6B3A2A",
+    profeta:   "#78787A",
+    guerreiro: "#1A1A2E",
+    sabia:     "#4A2020",
+  };
+  const skin = skinColors[tipo];
+  const hair = hairColors[tipo];
+  const bg   = bgColors[tipo];
 
   return (
     <svg width={size} height={Math.round(size * 1.2)} viewBox="0 0 80 96">
-      <circle cx="40" cy="44" r="38" fill={bgs[tipo]} opacity="0.65" />
+      {/* Background bubble */}
+      <circle cx="40" cy="54" r="38" fill={bg} />
 
-      {/* ── ROBE ── */}
-      <path d="M22 42 Q12 66 10 94 L70 94 Q68 66 58 42 Z" fill={cor} />
-      <path d="M33 42 Q29 64 28 94 L52 94 Q51 64 47 42 Z" fill={cor} opacity="0.5" />
-      <path d="M38 42 Q37 64 36 94 L44 94 Q43 64 42 42 Z" fill="white" opacity="0.12" />
-      <path d="M18 57 Q40 62 62 57 L60 65 Q40 70 20 65 Z" fill={sash} />
-      <circle cx="40" cy="61" r="4" fill={sash} />
-      <circle cx="40" cy="61" r="2.5" fill="#8a4010" />
+      {/* Body */}
+      <rect x="18" y="54" width="44" height="38" rx="22" fill={cor} />
 
-      {/* ── BRAÇOS ── */}
+      {/* Arms */}
+      <ellipse cx="12" cy="64" rx="7" ry="10" fill={cor} transform="rotate(-18 12 64)" />
+      <ellipse cx="68" cy="64" rx="7" ry="10" fill={cor} transform="rotate(18 68 64)" />
+      {/* Hands */}
+      <circle cx="8"  cy="74" r="5.5" fill={skinColors[tipo]} />
+      <circle cx="72" cy="74" r="5.5" fill={skinColors[tipo]} />
+
+      {/* Neck */}
+      <rect x="36" y="48" width="8" height="8" rx="4" fill={skin} />
+
+      {/* Hair (behind head) */}
+      {tipo === "peregrino" && (
+        <>
+          <ellipse cx="40" cy="9" rx="20" ry="12" fill={hair} />
+          <path d="M19 22 Q16 34 18 44" stroke={hair} strokeWidth="8" strokeLinecap="round" fill="none" />
+          <path d="M61 22 Q64 34 62 44" stroke={hair} strokeWidth="8" strokeLinecap="round" fill="none" />
+        </>
+      )}
+      {tipo === "profeta" && (
+        <>
+          <ellipse cx="40" cy="8" rx="19" ry="11" fill={hair} />
+          <path d="M20 22 Q18 32 20 42" stroke={hair} strokeWidth="7" strokeLinecap="round" fill="none" />
+          <path d="M60 22 Q62 32 60 42" stroke={hair} strokeWidth="7" strokeLinecap="round" fill="none" />
+        </>
+      )}
+      {tipo === "guerreiro" && (
+        <>
+          <rect x="19" y="4" width="42" height="20" rx="10" fill={hair} />
+          <rect x="16" y="14" width="9" height="16" rx="4.5" fill={hair} />
+          <rect x="55" y="14" width="9" height="16" rx="4.5" fill={hair} />
+        </>
+      )}
+      {tipo === "sabia" && (
+        <>
+          <ellipse cx="40" cy="8" rx="21" ry="12" fill={hair} />
+          <path d="M18 20 Q13 36 15 52" stroke={hair} strokeWidth="10" strokeLinecap="round" fill="none" />
+          <path d="M62 20 Q67 36 65 52" stroke={hair} strokeWidth="10" strokeLinecap="round" fill="none" />
+        </>
+      )}
+
+      {/* Head */}
+      <ellipse cx="40" cy="28" rx="22" ry="24" fill={skin} />
+
+      {/* Eyebrows */}
       {tipo === "guerreiro" ? (
         <>
-          <path d="M22 48 Q6 58 4 72" stroke={cor} strokeWidth="15" strokeLinecap="round" fill="none" />
-          <path d="M22 48 Q6 58 4 72" stroke="#c07040" strokeWidth="11" strokeLinecap="round" fill="none" />
-          <path d="M58 48 Q74 58 76 72" stroke={cor} strokeWidth="15" strokeLinecap="round" fill="none" />
-          <path d="M58 48 Q74 58 76 72" stroke="#c07040" strokeWidth="11" strokeLinecap="round" fill="none" />
-          <ellipse cx="4" cy="74" rx="6" ry="5" fill="#c07040" />
-          <ellipse cx="76" cy="74" rx="6" ry="5" fill="#c07040" />
+          <path d="M27 16 Q32 13 37 16" stroke={hair} strokeWidth="2.8" fill="none" strokeLinecap="round" />
+          <path d="M43 16 Q48 13 53 16" stroke={hair} strokeWidth="2.8" fill="none" strokeLinecap="round" />
+          <path d="M35 15 L38 17" stroke={hair} strokeWidth="1.5" fill="none" strokeLinecap="round" />
+          <path d="M45 15 L42 17" stroke={hair} strokeWidth="1.5" fill="none" strokeLinecap="round" />
         </>
       ) : (
         <>
-          <path d="M22 46 Q8 60 6 76" stroke={cor} strokeWidth="13" strokeLinecap="round" fill="none" />
-          <path d="M22 46 Q8 60 6 76" stroke={tipo === "sabia" ? "#c87848" : tipo === "profeta" ? "#b86838" : "#c8784a"} strokeWidth="9" strokeLinecap="round" fill="none" />
-          <path d="M58 46 Q72 60 74 76" stroke={cor} strokeWidth="13" strokeLinecap="round" fill="none" />
-          <path d="M58 46 Q72 60 74 76" stroke={tipo === "sabia" ? "#c87848" : tipo === "profeta" ? "#b86838" : "#c8784a"} strokeWidth="9" strokeLinecap="round" fill="none" />
-          <ellipse cx="6" cy="78" rx="5.5" ry="4.5" fill={tipo === "sabia" ? "#c87848" : tipo === "profeta" ? "#b86838" : "#c8784a"} />
-          <ellipse cx="74" cy="78" rx="5.5" ry="4.5" fill={tipo === "sabia" ? "#c87848" : tipo === "profeta" ? "#b86838" : "#c8784a"} />
+          <path d="M27 16 Q32 12 37 15" stroke={hair} strokeWidth="2" fill="none" strokeLinecap="round" />
+          <path d="M43 15 Q48 12 53 16" stroke={hair} strokeWidth="2" fill="none" strokeLinecap="round" />
         </>
       )}
 
-      {/* ── PESCOÇO ── */}
-      <rect x="36" y="38" width="8" height="8" rx="3" fill={tipo === "sabia" ? "#c87848" : tipo === "profeta" ? "#b86838" : tipo === "guerreiro" ? "#c07040" : "#c8784a"} />
+      {/* Eyes */}
+      <ellipse cx="32" cy="27" rx="6" ry="6.5" fill="white" />
+      <ellipse cx="48" cy="27" rx="6" ry="6.5" fill="white" />
+      <circle cx="33" cy="27.5" r="4" fill="#1A1A2E" />
+      <circle cx="49" cy="27.5" r="4" fill="#1A1A2E" />
+      <circle cx="34.5" cy="25.5" r="1.8" fill="white" />
+      <circle cx="50.5" cy="25.5" r="1.8" fill="white" />
 
-      {/* ── SANDÁLIAS ── */}
-      <ellipse cx="27" cy="93" rx="11" ry="5" fill={sandal} />
-      <ellipse cx="53" cy="93" rx="11" ry="5" fill={sandal} />
-      <path d="M20 91 Q27 87 34 91" stroke={sandal} strokeWidth="2" fill="none" strokeLinecap="round" />
-      <path d="M46 91 Q53 87 60 91" stroke={sandal} strokeWidth="2" fill="none" strokeLinecap="round" />
+      {/* Cheeks */}
+      <ellipse cx="24" cy="34" rx="4.5" ry="3" fill="#FF8888" opacity="0.30" />
+      <ellipse cx="56" cy="34" rx="4.5" ry="3" fill="#FF8888" opacity="0.30" />
 
-      {/* ── ROSTO único por personagem ── */}
-      {faces[tipo]}
+      {/* Nose */}
+      <ellipse cx="40" cy="33" rx="2" ry="1.5" fill={hair} opacity="0.25" />
 
-      {/* ── ACESSÓRIOS ── */}
+      {/* Mouth */}
+      {tipo === "guerreiro" ? (
+        <path d="M33 39 Q40 42 47 39" stroke="#CC6644" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+      ) : tipo === "profeta" ? (
+        <path d="M33 40 Q40 44 47 40" stroke="#CC6644" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+      ) : (
+        <path d="M32 39 Q40 47 48 39" stroke="#CC6644" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      )}
+
+      {/* Profeta: beard */}
+      {tipo === "profeta" && (
+        <path d="M27 38 Q28 50 40 52 Q52 50 53 38 Q48 46 40 47 Q32 46 27 38Z" fill={hair} opacity="0.75" />
+      )}
+
+      {/* Sábia: headband */}
+      {tipo === "sabia" && (
+        <path d="M18 20 Q40 12 62 20" stroke="#1A7FFF" strokeWidth="3.5" fill="none" strokeLinecap="round" />
+      )}
+
+      {/* Accessories */}
       {tipo === "peregrino" && (
-        <line x1="71" y1="30" x2="71" y2="94" stroke="#5a2808" strokeWidth="4.5" strokeLinecap="round" />
+        // Backpack
+        <g>
+          <rect x="54" y="52" width="11" height="15" rx="3.5" fill={hair} opacity="0.85" />
+          <rect x="56" y="50" width="7" height="5" rx="2" fill={hair} opacity="0.7" />
+          <line x1="57" y1="56" x2="63" y2="56" stroke="white" strokeWidth="1" opacity="0.5" />
+          <line x1="57" y1="59" x2="63" y2="59" stroke="white" strokeWidth="1" opacity="0.5" />
+        </g>
       )}
       {tipo === "profeta" && (
+        // Scroll
         <g>
-          <rect x="4" y="58" width="12" height="17" rx="2" fill="#e8dcc0" stroke="#8a6030" strokeWidth="1.2" />
-          <line x1="7" y1="63" x2="13" y2="63" stroke="#8a6030" strokeWidth="0.8" />
-          <line x1="7" y1="67" x2="13" y2="67" stroke="#8a6030" strokeWidth="0.8" />
-          <line x1="7" y1="71" x2="13" y2="71" stroke="#8a6030" strokeWidth="0.8" />
+          <rect x="3" y="55" width="11" height="15" rx="2.5" fill="#FEF3C7" stroke="#D97706" strokeWidth="1.5" />
+          <line x1="6" y1="60" x2="11" y2="60" stroke="#D97706" strokeWidth="1.2" />
+          <line x1="6" y1="63" x2="11" y2="63" stroke="#D97706" strokeWidth="1.2" />
+          <line x1="6" y1="66" x2="11" y2="66" stroke="#D97706" strokeWidth="1.2" />
         </g>
       )}
       {tipo === "guerreiro" && (
+        // Shield
         <g>
-          <rect x="67" y="38" width="5.5" height="36" rx="1.5" fill="#a0a8bc" />
-          <rect x="62" y="46" width="15" height="4.5" rx="1.5" fill="#c8b040" />
-          <rect x="65.5" y="34" width="8" height="7" rx="2" fill="#c8b040" />
+          <path d="M3 52 Q3 66 8 72 Q10 74 10 74 Q10 74 12 72 Q17 66 17 52 Q10 48 3 52Z" fill="#6366F1" />
+          <path d="M5 54 Q5 65 9 70 Q9 70 10 71 Q10 71 11 70 Q15 65 15 54 Q10 51 5 54Z" fill="#818CF8" />
+          <line x1="6" y1="56" x2="14" y2="56" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="10" y1="52" x2="10" y2="70" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
         </g>
       )}
       {tipo === "sabia" && (
+        // Open book
         <g>
-          <rect x="62" y="56" width="14" height="18" rx="2" fill="#d4c090" stroke="#8a6820" strokeWidth="1.2" />
-          <line x1="65" y1="56" x2="65" y2="74" stroke="#8a6820" strokeWidth="1" />
-          <line x1="65" y1="60" x2="75" y2="60" stroke="#8a6820" strokeWidth="0.8" />
-          <line x1="65" y1="64" x2="75" y2="64" stroke="#8a6820" strokeWidth="0.8" />
-          <line x1="65" y1="68" x2="75" y2="68" stroke="#8a6820" strokeWidth="0.8" />
+          <rect x="3" y="55" width="9" height="12" rx="2" fill="white" stroke="#1A7FFF" strokeWidth="1.5" />
+          <rect x="12" y="55" width="9" height="12" rx="2" fill="white" stroke="#1A7FFF" strokeWidth="1.5" />
+          <line x1="6"  y1="59" x2="10" y2="59" stroke="#1A7FFF" strokeWidth="0.9" />
+          <line x1="6"  y1="62" x2="10" y2="62" stroke="#1A7FFF" strokeWidth="0.9" />
+          <line x1="6"  y1="65" x2="10" y2="65" stroke="#1A7FFF" strokeWidth="0.9" />
+          <line x1="14" y1="59" x2="19" y2="59" stroke="#1A7FFF" strokeWidth="0.9" />
+          <line x1="14" y1="62" x2="19" y2="62" stroke="#1A7FFF" strokeWidth="0.9" />
+          <line x1="14" y1="65" x2="19" y2="65" stroke="#1A7FFF" strokeWidth="0.9" />
         </g>
       )}
     </svg>
