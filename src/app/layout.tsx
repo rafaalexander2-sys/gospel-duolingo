@@ -1,26 +1,27 @@
 import type { Metadata } from "next";
-import { Cinzel, EB_Garamond } from "next/font/google";
+import { Plus_Jakarta_Sans, Lora } from "next/font/google";
 import "./globals.css";
 
-const cinzel = Cinzel({
-  variable: "--font-cinzel",
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-ui",
   subsets: ["latin"],
-  weight: ["400", "600", "700", "900"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const garamond = EB_Garamond({
-  variable: "--font-garamond",
+const lora = Lora({
+  variable: "--font-verse",
   subsets: ["latin"],
-  weight: ["400", "500", "700", "800"],
+  style: ["normal", "italic"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
   title: "Discypulo",
-  description: "Embarque numa jornada épica pela Palavra de Deus",
+  description: "Embarque numa jornada pela Palavra de Deus",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
     title: "Discypulo",
   },
   icons: {
@@ -41,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${cinzel.variable} ${garamond.variable} h-full`}>
+    <html lang="pt-BR" className={`${jakarta.variable} ${lora.variable} h-full`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

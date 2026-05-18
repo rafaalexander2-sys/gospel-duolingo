@@ -22,11 +22,24 @@ import {
 
 // ── Design tokens ─────────────────────────────────────────────────
 const DS = {
-  bg: "#e8dfc8", bgCard: "#f5edd8", borda: "#c8b48a",
-  titulo: "#2c1505", corpo: "#4a2e0e",
-  dourado: "#b8860b", douradoClaro: "#d4a017", douradoSombra: "#7a5800",
-  vermelho: "#7a1515", vermelhoEsc: "#4a0a0a",
-  verde: "#1a4a1a", acerto: "#c8e6c0", erro: "#f0c8c8", off: "#9a8060",
+  bg: "#F9FAFB", white: "#FFFFFF",
+  blue: "#1A7FFF", blueDk: "#0062E0", blueLt: "#B8D9FF", blueTint: "#F0F6FF",
+  sky: "#38BDF8", teal: "#2DD4BF", tealDk: "#0D9488",
+  lav: "#A78BFA", lavDk: "#7C3AED",
+  success: "#12B76A", warn: "#F79009", error: "#F04438",
+  t0: "#0F172A", t1: "#374151", t2: "#6B7280", t3: "#9CA3AF",
+  border: "#E5E7EB", borderLt: "#F3F4F6",
+  shSm: "0 1px 3px rgba(0,0,0,0.07), 0 2px 8px rgba(0,0,0,0.04)",
+  shLg: "0 4px 14px rgba(0,0,0,0.10), 0 8px 22px rgba(0,0,0,0.05)",
+  shBlue: "0 4px 16px rgba(26,127,255,0.28)",
+  shPurp: "0 4px 14px rgba(124,58,237,0.22)",
+  shTeal: "0 4px 16px rgba(45,212,191,0.28)",
+  // Keep these for backward compat during migration (map to new values):
+  titulo: "#0F172A", corpo: "#374151", off: "#6B7280", borda: "#E5E7EB",
+  dourado: "#1A7FFF", douradoClaro: "#1A7FFF", douradoSombra: "#0062E0",
+  verde: "#12B76A", acerto: "#ECFDF5", erro: "#FFF1F0",
+  vermelho: "#F04438", vermelhoEsc: "#C0302A",
+  bgCard: "#FFFFFF",
 };
 
 type Tela = "login" | "cadastro" | "criar_personagem" | "home" | "trilhas" | "mapa" | "etapas" | "jogo" | "resultado" | "armadura" | "ranking" | "missoes" | "admin" | "planos" | "sem_vidas";
