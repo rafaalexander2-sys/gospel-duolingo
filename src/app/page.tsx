@@ -231,27 +231,7 @@ function SvgPersonagem({ tipo, cor, size = 80 }: { tipo: TipoPersonagem; cor: st
 
 function SvgJesus({ size = 80 }: { size?: number }) {
   return (
-    <svg width={size} height={Math.round(size * 1.2)} viewBox="0 0 80 96">
-      {/* Body — white robe */}
-      <path d="M15 50 Q11 96 40 96 Q69 96 65 50 Q56 44 40 44 Q24 44 15 50Z" fill="#F2F2F2" />
-      {/* Blue sash */}
-      <path d="M15 56 L67 74 L63 88 L11 70Z" fill="#1A7FFF" />
-      {/* Hair — sides (wide, flowing) */}
-      <ellipse cx="12" cy="47" rx="13" ry="29" fill="#5C2A00" />
-      <ellipse cx="68" cy="47" rx="13" ry="29" fill="#5C2A00" />
-      {/* Hair — top cap */}
-      <ellipse cx="40" cy="12" rx="24" ry="17" fill="#5C2A00" />
-      {/* Face */}
-      <circle cx="40" cy="30" r="20" fill="#F4C896" />
-      {/* Eyes — large black circles, signature feature */}
-      <circle cx="30" cy="28" r="8.5" fill="#1A1A1A" />
-      <circle cx="50" cy="28" r="8.5" fill="#1A1A1A" />
-      {/* Beard — small rounded brown shape at chin */}
-      <ellipse cx="40" cy="44" rx="7" ry="4" fill="#8B5A2B" />
-      {/* Halo — gold ring, rendered last so it floats above */}
-      <ellipse cx="40" cy="4" rx="25" ry="9" fill="#FFD700" />
-      <ellipse cx="40" cy="4" rx="19" ry="6" fill="#FFFBEB" />
-    </svg>
+    <img src="/jesus.png" width={size} height={Math.round(size * 1.2)} alt="Jesus" style={{ objectFit: "contain", display: "block" }} />
   );
 }
 
