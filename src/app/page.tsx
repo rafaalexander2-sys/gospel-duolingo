@@ -229,6 +229,32 @@ function SvgPersonagem({ tipo, cor, size = 80 }: { tipo: TipoPersonagem; cor: st
   );
 }
 
+function SvgJesus({ size = 80 }: { size?: number }) {
+  return (
+    <svg width={size} height={Math.round(size * 1.2)} viewBox="0 0 80 96">
+      {/* Body — white robe */}
+      <path d="M14 52 Q11 94 40 94 Q69 94 66 52 Q57 46 40 46 Q23 46 14 52Z" fill="#F5F5F5" />
+      {/* Blue sash */}
+      <path d="M13 60 L68 76 L64 88 L9 72Z" fill="#1A7FFF" />
+      {/* Hair — sides */}
+      <ellipse cx="15" cy="46" rx="12" ry="27" fill="#6B3A2A" />
+      <ellipse cx="65" cy="46" rx="12" ry="27" fill="#6B3A2A" />
+      {/* Hair — top */}
+      <ellipse cx="40" cy="12" rx="22" ry="15" fill="#6B3A2A" />
+      {/* Face */}
+      <circle cx="40" cy="30" r="21" fill="#F4C896" />
+      {/* Eyes */}
+      <circle cx="31" cy="28" r="7.5" fill="#1A1A2E" />
+      <circle cx="49" cy="28" r="7.5" fill="#1A1A2E" />
+      {/* Mouth */}
+      <path d="M35 40 Q40 45 45 40" stroke="#7B4A2A" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      {/* Halo — rendered on top */}
+      <ellipse cx="40" cy="7" rx="22" ry="8" fill="#FFD700" />
+      <ellipse cx="40" cy="7" rx="17" ry="5.5" fill="#FFFBEB" />
+    </svg>
+  );
+}
+
 function MascoteFlutuante() {
   return (
     <div style={{ width: 72, height: 72, borderRadius: "50%", background: "linear-gradient(135deg, #38BDF8 0%, #1A7FFF 100%)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(26,127,255,0.35)" }}>
@@ -896,19 +922,25 @@ function TelaHome({
             background: `linear-gradient(135deg, ${DS.lav}, ${DS.lavDk})`,
             borderRadius: "var(--r-lg)", padding: "16px 20px", marginBottom: "12px",
             boxShadow: DS.shPurp, position: "relative", overflow: "hidden",
+            display: "flex", gap: "12px", alignItems: "center",
           }}>
             <div style={{ position: "absolute", top: -10, right: -10, width: 80, height: 80, background: "radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)", pointerEvents: "none" }} />
-            <p style={{ fontSize: "14px", fontWeight: "700", color: "white", marginBottom: "4px" }}>Jornada de Jesus</p>
-            <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", marginBottom: "12px", lineHeight: 1.5 }}>
-              Caminhe ao lado de Jesus — do nascimento à ressurreição.
-            </p>
-            <button onClick={() => onEscolher("JESUS")} style={{
-              width: "100%", padding: "11px", fontSize: "13px", fontWeight: 700, cursor: "pointer",
-              background: "rgba(255,255,255,0.2)", border: "1.5px solid rgba(255,255,255,0.4)",
-              borderRadius: "var(--r-md)", color: "white", transition: "all 0.15s",
-            }}>
-              Iniciar Jornada
-            </button>
+            <div style={{ flexShrink: 0 }}>
+              <SvgJesus size={64} />
+            </div>
+            <div style={{ flex: 1, position: "relative" }}>
+              <p style={{ fontSize: "14px", fontWeight: "700", color: "white", marginBottom: "4px" }}>Jornada de Jesus</p>
+              <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", marginBottom: "12px", lineHeight: 1.5 }}>
+                Caminhe ao lado de Jesus — do nascimento à ressurreição.
+              </p>
+              <button onClick={() => onEscolher("JESUS")} style={{
+                width: "100%", padding: "11px", fontSize: "13px", fontWeight: 700, cursor: "pointer",
+                background: "rgba(255,255,255,0.2)", border: "1.5px solid rgba(255,255,255,0.4)",
+                borderRadius: "var(--r-md)", color: "white", transition: "all 0.15s",
+              }}>
+                Iniciar Jornada
+              </button>
+            </div>
           </div>
 
           {/* Missão do Dia */}
@@ -1055,9 +1087,15 @@ function TelaMapa({
             marginBottom: "24px", position: "relative", overflow: "hidden",
           }}>
             <div style={{ position: "absolute", top: 0, right: 0, width: "120px", height: "120px", background: "radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)", pointerEvents: "none" }} />
-            <div style={{ width: "48px", height: "48px", borderRadius: "16px", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-            </div>
+            {trilha === "JESUS" ? (
+              <div style={{ flexShrink: 0, marginLeft: "-4px" }}>
+                <SvgJesus size={52} />
+              </div>
+            ) : (
+              <div style={{ width: "48px", height: "48px", borderRadius: "16px", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              </div>
+            )}
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.7)", marginBottom: "2px" }}>Trilha</div>
               <div style={{ fontSize: "16px", fontWeight: 800, color: "rgba(255,255,255,0.98)", letterSpacing: "-0.02em" }}>{titulo}</div>
@@ -1789,7 +1827,9 @@ function TelaQuiz({
     }
     return (
       <div className="card-verbum" style={{ padding: "16px 20px", marginBottom: "16px", display: "flex", gap: "12px", alignItems: "flex-start" }}>
-        <SvgPersonagem tipo={perfil.personagem_tipo} cor={perfil.personagem_cor} size={56} />
+        {trilha === "JESUS"
+          ? <SvgJesus size={56} />
+          : <SvgPersonagem tipo={perfil.personagem_tipo} cor={perfil.personagem_cor} size={56} />}
         <p style={{ fontSize: "15px", color: DS.t1, lineHeight: 1.6, fontStyle: "italic", flex: 1, fontFamily: "var(--font-verse)" }}>{getEnunciado(q, perfil.nome)}</p>
       </div>
     );
