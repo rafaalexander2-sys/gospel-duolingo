@@ -1104,7 +1104,7 @@ function TelaMapa({
                 : 3) : 0;
 
               return (
-                <div key={cap.id} style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1, width: "100%", height: "88px" }}>
+                <div key={cap.id} style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: tooltipIdx === idx ? 50 : 1, width: "100%", height: "88px" }}>
                   <div style={{
                     transform: `translateX(${offset}px)`,
                     display: "flex", flexDirection: "column", alignItems: "center", gap: "4px",
