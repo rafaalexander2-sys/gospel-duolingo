@@ -2634,12 +2634,31 @@ export default function App() {
           setTela("login");
         }
       } else {
-        setTela("login");
+        // Modo demo — entra direto sem login
+        const perfilDemo: Perfil = {
+          id: "demo",
+          nome: "Visitante",
+          email: "",
+          personagem_tipo: "peregrino",
+          personagem_cor: "#1A7FFF",
+          xp: 0,
+          talentos: 0,
+          sequencia: 0,
+          sequencia_max: 0,
+          sequencia_ultimo_dia: null,
+          vidas: VIDAS_MAX,
+          vidas_ultima_recarga: new Date().toISOString(),
+          armadura: {},
+          criado_em: new Date().toISOString(),
+        };
+        setPerfil(perfilDemo);
+        atualizarVidas(perfilDemo);
+        setTela("home");
       }
     });
 
     const { data: sub } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_OUT") { setPerfil(null); setTela("login"); }
+      if (event === "SIGNED_OUT") { setPerfil(null); setTela("home"); }
     });
     return () => sub.subscription.unsubscribe();
   }, [atualizarVidas]);
