@@ -78,7 +78,14 @@ App de gamificação bíblica estilo Duolingo. Stack: Next.js 16 (App Router, `"
 
 ---
 
+## Ideias de novas trilhas
+
+- **Heróis da Fé**
+- **Discípulos**
+
 ## Pendências / próximos passos conhecidos
+
+- Personagens do jogador (Peregrino, Profeta, Guerreiro, Sábia) ainda são SVG em código — aguardando PNGs no estilo do `public/jesus.png` (`peregrino.png`, `profeta.png`, `guerreiro.png`, `sabia.png` em `public/`)
 
 - Modo Arena (PvP) referenciado na Couraça da Justiça — não implementado ainda
 - `SlotAnuncio` é placeholder — integração de anúncios não feita
